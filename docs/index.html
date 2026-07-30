@@ -44,7 +44,7 @@
     <!-- ?v= is a cache buster. GitHub Pages serves these assets with a long
          max-age, so a returning visitor keeps the old CSS and JS until the URL
          changes. Bump the value whenever site.css or site.js changes. -->
-    <link rel="stylesheet" href="assets/css/site.css?v=6">
+    <link rel="stylesheet" href="assets/css/site.css?v=7">
 </head>
 <body class="bg-slate-50 text-slate-900 antialiased">
 
@@ -62,9 +62,18 @@
     <nav id="site-nav" class="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-slate-200/80 shadow-sm">
         <div class="container mx-auto px-6 lg:px-8">
             <div class="flex items-center gap-8 h-20">
-                <a href="#main-content" class="inline-flex items-center gap-3.5 mr-auto">
-                    <img src="assets/images/logos/project-logo.png" alt="PermitAI" class="h-8 w-auto object-contain">
-                    <span class="text-lg font-semibold text-ink tracking-tight whitespace-nowrap">NEPA MCP Toolkit</span>
+                <!-- Stacked lockup: the mark, then the name with the plugin badge over
+                     "Toolkit". Gives the badge somewhere to sit without lengthening the
+                     single line, and lets the mark carry more weight. -->
+                <a href="#main-content" class="inline-flex items-center gap-4 mr-auto">
+                    <img src="assets/images/logos/project-logo.png" alt="PermitAI" class="h-9 w-auto object-contain">
+                    <span class="block">
+                        <span class="flex items-center gap-2">
+                            <span class="text-xl font-semibold text-ink tracking-tight whitespace-nowrap">NEPA MCP</span>
+                            <span class="text-xs font-medium bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full whitespace-nowrap">+ Plugins</span>
+                        </span>
+                        <span class="block text-xs text-slate-500 font-light">Toolkit</span>
+                    </span>
                 </a>
                 <div class="hidden md:flex items-center gap-5 lg:gap-7">
                     <a href="#overview" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap">Overview</a>
@@ -566,7 +575,7 @@ codex plugin add nepa-mcp@nepa-mcp-local</code></pre>
         </div>
     </footer>
 
-    <script src="assets/js/site-data.js?v=6"></script>
-    <script src="assets/js/site.js?v=6"></script>
+    <script src="assets/js/site-data.js?v=7"></script>
+    <script src="assets/js/site.js?v=7"></script>
 </body>
 </html>
