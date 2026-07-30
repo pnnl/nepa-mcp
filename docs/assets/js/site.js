@@ -893,6 +893,55 @@ function initJurisdictionFlow() {
 var TOOL_GROUP_PREVIEW = 6;
 var LAYER_PREVIEW_BUDGET = 15;
 
+// Presentation order for the layer section. site-data.js lists categories in
+// catalog order, which leads with three single-layer categories and buries the
+// two biggest. Lead with what a reviewer screens for first instead.
+//
+// Categories are grouped for display only — each layer keeps the category it
+// carries in the server's LAYER_METADATA. A group with several members collapses
+// its categories under one heading so single-layer rows do not sit near-empty.
+var LAYER_GROUPS = [
+    { categories: ['Federal Lands (BLM)'] },
+    { categories: ['Species and Habitat'] },
+    { categories: ['Habitat Protection'] },
+    { categories: ['Federal Lands (non-BLM)'] },
+    { categories: ['Water Resources (USACE)'] },
+    { categories: ['Water Resources (USGS NHD)'] },
+    {
+        label: 'Administrative · Tribal · Region of Interest',
+        categories: ['Administrative', 'Tribal', 'Region of Interest']
+    },
+    { categories: ['Contextual'] }
+];
+
+/**
+ * Resolve LAYER_GROUPS against the generated catalog. Unknown categories are
+ * appended in catalog order so a new layer never silently disappears.
+ * @param {string[]} categories
+ * @returns {{label: string, categories: string[]}[]}
+ */
+function layerGroups(categories) {
+    var claimed = {};
+    var groups = [];
+    LAYER_GROUPS.forEach(function (group) {
+        var present = group.categories.filter(function (category) {
+            return categories.indexOf(category) !== -1;
+        });
+        present.forEach(function (category) {
+            claimed[category] = true;
+        });
+        if (present.length) {
+            groups.push({ label: group.label || present[0], categories: present });
+        }
+    });
+    categories.forEach(function (category) {
+        if (!claimed[category]) {
+            groups.push({ label: category, categories: [category] });
+        }
+    });
+    return groups;
+}
+
 var toolState = {
     query: '',
     agency: 'all',
@@ -1220,7 +1269,9 @@ function initToolExplorer() {
    Layer explorer
    ============================================ */
 
-var activeProfile = 'screening';
+// Default to 'full' so every overlay reads as available on arrival; the narrower
+// profiles are a filter the visitor opts into.
+var activeProfile = 'full';
 var layersExpanded = false;
 
 function renderLayerCards() {
@@ -1249,29 +1300,32 @@ function renderLayerCards() {
               ' of ' + mapComposer.layers.length + ' layers';
     }
 
-    // Fill a layer budget, then cut at the next category boundary so a category
-    // is never shown half-empty.
-    var visibleCategories = mapComposer.categories;
+    // Fill a layer budget, then cut at the next group boundary so a group is
+    // never shown half-empty.
+    var groups = layerGroups(mapComposer.categories);
+    var layersInGroup = function (group) {
+        return mapComposer.layers.filter(function (layer) {
+            return group.categories.indexOf(layer.category) !== -1;
+        });
+    };
+
+    var visibleGroups = groups;
     if (!layersExpanded) {
         var budget = 0;
-        visibleCategories = [];
-        mapComposer.categories.some(function (category) {
-            var size = mapComposer.layers.filter(function (layer) {
-                return layer.category === category;
-            }).length;
-            visibleCategories.push(category);
-            budget += size;
+        visibleGroups = [];
+        groups.some(function (group) {
+            visibleGroups.push(group);
+            budget += layersInGroup(group).length;
             return budget >= LAYER_PREVIEW_BUDGET;
         });
     }
-    var hiddenLayers = mapComposer.layers.filter(function (layer) {
-        return visibleCategories.indexOf(layer.category) === -1;
-    }).length;
+    var shownLayers = visibleGroups.reduce(function (total, group) {
+        return total + layersInGroup(group).length;
+    }, 0);
+    var hiddenLayers = mapComposer.layers.length - shownLayers;
 
-    visibleCategories.forEach(function (category) {
-        var layers = mapComposer.layers.filter(function (layer) {
-            return layer.category === category;
-        });
+    visibleGroups.forEach(function (group) {
+        var layers = layersInGroup(group);
         if (!layers.length) {
             return;
         }
@@ -1282,7 +1336,7 @@ function renderLayerCards() {
         }).length;
 
         var heading = el('div', 'flex items-baseline gap-3 mb-3');
-        heading.appendChild(el('h3', 'layer-category-name', category));
+        heading.appendChild(el('h3', 'layer-category-name', group.label));
         heading.appendChild(el('span', 'text-xs text-slate-400 tabular-nums',
             inProfile + ' of ' + layers.length + ' in profile'));
         section.appendChild(heading);
