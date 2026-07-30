@@ -283,22 +283,8 @@ epa_aqs credentials: optional, missing EPA_AQS_EMAIL, EPA_AQS_API_KEY</code></pr
                     <div class="step-body">
                         <h3 class="text-lg font-semibold text-ink mb-1 pt-1.5">Ask a question</h3>
                         <p class="text-sm text-slate-600 mb-3">
-                            Your client launches the servers itself. To run one by hand — to smoke-test
-                            it, or to attach a client that expects an already-running process:
+                            Your client launches the servers itself — nothing left to start.
                         </p>
-                        <div class="code-block rounded-xl overflow-hidden shadow-inner">
-                            <button type="button" onclick="copyCode(event, 'run-code')" class="copy-button bg-slate-700/90 hover:bg-slate-600 text-white px-3 py-1.5 rounded text-xs font-medium">
-                                <i class="fas fa-copy mr-1" aria-hidden="true"></i>Copy
-                            </button>
-                            <pre id="run-code" class="p-5 text-slate-100 text-sm leading-relaxed overflow-x-auto"><code>nepa-mcp server ipac   # one server over stdio
-nepa-mcp server all    # every tool behind one connection</code></pre>
-                        </div>
-                        <p class="text-xs text-slate-500 mt-2.5 mb-4">
-                            Either waits on stdio for a client, so an idle process is the expected result.
-                            Individual servers are the recommended pattern; <code class="text-teal-800">all</code>
-                            is for testing or a single shared connection.
-                        </p>
-                        <p class="text-sm text-slate-600 mb-3">Then prompts like these work out of the box:</p>
                         <ul class="grid sm:grid-cols-3 gap-3">
                             <li class="bg-teal-50/70 border border-teal-200/60 rounded-xl px-4 py-3.5 text-sm text-slate-700 leading-relaxed">
                                 <i class="fas fa-quote-left text-teal-600/60 mr-1.5" aria-hidden="true"></i>
