@@ -858,8 +858,12 @@ function initJurisdictionFlow() {
 // Server groups shown before the "show more" control, and the approximate
 // number of layers to show before collapsing. Layer categories vary from 1 to 7
 // members, so budget by layer count and stop at a category boundary.
-var TOOL_GROUP_PREVIEW = 6;
-var LAYER_PREVIEW_BUDGET = 15;
+//
+// Both previews are deliberately short: enough to show what an entry looks like,
+// with the rest one click away. Three server groups reach cfr, the richest tool
+// list; a budget of 10 stops after the third layer category.
+var TOOL_GROUP_PREVIEW = 3;
+var LAYER_PREVIEW_BUDGET = 10;
 
 // Presentation order for the layer section. site-data.js lists categories in
 // catalog order, which leads with three single-layer categories and buries the
