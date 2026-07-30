@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEPA MCP Toolkit — Federal Environmental Data for AI Agents</title>
+    <meta name="description" content="Model Context Protocol servers giving AI agents direct access to public federal data for NEPA screening, regulatory research, and permitting analysis.">
+    <meta name="author" content="Sarthak Chaturvedi">
+
+    <meta property="og:title" content="NEPA MCP Toolkit">
+    <meta property="og:description" content="12 federal agencies · 19 servers · 46 tools · one protocol. Public federal data for AI-assisted NEPA workflows.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="assets/images/map-composer-chesapeake-1400.webp">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <link rel="icon" href="assets/images/logos/project-logo.png">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?v=3.4.17"></script>
+    <script>
+        // The feature and documentation cards are built in JavaScript, so their
+        // accent classes never appear in this markup for Tailwind to detect.
+        // Safelist them explicitly.
+        tailwind.config = {
+            safelist: [
+                'bg-teal-50', 'text-teal-600',
+                'bg-emerald-50', 'text-emerald-600',
+                'bg-slate-50', 'text-slate-600',
+                'bg-violet-50', 'text-violet-600',
+                'bg-amber-50', 'text-amber-600',
+                'bg-cyan-50', 'text-cyan-600'
+            ]
+        };
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Crimson+Pro:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased">
+
+    <a href="#main-content" class="skip-to-content">Skip to main content</a>
+
+    <!-- Top banner -->
+    <div id="site-banner" class="bg-gradient-to-r from-slate-900 via-teal-900 to-slate-900 text-white text-center py-2.5 text-sm border-b border-slate-700">
+        <a href="https://github.com/pnnl-int/nepa-mcp-server/tree/main" class="hover:text-teal-300 transition-colors inline-flex items-center space-x-2">
+            <i class="fab fa-github" aria-hidden="true"></i>
+            <span>View Source Repository</span>
+        </a>
+    </div>
+
+    <!-- Header -->
+    <nav id="site-nav" class="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-slate-200/80 shadow-sm">
+        <div class="container mx-auto px-6 lg:px-8">
+            <div class="flex items-center gap-8 h-20">
+                <a href="#main-content" class="inline-flex items-center gap-3.5 mr-auto">
+                    <img src="assets/images/logos/project-logo.png" alt="PermitAI" class="h-8 w-auto object-contain">
+                    <span class="text-lg font-semibold text-ink tracking-tight whitespace-nowrap">NEPA MCP Toolkit</span>
+                </a>
+                <div class="hidden md:flex items-center gap-5 lg:gap-7">
+                    <a href="#overview" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap">Overview</a>
+                    <a href="#demo" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap">Demo</a>
+                    <a href="#quick-start" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap">Quick&nbsp;Start</a>
+                    <a href="#servers" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap">Servers</a>
+                    <a href="#tools" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap">Tools</a>
+                    <a href="#layers" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap">Layers</a>
+                    <a href="#documentation" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap">Docs</a>
+                </div>
+            </div>
+        </div>
+        <!-- Narrow viewports get a scrollable link row rather than a hidden menu. -->
+        <div class="md:hidden border-t border-slate-200/80 overflow-x-auto">
+            <div class="flex items-center gap-5 px-6 py-3 whitespace-nowrap text-sm font-medium text-slate-600">
+                <a href="#overview" class="hover:text-teal-700 transition-colors">Overview</a>
+                <a href="#demo" class="hover:text-teal-700 transition-colors">Demo</a>
+                <a href="#quick-start" class="hover:text-teal-700 transition-colors">Quick Start</a>
+                <a href="#servers" class="hover:text-teal-700 transition-colors">Servers</a>
+                <a href="#tools" class="hover:text-teal-700 transition-colors">Tools</a>
+                <a href="#layers" class="hover:text-teal-700 transition-colors">Layers</a>
+                <a href="#documentation" class="hover:text-teal-700 transition-colors">Docs</a>
+            </div>
+        </div>
+    </nav>
+
+    <main id="main-content">
+
+    <!-- Hero -->
+    <section class="hero-gradient pt-20 pb-12 lg:pt-24 lg:pb-14 px-6">
+        <div class="container mx-auto max-w-5xl">
+            <div class="text-center">
+                <!-- The trademark is a superscript tail on the artwork, so the file
+                     centers ~46/670 of its width left of the wordmark's true middle.
+                     .brand-mark shifts it back so "PermitAI" reads optically centered. -->
+                <div class="fade-in-up mb-9 lg:mb-10">
+                    <img src="assets/permitai-mark-tm.svg" alt="PermitAI™" class="brand-mark h-20 md:h-24 w-auto object-contain">
+                </div>
+
+                <div class="fade-in-up delay-100">
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-light text-ink tracking-tight mb-4">
+                        NEPA MCP <span class="font-semibold">Toolkit</span>
+                    </h1>
+                    <div id="unified-badge" class="inline-flex flex-wrap justify-center items-center gap-x-2.5 gap-y-1 badge-premium text-white px-6 py-2.5 rounded-full text-sm font-medium tracking-wide mt-2 cursor-pointer" role="button" tabindex="0" title="Replay">
+                        <span class="badge-stat">12 Federal Agencies</span>
+                        <span class="badge-arrow text-teal-200" aria-hidden="true">→</span>
+                        <span class="badge-stat">19 Servers</span>
+                        <span class="badge-arrow text-teal-200" aria-hidden="true">→</span>
+                        <span class="badge-stat">46 Tools</span>
+                        <span class="badge-arrow text-teal-200" aria-hidden="true">→</span>
+                        <span class="badge-stat badge-finale">One Protocol</span>
+                    </div>
+                </div>
+
+                <div class="fade-in-up delay-200 mt-8">
+                    <p class="text-xl md:text-2xl text-slate-600 max-w-3xl mx-auto font-light leading-relaxed">
+                        Model Context Protocol servers giving AI agents direct access to public
+                        federal data for NEPA screening, regulatory research, and permitting analysis.
+                    </p>
+                </div>
+
+                <div class="fade-in-up delay-300 flex flex-wrap gap-4 justify-center mt-8">
+                    <a href="#quick-start" class="btn-premium text-white px-10 py-4 rounded-xl font-medium inline-flex items-center space-x-2">
+                        <span>Get Started</span>
+                        <i class="fas fa-arrow-right text-sm" aria-hidden="true"></i>
+                    </a>
+                    <a href="#demo" class="bg-white text-ink px-10 py-4 rounded-xl font-medium border border-slate-300 hover:border-slate-400 transition-all hover:shadow-lg inline-flex items-center space-x-2">
+                        <i class="fas fa-map-location-dot" aria-hidden="true"></i>
+                        <span>See Demo</span>
+                    </a>
+                </div>
+
+                <div class="fade-in-up delay-400 mt-6 pt-4">
+                    <p class="text-xs text-slate-400 mb-3 font-medium uppercase tracking-widest">Works with</p>
+                    <div id="mcp-clients" class="flex flex-wrap justify-center items-start gap-6 md:gap-9"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Overview -->
+    <section id="overview" class="py-16 lg:py-20 px-6 bg-white">
+        <div class="container mx-auto max-w-6xl">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl lg:text-4xl font-light text-ink mb-3">One Unified Protocol</h2>
+                <p class="text-lg text-slate-600 font-light">Unified access across federal permitting domains</p>
+            </div>
+            <div id="features-grid" class="grid md:grid-cols-2 lg:grid-cols-4 gap-8"></div>
+        </div>
+    </section>
+
+    <div class="section-divider mx-auto max-w-3xl"></div>
+
+    <!-- Demo -->
+    <section id="demo" class="py-16 lg:py-20 px-6 bg-gradient-to-b from-slate-50 to-white">
+        <div class="container mx-auto max-w-6xl">
+            <div class="text-center mb-8">
+                <span class="inline-block bg-teal-100 text-teal-800 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wide mb-4">Featured server</span>
+                <h2 class="text-3xl lg:text-4xl font-light text-ink mb-3">Map Composer in Action</h2>
+                <p class="text-lg text-slate-600 font-light mb-5">Federal GIS layers composed into one screening map</p>
+                <div id="jurisdiction-flow" class="inline-block" role="button" tabindex="0" title="Click to advance">
+                    <p class="text-base md:text-lg text-slate-500 bg-slate-100/70 px-5 py-2 rounded-full border border-slate-200/80">
+                        <span class="flow-feature text-slate-700 font-medium">Finding</span>
+                        <span class="flow-arrow text-teal-600 mx-2" aria-hidden="true">×</span>
+                        <span class="flow-result text-teal-700 font-medium">Review pathway</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="rounded-2xl overflow-hidden shadow-2xl border border-slate-200 bg-white">
+                <iframe
+                    src="demo/chesapeake-screening-map.html"
+                    class="demo-frame"
+                    title="Interactive environmental screening map for a Chesapeake Bay project area"
+                    loading="lazy">
+                </iframe>
+            </div>
+
+            <div class="text-center mt-6 space-y-2">
+                <p class="text-sm text-slate-600">
+                    <i class="fas fa-arrow-pointer mr-2 text-teal-600" aria-hidden="true"></i>
+                    Toggle overlays in the control panel · click any feature for its attributes
+                </p>
+                <p class="text-xs text-slate-500">
+                    11 of 32 available layers, for a Chesapeake Bay project area.
+                    <a href="#layers" class="text-teal-700 underline decoration-teal-300 hover:decoration-teal-600">See the full catalog</a>.
+                </p>
+            </div>
+
+            <!-- Before / after -->
+            <div class="rounded-2xl p-6 md:p-8 mt-10 bg-gradient-to-br from-slate-900 via-slate-800 to-teal-900 shadow-2xl" id="transform-section">
+                <div class="flex items-center justify-center gap-4 mb-6">
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Before</span>
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-r from-slate-500 to-teal-500 flex items-center justify-center">
+                        <i class="fas fa-arrow-right text-white text-xs" aria-hidden="true"></i>
+                    </div>
+                    <span class="text-xs font-semibold text-teal-300 uppercase tracking-wider">After</span>
+                </div>
+                <div id="transform-rows" class="space-y-3"></div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider mx-auto max-w-3xl"></div>
+
+    <!-- Quick start -->
+    <section id="quick-start" class="py-20 lg:py-28 px-6 bg-gradient-to-b from-white via-slate-50/60 to-white">
+        <div class="container mx-auto max-w-5xl">
+            <div class="text-center mb-14">
+                <span class="inline-block bg-teal-100 text-teal-800 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wide mb-4">Three steps</span>
+                <h2 class="text-4xl lg:text-5xl font-light text-ink mb-4">Quick Start</h2>
+                <p class="text-xl text-slate-600 font-light">Running in a few minutes on Python 3.12+</p>
+            </div>
+
+            <!-- Step 1 -->
+            <div class="premium-card rounded-2xl p-8 lg:p-9 shadow-lg mb-6">
+                <div class="flex items-start gap-5 mb-6">
+                    <div class="w-11 h-11 rounded-full badge-premium text-white flex items-center justify-center font-semibold flex-shrink-0">1</div>
+                    <div class="pt-1">
+                        <h3 class="text-2xl font-semibold text-ink mb-1">Install</h3>
+                        <p class="text-slate-600 text-sm">
+                            One package provides the <code class="text-teal-800">nepa-mcp</code> command
+                            for all 19 servers.
+                        </p>
+                    </div>
+                </div>
+                <div class="code-block rounded-xl overflow-hidden shadow-inner">
+                    <button type="button" onclick="copyCode(event, 'install-code')" class="copy-button bg-slate-700/90 hover:bg-slate-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                        <i class="fas fa-copy mr-2" aria-hidden="true"></i>Copy
+                    </button>
+                    <pre id="install-code" class="p-6 text-slate-100 text-sm leading-relaxed overflow-x-auto"><code>git clone https://github.com/pnnl-int/nepa-mcp-server.git
+cd nepa-mcp-server
+pipx install .</code></pre>
+                </div>
+                <div class="grid sm:grid-cols-2 gap-4 mt-5">
+                    <div class="flex items-start gap-3 bg-slate-50 rounded-xl px-4 py-3.5 border border-slate-200/70">
+                        <i class="fas fa-stethoscope text-teal-700 text-sm mt-0.5" aria-hidden="true"></i>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            <code class="text-teal-800 font-semibold">nepa-mcp doctor</code><br>
+                            Check the runtime and see which credentials are set.
+                        </p>
+                    </div>
+                    <div class="flex items-start gap-3 bg-slate-50 rounded-xl px-4 py-3.5 border border-slate-200/70">
+                        <i class="fas fa-list text-teal-700 text-sm mt-0.5" aria-hidden="true"></i>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            <code class="text-teal-800 font-semibold">nepa-mcp list-servers</code><br>
+                            List all 19 domains you can connect.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="premium-card rounded-2xl p-8 lg:p-9 shadow-lg mb-6">
+                <div class="flex items-start gap-5 mb-6">
+                    <div class="w-11 h-11 rounded-full badge-premium text-white flex items-center justify-center font-semibold flex-shrink-0">2</div>
+                    <div class="pt-1">
+                        <h3 class="text-2xl font-semibold text-ink mb-1">Connect your client</h3>
+                        <p class="text-slate-600 text-sm">
+                            Let the CLI merge the entries in, or paste the snippet yourself.
+                            Unrelated MCP servers are preserved.
+                        </p>
+                    </div>
+                </div>
+
+                <div id="client-tabs" class="flex flex-wrap gap-2 mb-5" role="tablist" aria-label="MCP client"></div>
+                <div id="client-panels"></div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="premium-card rounded-2xl p-8 lg:p-9 shadow-lg">
+                <div class="flex items-start gap-5 mb-6">
+                    <div class="w-11 h-11 rounded-full badge-premium text-white flex items-center justify-center font-semibold flex-shrink-0">3</div>
+                    <div class="pt-1">
+                        <h3 class="text-2xl font-semibold text-ink mb-1">Ask a question</h3>
+                        <p class="text-slate-600 text-sm">
+                            Start a server, then let your agent call the tools. Prompts like these work
+                            out of the box:
+                        </p>
+                    </div>
+                </div>
+                <div class="code-block rounded-xl overflow-hidden shadow-inner">
+                    <button type="button" onclick="copyCode(event, 'run-code')" class="copy-button bg-slate-700/90 hover:bg-slate-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                        <i class="fas fa-copy mr-2" aria-hidden="true"></i>Copy
+                    </button>
+                    <pre id="run-code" class="p-6 text-slate-100 text-sm leading-relaxed overflow-x-auto"><code>nepa-mcp server ipac           # one server over stdio
+nepa-mcp server all            # every tool behind one connection</code></pre>
+                </div>
+                <ul class="grid sm:grid-cols-3 gap-3 mt-5">
+                    <li class="bg-teal-50/70 border border-teal-200/60 rounded-xl px-4 py-3.5 text-xs text-slate-700 leading-relaxed">
+                        <i class="fas fa-quote-left text-teal-600/60 mr-1.5" aria-hidden="true"></i>
+                        What listed species and critical habitat are near 38.98, −76.49?
+                    </li>
+                    <li class="bg-teal-50/70 border border-teal-200/60 rounded-xl px-4 py-3.5 text-xs text-slate-700 leading-relaxed">
+                        <i class="fas fa-quote-left text-teal-600/60 mr-1.5" aria-hidden="true"></i>
+                        Build a screening map for a 20-mile project area there.
+                    </li>
+                    <li class="bg-teal-50/70 border border-teal-200/60 rounded-xl px-4 py-3.5 text-xs text-slate-700 leading-relaxed">
+                        <i class="fas fa-quote-left text-teal-600/60 mr-1.5" aria-hidden="true"></i>
+                        What does 40 CFR 1501.4 say, and when did it last change?
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Codex plugin -->
+    <section id="codex-plugin" class="pb-20 lg:pb-28 px-6 bg-gradient-to-b from-white via-slate-50/60 to-white">
+        <div class="container mx-auto max-w-5xl">
+            <div class="premium-card rounded-2xl p-8 lg:p-9 shadow-lg" style="transform: none;">
+                <div class="grid lg:grid-cols-5 gap-8 items-start">
+                    <div class="lg:col-span-2 min-w-0">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <img src="assets/images/logos/openai.svg" alt="" class="w-5 h-5 object-contain" aria-hidden="true">
+                            </div>
+                            <h2 class="text-2xl font-semibold text-ink">Codex Desktop plugin</h2>
+                        </div>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-5">
+                            The repository ships a local marketplace and plugin. One install registers
+                            all 19 servers <em>and</em> the <code class="text-teal-800">nepa-screening</code>
+                            skill, which tells the agent how to establish a project area and pick the
+                            right datasets.
+                        </p>
+                        <ul class="space-y-2.5">
+                            <li class="flex items-start gap-2.5 text-sm text-slate-600">
+                                <i class="fas fa-circle-check text-teal-600 text-xs mt-1.5" aria-hidden="true"></i>
+                                <span>All 19 servers at once — no per-server entries</span>
+                            </li>
+                            <li class="flex items-start gap-2.5 text-sm text-slate-600">
+                                <i class="fas fa-circle-check text-teal-600 text-xs mt-1.5" aria-hidden="true"></i>
+                                <span>Bundles the screening skill and starter prompts</span>
+                            </li>
+                            <li class="flex items-start gap-2.5 text-sm text-slate-600">
+                                <i class="fas fa-circle-check text-teal-600 text-xs mt-1.5" aria-hidden="true"></i>
+                                <span>Installs from your local checkout</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="lg:col-span-3 min-w-0">
+                        <div class="code-block rounded-xl overflow-hidden shadow-inner">
+                            <button type="button" onclick="copyCode(event, 'plugin-code')" class="copy-button bg-slate-700/90 hover:bg-slate-600 text-white px-3 py-1.5 rounded text-xs font-medium">
+                                <i class="fas fa-copy mr-1" aria-hidden="true"></i>Copy
+                            </button>
+                            <pre id="plugin-code" class="p-5 text-slate-100 text-xs leading-relaxed overflow-x-auto"><code># From the repository root, after pipx install
+codex plugin marketplace add "$(pwd)"
+codex plugin add nepa-mcp@nepa-mcp-local</code></pre>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-3 leading-relaxed">
+                            Start a new Codex task after installing or updating the plugin so the tools
+                            and skill are loaded.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider mx-auto max-w-3xl"></div>
+
+    <!-- Server inventory -->
+    <section id="servers" class="py-16 lg:py-24 px-6 bg-slate-50">
+        <div class="container mx-auto max-w-7xl">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl lg:text-5xl font-light text-ink mb-4">MCP Servers</h2>
+                <p class="text-xl text-slate-600 font-light">Nineteen specialized servers for federal environmental data</p>
+                <p class="text-sm text-slate-500 mt-3">
+                    <i class="fas fa-hand-pointer mr-1.5 text-teal-600" aria-hidden="true"></i>
+                    Flip any card to see what it covers
+                </p>
+            </div>
+
+            <div id="mcp-servers-grid" class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <noscript>
+                    <p class="text-sm text-slate-600">
+                        The server inventory needs JavaScript. See the
+                        <a href="https://github.com/pnnl-int/nepa-mcp-server/tree/main#server-inventory" class="text-teal-700 underline">inventory table in the README</a>.
+                    </p>
+                </noscript>
+            </div>
+
+            <p class="text-xs text-slate-500 mt-8 text-center">
+                Agency names identify upstream data provenance only.
+            </p>
+        </div>
+    </section>
+
+    <div class="section-divider mx-auto max-w-3xl"></div>
+
+    <!-- Tool explorer -->
+    <section id="tools" class="py-16 lg:py-20 px-6 bg-white">
+        <div class="container mx-auto max-w-5xl">
+            <div class="text-center mb-9">
+                <h2 class="text-4xl lg:text-5xl font-light text-ink mb-4">Tools Reference</h2>
+                <p class="text-xl text-slate-600 font-light">Search all 46 tools and the parameters they take</p>
+            </div>
+
+            <div class="premium-card rounded-2xl p-5 md:p-7 shadow-lg" style="transform: none;">
+                <div class="relative mb-4">
+                    <i class="fas fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm" aria-hidden="true"></i>
+                    <label for="tool-search" class="sr-only">Search tools by name, purpose, or server</label>
+                    <input
+                        type="search"
+                        id="tool-search"
+                        class="explorer-search"
+                        placeholder="Try &quot;wetland&quot;, &quot;flood&quot;, &quot;species&quot;, or &quot;cfr&quot;"
+                        autocomplete="off">
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2 mb-3" id="tool-agency-filters" role="group" aria-label="Filter tools by source agency"></div>
+
+                <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-200">
+                    <button type="button" id="tool-credential-filter" class="filter-chip" aria-pressed="false">
+                        <i class="fas fa-key text-xs" aria-hidden="true"></i>
+                        <span>No credentials required</span>
+                    </button>
+                    <p class="text-sm text-slate-500 explorer-count" id="tool-count" role="status" aria-live="polite"></p>
+                </div>
+
+                <div id="tool-results" class="mt-5">
+                    <noscript>
+                        <p class="text-sm text-slate-600">
+                            The interactive explorer needs JavaScript. The complete catalog is available as
+                            <a href="https://github.com/pnnl-int/nepa-mcp-server/blob/main/docs/mcp-tool-catalog.md" class="text-teal-700 underline">mcp-tool-catalog.md</a>.
+                        </p>
+                    </noscript>
+                </div>
+
+                <div id="tool-show-more" class="text-center mt-6"></div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider mx-auto max-w-3xl"></div>
+
+    <!-- Layer explorer -->
+    <section id="layers" class="py-16 lg:py-20 px-6 bg-slate-50">
+        <div class="container mx-auto max-w-6xl">
+            <div class="text-center mb-9">
+                <h2 class="text-4xl lg:text-5xl font-light text-ink mb-4">Map Layers</h2>
+                <p class="text-xl text-slate-600 font-light">Thirty-two overlays · pick a profile to see its membership</p>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-3 mb-4" id="profile-buttons" role="group" aria-label="Select a layer profile"></div>
+
+            <p class="text-center text-sm text-slate-500 explorer-count mb-8" id="layer-count" role="status" aria-live="polite"></p>
+
+            <div id="layer-results"></div>
+
+            <div id="layer-show-more" class="text-center mt-6"></div>
+
+            <p class="text-sm text-slate-500 text-center mt-8 max-w-2xl mx-auto leading-relaxed">
+                Every layer is reported as <code class="text-teal-800">ok</code>,
+                <code class="text-teal-800">empty</code>, <code class="text-teal-800">partial</code>, or
+                <code class="text-teal-800">failed</code> — an empty layer means no local features, not a
+                missing capability.
+            </p>
+        </div>
+    </section>
+
+    <div class="section-divider mx-auto max-w-3xl"></div>
+
+    <!-- Documentation -->
+    <section id="documentation" class="py-16 lg:py-20 px-6 bg-white">
+        <div class="container mx-auto max-w-5xl">
+            <div class="text-center mb-10">
+                <h2 class="text-4xl lg:text-5xl font-light text-ink mb-4">Documentation</h2>
+                <p class="text-xl text-slate-600 font-light">References maintained alongside the code</p>
+            </div>
+            <div id="doc-cards-grid" class="grid md:grid-cols-2 gap-6"></div>
+        </div>
+    </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gradient-to-br from-slate-900 via-teal-950 to-slate-900 text-slate-300 py-16 px-6 border-t border-teal-900/50">
+        <div class="container mx-auto max-w-6xl">
+            <div class="grid md:grid-cols-3 gap-12 mb-12">
+                <div class="text-left">
+                    <div class="mb-4">
+                        <img src="assets/images/logos/project-logo.png" alt="PermitAI" class="h-9 w-auto object-contain mb-3" loading="lazy">
+                        <div class="text-lg font-semibold text-white">NEPA MCP Toolkit</div>
+                    </div>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Public federal data for AI-assisted NEPA screening and permitting research.
+                    </p>
+                </div>
+
+                <div class="md:text-center">
+                    <h4 class="text-white font-semibold mb-4">Resources</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="https://github.com/pnnl-int/nepa-mcp-server/tree/main" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fab fa-github mr-2" aria-hidden="true"></i>Repository</a></li>
+                        <li><a href="https://github.com/pnnl-int/nepa-mcp-server/blob/main/docs/mcp-tool-catalog.md" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-list-check mr-2" aria-hidden="true"></i>Tool catalog</a></li>
+                        <li><a href="https://github.com/pnnl-int/nepa-mcp-server/issues" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-bug mr-2" aria-hidden="true"></i>Report an issue</a></li>
+                        <li><a href="https://github.com/pnnl-int/nepa-mcp-server/blob/main/LICENSE" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-scale-balanced mr-2" aria-hidden="true"></i>BSD 3-Clause License</a></li>
+                    </ul>
+                </div>
+
+                <div class="md:text-right">
+                    <h4 class="text-white font-semibold mb-4">Source Agencies</h4>
+                    <p class="text-sm text-slate-400 leading-relaxed">
+                        BLM · Census Bureau · EPA · FEMA<br>
+                        NARA / GPO · NOAA Fisheries · NPS<br>
+                        USACE · USFWS · USFS · USGS · NIFC<br>
+                        <span class="text-slate-500">with GBIF and Esri</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Development and sponsorship -->
+            <div class="border-t border-teal-900/30 pt-10 pb-6">
+                <div class="mb-8">
+                    <h4 class="text-white font-semibold mb-8 text-center">Development &amp; Sponsorship</h4>
+                    <!-- Equal-width columns keep the divider on the true centerline. The
+                         two marks have very different aspect ratios (2.1 vs 4.1), so each
+                         is normalized inside a fixed box rather than set to equal height. -->
+                    <div class="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-2 md:divide-x divide-teal-800/40">
+                        <div class="flex flex-col items-center text-center px-6 pb-8 md:pb-0">
+                            <div class="h-20 flex items-center justify-center mb-4">
+                                <img src="assets/images/logos/pnnl-horizontal-white.png" alt="Pacific Northwest National Laboratory" class="sponsor-logo sponsor-logo-pnnl" loading="lazy">
+                            </div>
+                            <p class="text-slate-400 text-xs mb-0.5">Developed at</p>
+                            <p class="text-white text-sm font-medium">Pacific Northwest National Laboratory</p>
+                        </div>
+                        <div class="flex flex-col items-center text-center px-6 pt-8 md:pt-0 border-t md:border-t-0 border-teal-800/40">
+                            <div class="h-20 flex items-center justify-center mb-4">
+                                <img src="assets/images/logos/doe.png" alt="U.S. Department of Energy" class="sponsor-logo sponsor-logo-doe" loading="lazy">
+                            </div>
+                            <p class="text-slate-400 text-xs mb-0.5">Sponsored by</p>
+                            <p class="text-white text-sm font-medium">DOE Office of Policy</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center space-y-2">
+                    <p class="text-slate-300 text-sm">Maintainers: Sarthak Chaturvedi · Renuka Chintalapati</p>
+                    <p class="text-slate-400 text-xs">
+                        <a href="https://github.com/pnnl-int/nepa-mcp-server/blob/main/CITATION.cff" class="underline decoration-slate-600 hover:decoration-slate-300">Cite this work</a>
+                    </p>
+                    <p class="text-slate-500 text-xs pt-3">
+                        BSD 3-Clause License · © 2026 Battelle Memorial Institute
+                    </p>
+                    <p class="text-slate-500 text-xs max-w-3xl mx-auto leading-relaxed pt-2">
+                        Agency and publisher names identify upstream data provenance only. NEPA MCP is
+                        an independent project and is not affiliated with, sponsored by, or endorsed by
+                        the source organizations listed above.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/site-data.js"></script>
+    <script src="assets/js/site.js"></script>
+</body>
+</html>
