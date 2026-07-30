@@ -41,7 +41,10 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-    <link rel="stylesheet" href="assets/css/site.css">
+    <!-- ?v= is a cache buster. GitHub Pages serves these assets with a long
+         max-age, so a returning visitor keeps the old CSS and JS until the URL
+         changes. Bump the value whenever site.css or site.js changes. -->
+    <link rel="stylesheet" href="assets/css/site.css?v=2">
 </head>
 <body class="bg-slate-50 text-slate-900 antialiased">
 
@@ -562,7 +565,7 @@ codex plugin add nepa-mcp@nepa-mcp-local</code></pre>
         </div>
     </footer>
 
-    <script src="assets/js/site-data.js"></script>
-    <script src="assets/js/site.js"></script>
+    <script src="assets/js/site-data.js?v=2"></script>
+    <script src="assets/js/site.js?v=2"></script>
 </body>
 </html>
