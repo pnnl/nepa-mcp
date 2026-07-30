@@ -298,7 +298,7 @@ or cite it as:
 
 ```bibtex
 @software{nepa_mcp,
-  author       = {Chaturvedi, Sarthak and Chintalapati, Renuka and Nally, Dan and Parkar, Mike and Munikoti, Sai and Horawalavithana, Sameera},
+  author       = {Chaturvedi, Sarthak and Chintalapati, Renuka and Nally, Dan and Parker, Mike and Munikoti, Sai and Horawalavithana, Sameera},
   title        = {NEPA MCP: Independent MCP Servers for NEPA Environmental Screening},
   year         = {2026},
   institution  = {Pacific Northwest National Laboratory},
