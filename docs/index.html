@@ -211,7 +211,7 @@
     <section id="quick-start" class="py-20 lg:py-28 px-6 bg-gradient-to-b from-white via-slate-50/60 to-white">
         <div class="container mx-auto max-w-5xl">
             <div class="text-center mb-14">
-                <span class="inline-block bg-teal-100 text-teal-800 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wide mb-4">Three steps</span>
+                <span class="inline-block bg-teal-100 text-teal-800 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wide mb-4">Four steps</span>
                 <h2 class="text-4xl lg:text-5xl font-light text-ink mb-4">Quick Start</h2>
                 <p class="text-xl text-slate-600 font-light">Install once, then point your agent at any of the 19 servers</p>
             </div>
@@ -224,7 +224,7 @@
                         <h3 class="text-2xl font-semibold text-ink mb-1">Install</h3>
                         <p class="text-slate-600 text-sm">
                             One package provides the <code class="text-teal-800">nepa-mcp</code> command
-                            for all 19 servers. Needs Python 3.12+.
+                            for all 19 servers. Needs Python 3.12+, pipx, and Git.
                         </p>
                     </div>
                 </div>
@@ -236,22 +236,6 @@
 cd nepa-mcp-server
 pipx install .</code></pre>
                 </div>
-                <div class="grid sm:grid-cols-2 gap-4 mt-5">
-                    <div class="flex items-start gap-3 bg-slate-50 rounded-xl px-4 py-3.5 border border-slate-200/70">
-                        <i class="fas fa-stethoscope text-teal-700 text-sm mt-0.5" aria-hidden="true"></i>
-                        <p class="text-xs text-slate-600 leading-relaxed">
-                            <code class="text-teal-800 font-semibold">nepa-mcp doctor</code><br>
-                            Check the runtime and see which credentials are set.
-                        </p>
-                    </div>
-                    <div class="flex items-start gap-3 bg-slate-50 rounded-xl px-4 py-3.5 border border-slate-200/70">
-                        <i class="fas fa-list text-teal-700 text-sm mt-0.5" aria-hidden="true"></i>
-                        <p class="text-xs text-slate-600 leading-relaxed">
-                            <code class="text-teal-800 font-semibold">nepa-mcp list-servers</code><br>
-                            List all 19 domains you can connect.
-                        </p>
-                    </div>
-                </div>
             </div>
 
             <!-- Step 2 -->
@@ -259,10 +243,35 @@ pipx install .</code></pre>
                 <div class="flex items-start gap-5 mb-6">
                     <div class="w-11 h-11 rounded-full badge-premium text-white flex items-center justify-center font-semibold flex-shrink-0">2</div>
                     <div class="pt-1">
+                        <h3 class="text-2xl font-semibold text-ink mb-1">Verify the install</h3>
+                        <p class="text-slate-600 text-sm">
+                            Confirm the runtime is in place before you wire up a client.
+                        </p>
+                    </div>
+                </div>
+                <div class="code-block rounded-xl overflow-hidden shadow-inner">
+                    <button type="button" onclick="copyCode(event, 'verify-code')" class="copy-button bg-slate-700/90 hover:bg-slate-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                        <i class="fas fa-copy mr-2" aria-hidden="true"></i>Copy
+                    </button>
+                    <pre id="verify-code" class="p-6 text-slate-100 text-sm leading-relaxed overflow-x-auto"><code>nepa-mcp doctor         # version, Python, credentials, all 19 servers present
+nepa-mcp list-servers   # every domain you can connect</code></pre>
+                </div>
+                <p class="text-xs text-slate-500 mt-3 leading-relaxed">
+                    <code class="text-teal-800">doctor</code> exits non-zero if a server file is missing,
+                    so it is the one command to trust before moving on.
+                </p>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="premium-card rounded-2xl p-8 lg:p-9 shadow-lg mb-6">
+                <div class="flex items-start gap-5 mb-6">
+                    <div class="w-11 h-11 rounded-full badge-premium text-white flex items-center justify-center font-semibold flex-shrink-0">3</div>
+                    <div class="pt-1">
                         <h3 class="text-2xl font-semibold text-ink mb-1">Connect your client</h3>
                         <p class="text-slate-600 text-sm">
-                            Let the CLI merge the entries in, or paste the snippet yourself.
-                            Unrelated MCP servers are preserved.
+                            Register the servers your client should launch on demand. The CLI merges the
+                            entries in for you — unrelated MCP servers are preserved, and the existing
+                            file gets a one-time backup.
                         </p>
                     </div>
                 </div>
@@ -271,39 +280,41 @@ pipx install .</code></pre>
                 <div id="client-panels"></div>
             </div>
 
-            <!-- Step 3 -->
+            <!-- Step 4 -->
             <div class="premium-card rounded-2xl p-8 lg:p-9 shadow-lg">
                 <div class="flex items-start gap-5 mb-6">
-                    <div class="w-11 h-11 rounded-full badge-premium text-white flex items-center justify-center font-semibold flex-shrink-0">3</div>
+                    <div class="w-11 h-11 rounded-full badge-premium text-white flex items-center justify-center font-semibold flex-shrink-0">4</div>
                     <div class="pt-1">
                         <h3 class="text-2xl font-semibold text-ink mb-1">Ask a question</h3>
                         <p class="text-slate-600 text-sm">
-                            Start a server, then let your agent call the tools. Prompts like these work
-                            out of the box:
+                            Your client starts the servers itself, so there is nothing left to launch.
+                            Prompts like these work out of the box:
                         </p>
                     </div>
                 </div>
-                <div class="code-block rounded-xl overflow-hidden shadow-inner">
-                    <button type="button" onclick="copyCode(event, 'run-code')" class="copy-button bg-slate-700/90 hover:bg-slate-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
-                        <i class="fas fa-copy mr-2" aria-hidden="true"></i>Copy
-                    </button>
-                    <pre id="run-code" class="p-6 text-slate-100 text-sm leading-relaxed overflow-x-auto"><code>nepa-mcp server ipac           # one server over stdio
-nepa-mcp server all            # every tool behind one connection</code></pre>
-                </div>
-                <ul class="grid sm:grid-cols-3 gap-3 mt-5">
-                    <li class="bg-teal-50/70 border border-teal-200/60 rounded-xl px-4 py-3.5 text-xs text-slate-700 leading-relaxed">
+                <ul class="grid sm:grid-cols-3 gap-3">
+                    <li class="bg-teal-50/70 border border-teal-200/60 rounded-xl px-4 py-3.5 text-sm text-slate-700 leading-relaxed">
                         <i class="fas fa-quote-left text-teal-600/60 mr-1.5" aria-hidden="true"></i>
                         What listed species and critical habitat are near 38.98, −76.49?
                     </li>
-                    <li class="bg-teal-50/70 border border-teal-200/60 rounded-xl px-4 py-3.5 text-xs text-slate-700 leading-relaxed">
+                    <li class="bg-teal-50/70 border border-teal-200/60 rounded-xl px-4 py-3.5 text-sm text-slate-700 leading-relaxed">
                         <i class="fas fa-quote-left text-teal-600/60 mr-1.5" aria-hidden="true"></i>
                         Build a screening map for a 20-mile project area there.
                     </li>
-                    <li class="bg-teal-50/70 border border-teal-200/60 rounded-xl px-4 py-3.5 text-xs text-slate-700 leading-relaxed">
+                    <li class="bg-teal-50/70 border border-teal-200/60 rounded-xl px-4 py-3.5 text-sm text-slate-700 leading-relaxed">
                         <i class="fas fa-quote-left text-teal-600/60 mr-1.5" aria-hidden="true"></i>
                         What does 40 CFR 1501.4 say, and when did it last change?
                     </li>
                 </ul>
+                <div class="flex items-start gap-3 bg-slate-50 rounded-xl px-4 py-3.5 border border-slate-200/70 mt-5">
+                    <i class="fas fa-terminal text-slate-500 text-sm mt-0.5" aria-hidden="true"></i>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Optional — run a server by hand to smoke-test it. It waits on stdio for a client,
+                        so an idle process is the expected result.<br>
+                        <code class="text-teal-800 font-semibold">nepa-mcp server ipac</code> ·
+                        <code class="text-teal-800 font-semibold">nepa-mcp server all</code>
+                    </p>
+                </div>
             </div>
 
         </div>

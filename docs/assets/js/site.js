@@ -82,46 +82,20 @@ var CLIENT_CONFIGS = [
         id: 'claude',
         label: 'Claude Code',
         command: 'nepa-mcp configure claude',
-        path: '.mcp.json in the project directory',
-        code:
-            '{\n' +
-            '  "mcpServers": {\n' +
-            '    "ipac": {\n' +
-            '      "command": "nepa-mcp",\n' +
-            '      "args": ["server", "ipac"],\n' +
-            '      "env": { "PYTHONUNBUFFERED": "1" }\n' +
-            '    }\n' +
-            '  }\n' +
-            '}'
+        path: '.mcp.json in the project directory'
     },
     {
         id: 'vscode',
         label: 'VS Code',
         command: 'nepa-mcp configure vscode',
-        path: '.vscode/mcp.json in the project directory',
-        code:
-            '{\n' +
-            '  "servers": {\n' +
-            '    "ipac": {\n' +
-            '      "type": "stdio",\n' +
-            '      "command": "nepa-mcp",\n' +
-            '      "args": ["server", "ipac"],\n' +
-            '      "env": { "PYTHONUNBUFFERED": "1" }\n' +
-            '    }\n' +
-            '  }\n' +
-            '}'
+        path: '.vscode/mcp.json in the project directory'
     },
     {
         id: 'codex',
         label: 'Codex',
         command: 'nepa-mcp configure codex',
         path: '~/.codex/config.toml',
-        note: 'Prefer the plugin below to register every server and the screening skill in one step.',
-        code:
-            '[mcp_servers.ipac]\n' +
-            'command = "nepa-mcp"\n' +
-            'args = ["server", "ipac"]\n' +
-            'env = { PYTHONUNBUFFERED = "1" }'
+        note: 'Prefer the plugin below to register every server and the screening skill in one step.'
     }
 ];
 
@@ -546,12 +520,6 @@ function renderClientConfigs() {
 
         var cliId = 'client-cli-' + client.id;
         panel.appendChild(buildCodeBlock(cliId, client.command, 'text-xs', 'p-4'));
-
-        var snippetLabel = el('p', 'text-xs text-slate-500 mt-4 mb-2', 'Or add the entry yourself:');
-        panel.appendChild(snippetLabel);
-
-        var snippetId = 'client-code-' + client.id;
-        panel.appendChild(buildCodeBlock(snippetId, client.code, 'text-xs', 'p-5'));
 
         if (client.note) {
             panel.appendChild(el('p', 'text-xs text-slate-500 mt-3 leading-relaxed', client.note));
