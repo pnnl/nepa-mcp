@@ -33,20 +33,21 @@ body {
 }
 
 /* Optically center the PermitAI wordmark.
-   Measured from the rendered artwork (670x181 viewBox): the wordmark body ends
-   at x=578 and nothing sits below y=70 past it, so the trademark (x 582-667) is
-   a pure superscript tail. Centering the file therefore sits the wordmark ~46px
-   left of true center. Shifting right by half that tail restores optical
-   balance while keeping the mark in normal flow. Verified centered on the h1
-   at 1440 / 1024 / 834 / 390. */
+   Measured from the rendered artwork (670x181 viewBox): the wordmark body spans
+   x -0.3 to 576.5, so its centre sits at x=288.1 while the file's centre is 335.
+   The trademark past x=576.5 is a pure superscript tail, so centering the file
+   sits the wordmark 46.9 units left of true centre. Shifting right by that much
+   restores optical balance while keeping the mark in normal flow.
+   Verified centered on the h1 at 1440 / 1024 / 390. */
 .brand-mark {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    /* translateX resolves against the element's own width, so 6.87% == the 46px
-       offset at any rendered size. This is static positioning, not motion, and
-       must survive the reduced-motion rules below. */
-    transform: translateX(7.4%);
+    /* translateX resolves against the element's own width, so 46.9/670 = 7%
+       holds at any rendered size. This depends on where the wordmark sits inside
+       the viewBox, not on the trademark's size. Static positioning, not motion,
+       so it must survive the reduced-motion rules below. */
+    transform: translateX(7%);
 }
 
 /* ============================================
