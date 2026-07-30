@@ -445,6 +445,30 @@ section {
     font-weight: 600;
 }
 
+/* ============================================
+   Plugin panel
+   ============================================ */
+
+/* The plugin is an alternative to step 3, not a fifth step. A dark surface
+   separates it from the white step cards without inventing a new treatment —
+   it reuses the code-block gradient already used across the page. */
+.plugin-panel {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+/* Recessed rather than a slab floating on the panel. */
+.plugin-panel .plugin-code {
+    position: relative;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+/* The OpenAI mark ships as dark artwork; invert it for the dark panel. */
+.plugin-mark {
+    filter: brightness(0) invert(1);
+}
+
 .copy-button {
     position: absolute;
     top: 1rem;

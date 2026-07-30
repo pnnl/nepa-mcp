@@ -306,52 +306,60 @@ epa_aqs credentials: optional, missing EPA_AQS_EMAIL, EPA_AQS_API_KEY</code></pr
         </div>
     </section>
 
-    <!-- Codex plugin -->
-    <section id="codex-plugin" class="pb-20 lg:pb-28 px-6 bg-gradient-to-b from-white via-slate-50/60 to-white">
+    <div class="section-divider mx-auto max-w-3xl"></div>
+
+    <!-- Codex plugin: an alternative to step 3, not a fifth step -->
+    <section id="codex-plugin" class="py-16 lg:py-20 px-6 bg-white">
         <div class="container mx-auto max-w-5xl">
-            <div class="premium-card rounded-2xl p-8 lg:p-9 shadow-lg" style="transform: none;">
+            <div class="text-center mb-9">
+                <span class="inline-block bg-teal-50 text-teal-800 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wide mb-4 border border-teal-200/70">Instead of step 3</span>
+                <h2 class="text-4xl lg:text-5xl font-light text-ink mb-4">Codex Desktop plugin</h2>
+                <p class="text-xl text-slate-600 font-light">One install for all 19 servers and the screening skill</p>
+            </div>
+
+            <div class="plugin-panel rounded-2xl p-8 lg:p-9">
                 <div class="grid lg:grid-cols-5 gap-8 items-start">
                     <div class="lg:col-span-2 min-w-0">
                         <div class="flex items-center gap-3 mb-4">
-                            <div class="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                                <img src="assets/images/logos/openai.svg" alt="" class="w-5 h-5 object-contain" aria-hidden="true">
+                            <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <img src="assets/images/logos/openai.svg" alt="" class="w-5 h-5 object-contain plugin-mark" aria-hidden="true">
                             </div>
-                            <h2 class="text-2xl font-semibold text-ink">Codex Desktop plugin</h2>
+                            <p class="text-sm font-semibold text-white">Local marketplace</p>
                         </div>
-                        <p class="text-slate-600 text-sm leading-relaxed mb-5">
-                            The repository ships a local marketplace and plugin. One install registers
-                            all 19 servers <em>and</em> the <code class="text-teal-800">nepa-screening</code>
+                        <p class="text-slate-300 text-sm leading-relaxed mb-5">
+                            The repository ships a Codex marketplace and plugin. One install registers
+                            all 19 servers <em>and</em> the <code class="text-teal-300">nepa-screening</code>
                             skill, which tells the agent how to establish a project area and pick the
                             right datasets.
                         </p>
                         <ul class="space-y-2.5">
-                            <li class="flex items-start gap-2.5 text-sm text-slate-600">
-                                <i class="fas fa-circle-check text-teal-600 text-xs mt-1.5" aria-hidden="true"></i>
+                            <li class="flex items-start gap-2.5 text-sm text-slate-300">
+                                <i class="fas fa-circle-check text-teal-400 text-xs mt-1.5" aria-hidden="true"></i>
                                 <span>All 19 servers at once — no per-server entries</span>
                             </li>
-                            <li class="flex items-start gap-2.5 text-sm text-slate-600">
-                                <i class="fas fa-circle-check text-teal-600 text-xs mt-1.5" aria-hidden="true"></i>
+                            <li class="flex items-start gap-2.5 text-sm text-slate-300">
+                                <i class="fas fa-circle-check text-teal-400 text-xs mt-1.5" aria-hidden="true"></i>
                                 <span>Bundles the screening skill and starter prompts</span>
                             </li>
-                            <li class="flex items-start gap-2.5 text-sm text-slate-600">
-                                <i class="fas fa-circle-check text-teal-600 text-xs mt-1.5" aria-hidden="true"></i>
+                            <li class="flex items-start gap-2.5 text-sm text-slate-300">
+                                <i class="fas fa-circle-check text-teal-400 text-xs mt-1.5" aria-hidden="true"></i>
                                 <span>Installs from your local checkout</span>
                             </li>
                         </ul>
                     </div>
 
                     <div class="lg:col-span-3 min-w-0">
-                        <div class="code-block rounded-xl overflow-hidden shadow-inner">
-                            <button type="button" onclick="copyCode(event, 'plugin-code')" class="copy-button bg-slate-700/90 hover:bg-slate-600 text-white px-3 py-1.5 rounded text-xs font-medium">
+                        <p class="text-xs text-slate-400 mb-2">From the repository root, after pipx install:</p>
+                        <div class="plugin-code rounded-xl overflow-hidden">
+                            <button type="button" onclick="copyCode(event, 'plugin-code')" class="copy-button bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded text-xs font-medium">
                                 <i class="fas fa-copy mr-1" aria-hidden="true"></i>Copy
                             </button>
-                            <pre id="plugin-code" class="p-5 text-slate-100 text-xs leading-relaxed overflow-x-auto"><code># From the repository root, after pipx install
-codex plugin marketplace add "$(pwd)"
+                            <pre id="plugin-code" class="p-5 text-slate-100 text-xs leading-relaxed overflow-x-auto"><code>codex plugin marketplace add "$(pwd)"
 codex plugin add nepa-mcp@nepa-mcp-local</code></pre>
                         </div>
-                        <p class="text-xs text-slate-500 mt-3 leading-relaxed">
+                        <p class="text-xs text-slate-400 mt-3 leading-relaxed">
                             Start a new Codex task after installing or updating the plugin so the tools
-                            and skill are loaded.
+                            and skill are loaded. Steps 1, 2 and 4 are unchanged.
                         </p>
                     </div>
                 </div>
