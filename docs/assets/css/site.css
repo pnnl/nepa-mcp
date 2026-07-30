@@ -474,11 +474,15 @@ section {
     position: absolute;
     top: 1rem;
     right: 1rem;
-    opacity: 0;
+    /* Visible at rest, not hidden until hover: copying a command is the main
+       thing to do in Quick Start, and a control nobody can see is a control
+       nobody uses. Held back far enough to stay quieter than the code. */
+    opacity: 0.55;
     transition: all 0.3s ease;
 }
 
 .code-block:hover .copy-button,
+.copy-button:hover,
 .copy-button:focus-visible {
     opacity: 1;
 }
