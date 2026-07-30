@@ -325,6 +325,81 @@ section {
 }
 
 /* ============================================
+   Quick Start rail
+   ============================================ */
+
+/* One container with numbered steps on a connected rail, rather than four
+   free-floating cards. The rail carries the sequence, so each step repeats no
+   card chrome and steps are free to differ in weight. */
+.step-row {
+    display: grid;
+    grid-template-columns: 2.25rem 1fr;
+    column-gap: 1.25rem;
+}
+
+.step-marker {
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+.step-number {
+    position: relative;
+    z-index: 1;
+    width: 2.25rem;
+    height: 2.25rem;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: #fff;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, var(--brand-primary-darkest) 0%, var(--brand-primary) 100%);
+}
+
+/* The connector runs from just below one number to the next. The last row has
+   no connector, so the rail terminates on the final step. */
+.step-row:not(:last-child) .step-marker::after {
+    content: '';
+    position: absolute;
+    top: 2.25rem;
+    bottom: -0.25rem;
+    left: 50%;
+    width: 2px;
+    margin-left: -1px;
+    background: linear-gradient(to bottom, rgba(var(--brand-primary-rgb), 0.35), rgba(var(--brand-primary-rgb), 0.12));
+}
+
+.step-body {
+    min-width: 0;
+    padding-bottom: 2.5rem;
+}
+
+.step-row:last-child .step-body {
+    padding-bottom: 0;
+}
+
+@media (max-width: 640px) {
+    .step-row {
+        grid-template-columns: 1.75rem 1fr;
+        column-gap: 0.875rem;
+    }
+
+    .step-number {
+        width: 1.75rem;
+        height: 1.75rem;
+        font-size: 0.8125rem;
+    }
+
+    .step-row:not(:last-child) .step-marker::after {
+        top: 1.75rem;
+    }
+}
+
+/* ============================================
    Buttons, badges, code
    ============================================ */
 
@@ -347,6 +422,27 @@ section {
 .code-block {
     position: relative;
     background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+}
+
+/* A recorded terminal session, not something to copy. Dimmer than a command
+   block so the two never read as interchangeable, and the prompt and the
+   proof line carry the only emphasis. */
+.transcript {
+    background: #0f172a;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+.transcript pre {
+    color: #94a3b8;
+}
+
+.transcript .t-prompt {
+    color: #5eead4;
+}
+
+.transcript .t-proof {
+    color: #f1f5f9;
+    font-weight: 600;
 }
 
 .copy-button {
