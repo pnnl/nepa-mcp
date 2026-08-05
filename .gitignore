@@ -36,6 +36,9 @@ handoffs/
 # Local outputs
 output/
 
+# GitLab Pages build directory (CI copies docs/ here)
+public/
+
 # OS and editor files
 .DS_Store
 .vscode/
