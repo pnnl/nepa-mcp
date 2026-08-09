@@ -90,18 +90,20 @@ class TestFilesystemChecks:
         assert "PermitAI project mailbox" in security
         assert "Do not report suspected vulnerabilities through a public GitHub issue" in security
 
-    def test_readme_package_links_are_absolute(self):
+    def test_readme_relative_images_exist_and_document_links_are_absolute(self):
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
-        link_matches = re.findall(
-            r'(?:src|href)="([^"]+)"|\]\(([^)]+)\)',
-            readme,
-        )
-        relative_targets = []
+        for target in re.findall(r'src="([^"]+)"', readme):
+            if target.startswith(("https://", "http://")):
+                continue
+            assert (ROOT / target).is_file(), f"README image is missing: {target}"
+
+        link_matches = re.findall(r'href="([^"]+)"|\]\(([^)]+)\)', readme)
+        relative_links = []
         for html_target, markdown_target in link_matches:
             target = html_target or markdown_target
             if not target.startswith(("https://", "http://", "#", "mailto:")):
-                relative_targets.append(target)
-        assert relative_targets == [], f"README contains relative package links: {relative_targets}"
+                relative_links.append(target)
+        assert relative_links == [], f"README contains relative document links: {relative_links}"
 
 
 # ---------------------------------------------------------------------------
