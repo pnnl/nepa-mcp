@@ -23,6 +23,7 @@ htmlcov/
 credentials.env
 config.toml
 handoffs/
+.claude/
 
 # Generated MCP client backups and interrupted writes
 *.nepa-mcp.bak
@@ -35,6 +36,17 @@ handoffs/
 
 # Local outputs
 output/
+tmp/
+
+# Internal review and working documents
+EIDR/
+docs/*.doc
+docs/*.docx
+docs/**/*.doc
+docs/**/*.docx
+
+# Local GitLab CI configuration
+.gitlab-ci.yml
 
 # GitLab Pages build directory (CI copies docs/ here)
 public/
