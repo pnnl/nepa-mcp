@@ -30,9 +30,7 @@ def _load_nrhp_api():
     server_dir = ROOT / "nrhp"
     sys.path.insert(0, str(server_dir))
     try:
-        spec = importlib.util.spec_from_file_location(
-            "_nrhp_perf_api", server_dir / "src" / "apis" / "nrhp_api.py"
-        )
+        spec = importlib.util.spec_from_file_location("_nrhp_perf_api", server_dir / "src" / "apis" / "nrhp_api.py")
         assert spec is not None and spec.loader is not None
         module = importlib.util.module_from_spec(spec)
         sys.modules["_nrhp_perf_api"] = module
@@ -51,10 +49,7 @@ class TestDeduplicationScaling:
         api = _load_nrhp_api()
         _patch_roi(api, monkeypatch)
         # Same 1000 refnums appear in both polygon (1) and point (0) layers.
-        shared = [
-            {"attributes": {"NRIS_Refnum": str(i), "RESNAME": f"Site {i}", "State": "NM"}}
-            for i in range(1000)
-        ]
+        shared = [{"attributes": {"NRIS_Refnum": str(i), "RESNAME": f"Site {i}", "State": "NM"}} for i in range(1000)]
 
         def query_features(url, layer_id, _geometry, *, service_name=None, **_k):
             return ArcGISFeatureQueryResult(features=list(shared), warnings=[])
@@ -85,10 +80,7 @@ class TestParsingThroughput:
     def test_large_feature_set_parses_quickly(self, monkeypatch):
         api = _load_nrhp_api()
         _patch_roi(api, monkeypatch)
-        features = [
-            {"attributes": {"NRIS_Refnum": str(i), "RESNAME": f"Site {i}", "State": "NM"}}
-            for i in range(5000)
-        ]
+        features = [{"attributes": {"NRIS_Refnum": str(i), "RESNAME": f"Site {i}", "State": "NM"}} for i in range(5000)]
 
         def query_features(url, layer_id, _geometry, *, service_name=None, **_k):
             if layer_id == 1:
@@ -106,10 +98,7 @@ class TestParsingThroughput:
     def test_formatter_bounded_on_large_result(self, monkeypatch):
         api = _load_nrhp_api()
         _patch_roi(api, monkeypatch)
-        features = [
-            {"attributes": {"NRIS_Refnum": str(i), "RESNAME": f"Site {i}", "State": "NM"}}
-            for i in range(3000)
-        ]
+        features = [{"attributes": {"NRIS_Refnum": str(i), "RESNAME": f"Site {i}", "State": "NM"}} for i in range(3000)]
 
         def query_features(url, layer_id, _geometry, *, service_name=None, **_k):
             if layer_id == 1:

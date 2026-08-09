@@ -31,9 +31,7 @@ def _load_noaa_api():
             sys.modules.pop(module_name, None)
     sys.path.insert(0, str(SERVER_DIR))
     try:
-        spec = importlib.util.spec_from_file_location(
-            "_noaa_perf_api", SERVER_DIR / "src" / "apis" / "noaa_api.py"
-        )
+        spec = importlib.util.spec_from_file_location("_noaa_perf_api", SERVER_DIR / "src" / "apis" / "noaa_api.py")
         assert spec is not None and spec.loader is not None
         module = importlib.util.module_from_spec(spec)
         sys.modules["_noaa_perf_api"] = module
@@ -64,8 +62,7 @@ class TestDeduplicationScaling:
     def test_many_line_fragments_sum_length(self):
         api = _load_noaa_api()
         features = [
-            {"attributes": {"listentity": "Salmon DPS", "unit": f"Reach {i}", "lengthkm": 1.0}}
-            for i in range(1000)
+            {"attributes": {"listentity": "Salmon DPS", "unit": f"Reach {i}", "lengthkm": 1.0}} for i in range(1000)
         ]
         deduped = api._deduplicate_fragments(features, 1, "line")
         assert len(deduped) == 1
@@ -77,9 +74,7 @@ class TestParsingThroughput:
         api = _load_noaa_api()
         _patch_roi(api, monkeypatch)
         # Lines skip geometry clipping, so this measures pure parse throughput.
-        features = [
-            {"attributes": {"listentity": f"Entity {i}", "lengthkm": 1.0}} for i in range(5000)
-        ]
+        features = [{"attributes": {"listentity": f"Entity {i}", "lengthkm": 1.0}} for i in range(5000)]
         monkeypatch.setattr(
             api.ArcGISService,
             "query_features",

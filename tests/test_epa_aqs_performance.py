@@ -52,10 +52,7 @@ class TestMonitorDeduplicationScaling:
         # 1000 records but only 5 distinct sites per param.
         def fake_sync(_endpoint, _params, max_retries=3):
             return {
-                "Data": [
-                    {"state_code": "35", "county_code": "001", "site_number": f"{i % 5:04d}"}
-                    for i in range(1000)
-                ]
+                "Data": [{"state_code": "35", "county_code": "001", "site_number": f"{i % 5:04d}"} for i in range(1000)]
             }
 
         monkeypatch.setattr(api, "_query_aqs_api_sync", fake_sync)

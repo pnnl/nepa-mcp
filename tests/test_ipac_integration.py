@@ -82,19 +82,13 @@ def _sample_resources():
         },
         "refuges": {"items": []},
         "fieldOffices": [{"officeName": "New Mexico ESFO", "officeCode": "NMESFO"}],
-        "crithabs": [
-            {"populationSid": {"val": "POP1"}, "type": "Final", "speciesInFootprint": True}
-        ],
+        "crithabs": [{"populationSid": {"val": "POP1"}, "type": "Final", "speciesInFootprint": True}],
     }
 
 
 def _load_server():
     for module_name in list(sys.modules):
-        if (
-            module_name == "src"
-            or module_name.startswith("src.")
-            or module_name.startswith("_ipac_int_")
-        ):
+        if module_name == "src" or module_name.startswith("src.") or module_name.startswith("_ipac_int_"):
             sys.modules.pop(module_name, None)
     sys.path[:] = [entry for entry in sys.path if entry != str(SERVER_DIR)]
     sys.path.insert(0, str(SERVER_DIR))
@@ -172,9 +166,7 @@ class TestResourcesTool:
             "crithabs": [],
         }
         _install_mocks(resources=empty)
-        result = asyncio.run(
-            _call(module, "get_ipac_resources_in_roi", {"latitude": 34.5, "longitude": -106.5})
-        )
+        result = asyncio.run(_call(module, "get_ipac_resources_in_roi", {"latitude": 34.5, "longitude": -106.5}))
         text = _text(result)
         assert "Threatened/Endangered Species: 0" in text
         assert "Critical Habitat Units: 0" in text
@@ -184,9 +176,7 @@ class TestInputValidationThroughTool:
     def test_out_of_range_latitude_is_rejected(self):
         module = _load_server()
         with pytest.raises(Exception):
-            asyncio.run(
-                _call(module, "get_ipac_resources_in_roi", {"latitude": 999, "longitude": -106.5})
-            )
+            asyncio.run(_call(module, "get_ipac_resources_in_roi", {"latitude": 999, "longitude": -106.5}))
 
     def test_zero_buffer_is_rejected(self):
         module = _load_server()

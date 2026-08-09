@@ -138,13 +138,9 @@ class TestInputValidationThroughTool:
     def test_zero_buffer_is_rejected(self):
         module = _load_server()
         with pytest.raises(Exception):
-            asyncio.run(
-                _call(module, "calculate_roi_area", {"latitude": 34.5, "longitude": -106.5, "buffer_miles": 0})
-            )
+            asyncio.run(_call(module, "calculate_roi_area", {"latitude": 34.5, "longitude": -106.5, "buffer_miles": 0}))
 
     def test_buffer_above_max_is_rejected(self):
         module = _load_server()
         with pytest.raises(Exception):
-            asyncio.run(
-                _call(module, "get_roi_geojson", {"latitude": 34.5, "longitude": -106.5, "buffer_miles": 250})
-            )
+            asyncio.run(_call(module, "get_roi_geojson", {"latitude": 34.5, "longitude": -106.5, "buffer_miles": 250}))

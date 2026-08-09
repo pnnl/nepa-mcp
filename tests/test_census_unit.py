@@ -31,17 +31,23 @@ DEFAULT_VALUE_MAP = {
     "DP03_0088E": "30000",  # per capita income        -> $30,000
     "DP03_0128PE": "12.5",  # families below poverty   -> 12.5%
     "DP03_0134PE": "15.0",  # people below poverty     -> 15.0%
-    "DP03_0009PE": "6.2",   # unemployment rate        -> 6.2%
+    "DP03_0009PE": "6.2",  # unemployment rate        -> 6.2%
     "DP03_0008E": "300000",  # civilian labor force    -> 300,000
     "DP03_0004E": "280000",  # employed                -> 280,000
 }
 
 # Minimal ACS profile variables metadata for industry/occupation extraction.
 DEFAULT_VARIABLES_META = {
-    "DP03_0033PE": {"label": "Estimate!!INDUSTRY!!Civilian employed population 16 years and over!!Agriculture, forestry, fishing"},
+    "DP03_0033PE": {
+        "label": "Estimate!!INDUSTRY!!Civilian employed population 16 years and over!!Agriculture, forestry, fishing"
+    },
     "DP03_0034PE": {"label": "Estimate!!INDUSTRY!!Civilian employed population 16 years and over!!Construction"},
-    "DP03_0027PE": {"label": "Estimate!!OCCUPATION!!Civilian employed population 16 years and over!!Management, business, science"},
-    "DP03_0028PE": {"label": "Estimate!!OCCUPATION!!Civilian employed population 16 years and over!!Service occupations"},
+    "DP03_0027PE": {
+        "label": "Estimate!!OCCUPATION!!Civilian employed population 16 years and over!!Management, business, science"
+    },
+    "DP03_0028PE": {
+        "label": "Estimate!!OCCUPATION!!Civilian employed population 16 years and over!!Service occupations"
+    },
 }
 
 INDUSTRY_OCCUPATION_VALUES = {
@@ -110,9 +116,7 @@ def _make_router(api, counties, value_map=None, variables_meta=None):
 
 def _patch_network(api, monkeypatch, counties, value_map=None, variables_meta=None):
     monkeypatch.setattr(api.ArcGISService, "create_roi_buffer", lambda *_a, **_k: SIMPLE_GEOMETRY)
-    monkeypatch.setattr(
-        api.requests, "get", _make_router(api, counties, value_map, variables_meta)
-    )
+    monkeypatch.setattr(api.requests, "get", _make_router(api, counties, value_map, variables_meta))
 
 
 BERNALILLO = {"NAME": "Bernalillo County", "GEOID": "35001"}
@@ -293,9 +297,7 @@ class TestGetCensusDataByCoordinates:
             value_map=INDUSTRY_OCCUPATION_VALUES,
         )
         client = api.SimplifiedCensusAPI(api_key="k")
-        data = client.get_census_data_by_coordinates(
-            34.5, -106.5, 25.0, include_industries=True, top_n=1
-        )
+        data = client.get_census_data_by_coordinates(34.5, -106.5, 25.0, include_industries=True, top_n=1)
         county = data["counties"][0]
         assert county["industries"][0]["category"] == "Agriculture, forestry, fishing"
         assert county["occupations"][0]["category"] == "Management, business, science"

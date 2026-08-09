@@ -185,9 +185,7 @@ class TestMalformedFeatures:
             "attributes": {"LISTENTITY": "Test salmon DPS", "UNIT": "Unit A", "AREASqKm": 2.0},
             "geometry": {"paths": [[[0.0, 0.0], [1.0, 1.0]]]},
         }
-        record = api._deduplicate_ch_fragments(
-            [valid, invalid], "polygon", roi_geometry=SIMPLE_GEOMETRY
-        )[0]
+        record = api._deduplicate_ch_fragments([valid, invalid], "polygon", roi_geometry=SIMPLE_GEOMETRY)[0]
         assert record["area_status"] == "ok"
         assert record["area_complete"] is False
         assert any("Line paths" in w for w in record["area_warnings"])

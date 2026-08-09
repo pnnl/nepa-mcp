@@ -253,9 +253,7 @@ class TestFormatter:
             "center": {"latitude": 34.5, "longitude": -106.5},
             "buffer_miles": 25.0,
             "total": 1,
-            "tribal_lands": [
-                {"name": "No Area Land", "area_sq_mi": None, "category": "Tribal Subdivisions"}
-            ],
+            "tribal_lands": [{"name": "No Area Land", "area_sq_mi": None, "category": "Tribal Subdivisions"}],
             "warnings": [],
         }
         out = api.format_tribal_summary(data)

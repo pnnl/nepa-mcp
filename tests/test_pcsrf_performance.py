@@ -31,9 +31,7 @@ def _load_pcsrf_api():
     server_dir = ROOT / "pcsrf"
     sys.path.insert(0, str(server_dir))
     try:
-        spec = importlib.util.spec_from_file_location(
-            "_pcsrf_perf_api", server_dir / "src" / "apis" / "pcsrf_api.py"
-        )
+        spec = importlib.util.spec_from_file_location("_pcsrf_perf_api", server_dir / "src" / "apis" / "pcsrf_api.py")
         assert spec is not None and spec.loader is not None
         module = importlib.util.module_from_spec(spec)
         sys.modules["_pcsrf_perf_api"] = module

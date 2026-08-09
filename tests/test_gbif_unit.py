@@ -63,8 +63,17 @@ class _FakeResponse:
         return self._payload
 
 
-def _gbif_record(sci="Ursus arctos", iucn="EN", key=1, lat=34.5, lon=-106.5,
-                 date="2020-05-01T00:00:00", common="Grizzly Bear", county="", state=""):
+def _gbif_record(
+    sci="Ursus arctos",
+    iucn="EN",
+    key=1,
+    lat=34.5,
+    lon=-106.5,
+    date="2020-05-01T00:00:00",
+    common="Grizzly Bear",
+    county="",
+    state="",
+):
     return {
         "key": key,
         "scientificName": sci,
@@ -220,7 +229,16 @@ class TestCountyAggregation:
         _patch_counties(
             api,
             monkeypatch,
-            [{"attributes": {"NAME": "Los Angeles County", "STATE": "06", "BASENAME": "Los Angeles", "GEOID": "06037"}}],
+            [
+                {
+                    "attributes": {
+                        "NAME": "Los Angeles County",
+                        "STATE": "06",
+                        "BASENAME": "Los Angeles",
+                        "GEOID": "06037",
+                    }
+                }
+            ],
         )
         monkeypatch.setattr(
             api.requests, "get", _single_page_get([_gbif_record(sci="Sp A"), _gbif_record(sci="Sp B", key=2)])

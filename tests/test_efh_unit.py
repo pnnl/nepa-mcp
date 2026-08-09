@@ -52,9 +52,7 @@ def _patch_query(api, monkeypatch, feature_map, warnings=None, truncated=False):
     def query_features(url, _layer_id, _geometry, *, service_name=None, **_kwargs):
         for key, feats in feature_map.items():
             if key in (service_name or "") or key in url:
-                return ArcGISFeatureQueryResult(
-                    features=feats, warnings=warnings or [], truncated=truncated
-                )
+                return ArcGISFeatureQueryResult(features=feats, warnings=warnings or [], truncated=truncated)
         return ArcGISFeatureQueryResult(features=[], warnings=warnings or [])
 
     monkeypatch.setattr(api.ArcGISService, "query_features", query_features)
@@ -250,9 +248,7 @@ class TestHmsAreaClipping:
 
     def test_truncated_geometry_marks_incomplete(self, monkeypatch):
         api = _load_efh_api()
-        record = api._deduplicate_efh(
-            [_efh_feature()], roi_geometry=SIMPLE_GEOMETRY, geometry_complete=False
-        )[0]
+        record = api._deduplicate_efh([_efh_feature()], roi_geometry=SIMPLE_GEOMETRY, geometry_complete=False)[0]
         assert record["area_complete"] is False
         assert any("understated" in w for w in record["area_warnings"])
 

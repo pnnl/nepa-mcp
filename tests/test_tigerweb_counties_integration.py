@@ -86,9 +86,7 @@ class TestCountiesTool:
             monkeypatch,
             [{"attributes": {"NAME": "Bernalillo County", "STATE": "35", "GEOID": "35001"}}],
         )
-        result = asyncio.run(
-            _call(module, _TOOL_NAME, {"latitude": 34.5, "longitude": -106.5, "buffer_miles": 25})
-        )
+        result = asyncio.run(_call(module, _TOOL_NAME, {"latitude": 34.5, "longitude": -106.5, "buffer_miles": 25}))
         text = _text(result)
         assert "Counties within ROI" in text
         assert "Bernalillo County" in text
@@ -116,6 +114,4 @@ class TestInputValidationThroughTool:
     def test_zero_buffer_is_rejected(self):
         module = _load_server()
         with pytest.raises(Exception):
-            asyncio.run(
-                _call(module, _TOOL_NAME, {"latitude": 34.5, "longitude": -106.5, "buffer_miles": 0})
-            )
+            asyncio.run(_call(module, _TOOL_NAME, {"latitude": 34.5, "longitude": -106.5, "buffer_miles": 0}))

@@ -150,9 +150,7 @@ class TestFormatters:
 
     def test_roi_summary_renders_extent_and_project(self, monkeypatch):
         api = _load_roi_api()
-        geojson = {
-            "metadata": {"extent": {"north": 35.0, "south": 34.0, "east": -106.0, "west": -107.0}}
-        }
+        geojson = {"metadata": {"extent": {"north": 35.0, "south": 34.0, "east": -106.0, "west": -107.0}}}
         out = api.format_roi_summary(34.5, -106.5, 25.0, 5865.26, 3753768.0, geojson, "Test Project")
         assert "Region of Interest (ROI) Summary" in out
         assert "Project: Test Project" in out

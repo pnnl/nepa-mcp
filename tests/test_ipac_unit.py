@@ -136,9 +136,7 @@ def _sample_resources():
                 }
             ]
         },
-        "fieldOffices": [
-            {"officeName": "New Mexico Ecological Services", "officeCode": "NMESFO"}
-        ],
+        "fieldOffices": [{"officeName": "New Mexico Ecological Services", "officeCode": "NMESFO"}],
         "crithabs": [
             {
                 "populationSid": {"val": "POP1"},
@@ -158,9 +156,7 @@ def _sample_resources():
 
 def _patch_geometry(api, monkeypatch):
     monkeypatch.setattr(api.ArcGISService, "create_roi_buffer", lambda *_a, **_k: SIMPLE_GEOMETRY)
-    monkeypatch.setattr(
-        api.ArcGISService, "simplify_polygon_geometry", lambda *_a, **_k: SIMPLE_GEOMETRY
-    )
+    monkeypatch.setattr(api.ArcGISService, "simplify_polygon_geometry", lambda *_a, **_k: SIMPLE_GEOMETRY)
 
 
 def _patch_post(api, monkeypatch, resources, status_code=200, extra=None):
@@ -309,9 +305,7 @@ class TestFieldOfficesAndCritHab:
         _patch_geometry(api, monkeypatch)
         _patch_post(api, monkeypatch, _sample_resources())
         result = api.get_ipac_resources_in_roi(34.5, -106.5)
-        unmatched = next(
-            c for c in result["critical_habitat"] if c["species_id"] == "UNKNOWN_POP"
-        )
+        unmatched = next(c for c in result["critical_habitat"] if c["species_id"] == "UNKNOWN_POP")
         assert unmatched["common_name"] == "Unknown"
         assert unmatched["federal_register_date"] == ""
 
@@ -355,9 +349,7 @@ class TestFormatter:
 
     def test_summary_truncates_bird_list(self, monkeypatch):
         api = _load_ipac_api()
-        birds = [
-            {"common_name": f"Bird {i:02d}", "conservation_level": "BCC"} for i in range(15)
-        ]
+        birds = [{"common_name": f"Bird {i:02d}", "conservation_level": "BCC"} for i in range(15)]
         data = {
             "center": {"latitude": 1, "longitude": 2},
             "buffer_miles": 25.0,

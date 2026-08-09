@@ -29,9 +29,7 @@ def _load_blm_api():
     server_dir = ROOT / "blm"
     sys.path.insert(0, str(server_dir))
     try:
-        spec = importlib.util.spec_from_file_location(
-            "_blm_perf_api", server_dir / "src" / "apis" / "blm_api.py"
-        )
+        spec = importlib.util.spec_from_file_location("_blm_perf_api", server_dir / "src" / "apis" / "blm_api.py")
         assert spec is not None and spec.loader is not None
         module = importlib.util.module_from_spec(spec)
         sys.modules["_blm_perf_api"] = module
@@ -69,10 +67,7 @@ class TestParsingThroughput:
     def test_large_wilderness_set_parses_quickly(self, monkeypatch):
         api = _load_blm_api()
         _patch_roi(api, monkeypatch)
-        features = [
-            {"attributes": {"NLCS_NAME": f"Wilderness {i}", "DESIG_DATE": 946684800000}}
-            for i in range(5000)
-        ]
+        features = [{"attributes": {"NLCS_NAME": f"Wilderness {i}", "DESIG_DATE": 946684800000}} for i in range(5000)]
         _patch_features(api, monkeypatch, features)
         start = time.perf_counter()
         result = api.get_blm_wilderness_areas_in_roi(38.5, -111.5)

@@ -62,8 +62,7 @@ class TestSummaryAggregationScaling:
         # 1000 records across 4 distinct zone classes; half are SFHA.
         classes = ["AE", "X", "VE", "D"]
         features = [
-            {"attributes": {"FLD_ZONE": classes[i % 4], "SFHA_TF": "T" if i % 2 == 0 else "F"}}
-            for i in range(1000)
+            {"attributes": {"FLD_ZONE": classes[i % 4], "SFHA_TF": "T" if i % 2 == 0 else "F"}} for i in range(1000)
         ]
         _single_page(fema_api, monkeypatch, features)
         result = fema_api.get_flood_zones(29.95, -90.07)
@@ -82,9 +81,7 @@ class TestPaginationCap:
 
         def fake_get(url: str, *, params: dict[str, Any], timeout: int):
             count = params["resultRecordCount"]
-            return _FakeResponse(
-                {"exceededTransferLimit": True, "features": [dict(page) for _ in range(count)]}
-            )
+            return _FakeResponse({"exceededTransferLimit": True, "features": [dict(page) for _ in range(count)]})
 
         monkeypatch.setattr(fema_api.requests, "get", fake_get)
         result = fema_api._query_nfhl_layer_result(FLOOD_ZONES_LAYER, 29.95, -90.07, max_features=100)

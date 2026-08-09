@@ -212,8 +212,6 @@ class TestFormatter:
 
     def test_top_records_fall_back_to_owner_name_when_no_unit(self, monkeypatch):
         api = _load_padus_api()
-        data = self._data(
-            [{"owner_type": "FED", "owner_name": "BLM", "unit_name": "", "gis_acres": 42.0}]
-        )
+        data = self._data([{"owner_type": "FED", "owner_name": "BLM", "unit_name": "", "gis_acres": 42.0}])
         out = api.format_padus_summary(data)
         assert "BLM (FED)" in out

@@ -117,7 +117,7 @@ class TestMalformedResponses:
         api = _load_nepa_assist_api()
         _patch_roi(api, monkeypatch)
         html = (
-            '<html><body><table>'
+            "<html><body><table>"
             '<tr class="yes0"><td class="questionText"><a href="#">Only one cell?</a></td></tr>'
             "</table></body></html>"
         )
@@ -130,7 +130,7 @@ class TestMalformedResponses:
         api = _load_nepa_assist_api()
         _patch_roi(api, monkeypatch)
         html = (
-            '<html><body><table>'
+            "<html><body><table>"
             '<tr class="yes0"><td class="questionText"><a href="#">Stream nearby?</a></td>'
             '<td><a href="#">Maybe</a></td></tr>'
             "</table></body></html>"

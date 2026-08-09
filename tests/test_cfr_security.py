@@ -48,9 +48,7 @@ def _load_api():
             sys.modules.pop(module_name, None)
     sys.path.insert(0, str(SERVER_DIR))
     try:
-        spec = importlib.util.spec_from_file_location(
-            "_cfr_secapi_api", SERVER_DIR / "src" / "apis" / "cfr_api.py"
-        )
+        spec = importlib.util.spec_from_file_location("_cfr_secapi_api", SERVER_DIR / "src" / "apis" / "cfr_api.py")
         module = importlib.util.module_from_spec(spec)
         sys.modules["_cfr_secapi_api"] = module
         spec.loader.exec_module(module)

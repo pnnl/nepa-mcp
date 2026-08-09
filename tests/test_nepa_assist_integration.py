@@ -117,7 +117,9 @@ class TestScreeningTool:
         module = _load_server()
         _install_mock_http(module, _build_html(_MIXED_ROWS))
         result = asyncio.run(
-            _call(module, _TOOL_NAME, {"latitude": 34.5, "longitude": -106.5, "buffer_miles": 25, "project_title": "Demo"})
+            _call(
+                module, _TOOL_NAME, {"latitude": 34.5, "longitude": -106.5, "buffer_miles": 25, "project_title": "Demo"}
+            )
         )
         text = _text(result)
         assert "EPA NEPA ASSIST ENVIRONMENTAL SCREENING REPORT" in text

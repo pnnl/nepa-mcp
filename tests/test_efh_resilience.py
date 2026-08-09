@@ -30,9 +30,7 @@ def _load_efh_api():
     server_dir = ROOT / "efh"
     sys.path.insert(0, str(server_dir))
     try:
-        spec = importlib.util.spec_from_file_location(
-            "_efh_resilience_api", server_dir / "src" / "apis" / "efh_api.py"
-        )
+        spec = importlib.util.spec_from_file_location("_efh_resilience_api", server_dir / "src" / "apis" / "efh_api.py")
         assert spec is not None and spec.loader is not None
         module = importlib.util.module_from_spec(spec)
         sys.modules["_efh_resilience_api"] = module
@@ -126,9 +124,7 @@ class TestHmsAreaResilience:
         monkeypatch.setattr(
             api.ArcGISService,
             "query_features",
-            lambda *_a, **_k: ArcGISFeatureQueryResult(
-                features=[_efh_feature()], warnings=[], truncated=True
-            ),
+            lambda *_a, **_k: ArcGISFeatureQueryResult(features=[_efh_feature()], warnings=[], truncated=True),
         )
         result = api.get_hms_cps_groundfish_efh_in_roi(46.5, -120.5)
         assert result["efh_areas"][0]["area_complete"] is False
@@ -140,9 +136,7 @@ class TestHmsAreaResilience:
         monkeypatch.setattr(
             api.ArcGISService,
             "query_features",
-            lambda *_a, **_k: ArcGISFeatureQueryResult(
-                features=[_efh_feature(geometry=None)], warnings=[]
-            ),
+            lambda *_a, **_k: ArcGISFeatureQueryResult(features=[_efh_feature(geometry=None)], warnings=[]),
         )
         result = api.get_hms_cps_groundfish_efh_in_roi(46.5, -120.5)
         entry = result["efh_areas"][0]

@@ -21,9 +21,24 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 
 SERVER_NAMES = [
-    "blm", "census", "cfr", "efh", "epa_aqs", "esa_ranges", "fema_nfhl",
-    "gbif", "gis", "ipac", "nepa_assist", "noaa", "nrhp", "padus", "pcsrf",
-    "tigerweb_counties", "tribal", "usace",
+    "blm",
+    "census",
+    "cfr",
+    "efh",
+    "epa_aqs",
+    "esa_ranges",
+    "fema_nfhl",
+    "gbif",
+    "gis",
+    "ipac",
+    "nepa_assist",
+    "noaa",
+    "nrhp",
+    "padus",
+    "pcsrf",
+    "tigerweb_counties",
+    "tribal",
+    "usace",
 ]
 
 
@@ -49,6 +64,44 @@ class TestFilesystemChecks:
 
     def test_readme_exists(self):
         assert (ROOT / "README.md").exists()
+
+    def test_public_governance_files_exist(self):
+        for filename in (
+            "CODE_OF_CONDUCT.md",
+            "CONTRIBUTING.md",
+            "MAINTAINERS.md",
+            "SECURITY.md",
+            "SUPPORT.md",
+        ):
+            assert (ROOT / filename).exists(), f"{filename} is missing"
+
+        contributing = (ROOT / "CONTRIBUTING.md").read_text(encoding="utf-8")
+        conduct = (ROOT / "CODE_OF_CONDUCT.md").read_text(encoding="utf-8")
+        security = (ROOT / "SECURITY.md").read_text(encoding="utf-8")
+        assert "Developer Certificate of Origin 1.1" in contributing
+        assert 'git commit -s -m "Describe the change"' in contributing
+        assert "Contributor Covenant 3.0" in conduct
+        assert "policyai@pnnl.gov" in conduct
+        assert "PermitAI mailbox" in conduct
+        assert "Sarthak Chaturvedi" in conduct
+        assert "[NOTE:" not in conduct
+        assert "policyai@pnnl.gov" in security
+        assert "NEPA MCP Security Report" in security
+        assert "PermitAI project mailbox" in security
+        assert "Do not report suspected vulnerabilities through a public GitHub issue" in security
+
+    def test_readme_package_links_are_absolute(self):
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        link_matches = re.findall(
+            r'(?:src|href)="([^"]+)"|\]\(([^)]+)\)',
+            readme,
+        )
+        relative_targets = []
+        for html_target, markdown_target in link_matches:
+            target = html_target or markdown_target
+            if not target.startswith(("https://", "http://", "#", "mailto:")):
+                relative_targets.append(target)
+        assert relative_targets == [], f"README contains relative package links: {relative_targets}"
 
 
 # ---------------------------------------------------------------------------
@@ -119,7 +172,9 @@ class TestReadme:
 
 
 def _tool(name: str) -> str | None:
-    return shutil.which(name) or (str(Path(sys.prefix) / "bin" / name) if (Path(sys.prefix) / "bin" / name).exists() else None)
+    return shutil.which(name) or (
+        str(Path(sys.prefix) / "bin" / name) if (Path(sys.prefix) / "bin" / name).exists() else None
+    )
 
 
 class TestStaticAnalysis:
@@ -136,7 +191,9 @@ class TestStaticAnalysis:
             pytest.skip("mypy not installed")
         proc = subprocess.run(
             [mypy, "nepa_mcp_common/", "--ignore-missing-imports"],
-            cwd=ROOT, capture_output=True, text=True,
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
         )
         # The shared core should be free of real (non-stub) type errors.
         assert proc.returncode == 0, f"mypy found issues in nepa_mcp_common:\n{proc.stdout}"
@@ -147,7 +204,9 @@ class TestStaticAnalysis:
             pytest.skip("pip-audit not installed")
         proc = subprocess.run(
             [pip_audit, "--progress-spinner", "off"],
-            cwd=ROOT, capture_output=True, text=True,
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
         )
         combined = proc.stdout + proc.stderr
         assert "No known vulnerabilities found" in combined, f"pip-audit output:\n{combined}"

@@ -90,8 +90,15 @@ def _layer2_feature(*, listentity="STUCR", huc12="170200160601", area=999.0, geo
     return feature
 
 
-def _layer1_feature(*, dps="Steelhead (Puget Sound DPS)", dps_id="STPUG", huc12="171100020101", area=42.5,
-                    geometry=SIMPLE_GEOMETRY, **extra):
+def _layer1_feature(
+    *,
+    dps="Steelhead (Puget Sound DPS)",
+    dps_id="STPUG",
+    huc12="171100020101",
+    area=42.5,
+    geometry=SIMPLE_GEOMETRY,
+    **extra,
+):
     attrs = {
         "dps": dps,
         "dps_id": dps_id,
@@ -185,9 +192,7 @@ class TestDeduplicateRanges:
 
     def test_truncation_marks_incomplete(self):
         api = _load_esa_api()
-        record = api._deduplicate_ranges(
-            [_layer2_feature()], roi_geometry=SIMPLE_GEOMETRY, geometry_complete=False
-        )[0]
+        record = api._deduplicate_ranges([_layer2_feature()], roi_geometry=SIMPLE_GEOMETRY, geometry_complete=False)[0]
         assert record["area_status"] == "ok"
         assert record["area_complete"] is False
         assert any("may be understated" in w for w in record["area_warnings"])
@@ -224,9 +229,7 @@ class TestNormalizeLayer1:
     def test_dps_id_falls_back_to_decoded_listentity(self):
         api = _load_esa_api()
         # No explicit "dps" string -> decode dps_id via _LISTENTITY.
-        record = api._normalize_layer1(
-            [_layer1_feature(dps=None, dps_id="STPUG")], roi_geometry=SIMPLE_GEOMETRY
-        )[0]
+        record = api._normalize_layer1([_layer1_feature(dps=None, dps_id="STPUG")], roi_geometry=SIMPLE_GEOMETRY)[0]
         assert record["listed_entity"] == "Steelhead (Puget Sound DPS)"
 
 
@@ -240,9 +243,7 @@ class TestMergeRanges:
         api = _load_esa_api()
         key_kwargs = dict(dps="Steelhead (Upper Columbia River DPS)", dps_id="STUCR", huc12="170200160601")
         layer1 = api._normalize_layer1([_layer1_feature(**key_kwargs)], roi_geometry=SIMPLE_GEOMETRY)
-        layer2 = api._deduplicate_ranges(
-            [_layer2_feature(notes="layer-2-authoritative")], roi_geometry=SIMPLE_GEOMETRY
-        )
+        layer2 = api._deduplicate_ranges([_layer2_feature(notes="layer-2-authoritative")], roi_geometry=SIMPLE_GEOMETRY)
         merged = api._merge_ranges(layer2, layer1)
         assert len(merged) == 1
         winner = merged[0]

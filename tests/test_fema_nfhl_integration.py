@@ -108,7 +108,9 @@ class TestFloodZonesTool:
             {FLOOD_ZONES_LAYER: [{"FLD_ZONE": "AE", "SFHA_TF": "T"}, {"FLD_ZONE": "X", "SFHA_TF": "F"}]},
         )
         result = asyncio.run(
-            _call(module, "get_fema_nfhl_flood_zones_in_roi", {"latitude": 29.95, "longitude": -90.07, "radius_miles": 25})
+            _call(
+                module, "get_fema_nfhl_flood_zones_in_roi", {"latitude": 29.95, "longitude": -90.07, "radius_miles": 25}
+            )
         )
         text = _text(result)
         assert "FEMA Flood Zones Analysis" in text
@@ -127,9 +129,7 @@ class TestLeveesTool:
     def test_returns_levee_count(self):
         module = _load_server()
         _install_requests_mock(module, {LEVEES_LAYER: [{"OBJECTID": 1}, {"OBJECTID": 2}]})
-        result = asyncio.run(
-            _call(module, "get_fema_nfhl_levees_in_roi", {"latitude": 29.95, "longitude": -90.07})
-        )
+        result = asyncio.run(_call(module, "get_fema_nfhl_levees_in_roi", {"latitude": 29.95, "longitude": -90.07}))
         text = _text(result)
         assert "FEMA Levees" in text
         assert "Total: 2" in text
@@ -172,9 +172,7 @@ class TestInputValidationThroughTool:
     def test_out_of_range_latitude_is_rejected(self):
         module = _load_server()
         with pytest.raises(Exception):
-            asyncio.run(
-                _call(module, "get_fema_nfhl_flood_zones_in_roi", {"latitude": 999, "longitude": -90.07})
-            )
+            asyncio.run(_call(module, "get_fema_nfhl_flood_zones_in_roi", {"latitude": 999, "longitude": -90.07}))
 
     def test_zero_radius_is_rejected(self):
         module = _load_server()

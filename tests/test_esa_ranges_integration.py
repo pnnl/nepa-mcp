@@ -110,9 +110,7 @@ class TestSpeciesRangeTool:
     def test_returns_markdown_with_entity_and_area(self):
         module = _load_server()
         _install_mock_query(module, {_LAYER2_ID: [_layer2_feature()], _LAYER1_ID: []})
-        result = asyncio.run(
-            _call(module, _TOOL_NAME, {"latitude": 46.47, "longitude": -119.30, "buffer_miles": 5})
-        )
+        result = asyncio.run(_call(module, _TOOL_NAME, {"latitude": 46.47, "longitude": -119.30, "buffer_miles": 5}))
         text = _text(result)
         assert "NOAA ESA Species Ranges" in text
         assert "Steelhead (Upper Columbia River DPS)" in text
@@ -122,9 +120,7 @@ class TestSpeciesRangeTool:
     def test_empty_result_is_graceful(self):
         module = _load_server()
         _install_mock_query(module, {_LAYER2_ID: [], _LAYER1_ID: []})
-        result = asyncio.run(
-            _call(module, _TOOL_NAME, {"latitude": 46.47, "longitude": -119.30, "buffer_miles": 5})
-        )
+        result = asyncio.run(_call(module, _TOOL_NAME, {"latitude": 46.47, "longitude": -119.30, "buffer_miles": 5}))
         assert "No NOAA ESA-listed species ranges found within the ROI." in _text(result)
 
     def test_default_buffer_applies(self):
@@ -136,9 +132,7 @@ class TestSpeciesRangeTool:
     def test_truncation_surfaces_partial_area(self):
         module = _load_server()
         _install_mock_query(module, {_LAYER2_ID: [_layer2_feature()], _LAYER1_ID: []}, truncated=True)
-        result = asyncio.run(
-            _call(module, _TOOL_NAME, {"latitude": 46.47, "longitude": -119.30, "buffer_miles": 5})
-        )
+        result = asyncio.run(_call(module, _TOOL_NAME, {"latitude": 46.47, "longitude": -119.30, "buffer_miles": 5}))
         text = _text(result)
         assert "Partial area within ROI" in text
         assert "may be understated" in text

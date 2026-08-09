@@ -310,9 +310,7 @@ class TestVersionsWithMockedHTTP:
         cit = api.parse_cfr_citation("40 CFR 1502.14")
         all_events = api.get_section_versions(cit, start_date="2023-01-01", end_date="2023-12-31")
         assert len(all_events) == 2
-        subst = api.get_section_versions(
-            cit, start_date="2023-01-01", end_date="2023-12-31", substantive_only=True
-        )
+        subst = api.get_section_versions(cit, start_date="2023-01-01", end_date="2023-12-31", substantive_only=True)
         assert len(subst) == 1
         assert subst[0]["substantive"] is True
 

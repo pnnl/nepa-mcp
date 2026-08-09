@@ -30,9 +30,7 @@ def _load_tribal_api():
     server_dir = ROOT / "tribal"
     sys.path.insert(0, str(server_dir))
     try:
-        spec = importlib.util.spec_from_file_location(
-            "_tribal_perf_api", server_dir / "src" / "apis" / "tribal_api.py"
-        )
+        spec = importlib.util.spec_from_file_location("_tribal_perf_api", server_dir / "src" / "apis" / "tribal_api.py")
         assert spec is not None and spec.loader is not None
         module = importlib.util.module_from_spec(spec)
         sys.modules["_tribal_perf_api"] = module

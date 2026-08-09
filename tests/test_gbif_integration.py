@@ -152,12 +152,19 @@ class TestSpeciesByCountyTool:
         module = _load_server()
         _install_mock_counties(
             module,
-            [{"attributes": {"NAME": "Los Angeles County", "STATE": "06", "BASENAME": "Los Angeles", "GEOID": "06037"}}],
+            [
+                {
+                    "attributes": {
+                        "NAME": "Los Angeles County",
+                        "STATE": "06",
+                        "BASENAME": "Los Angeles",
+                        "GEOID": "06037",
+                    }
+                }
+            ],
         )
         _install_mock_gbif(module, [_gbif_record(sci="Sp A"), _gbif_record(sci="Sp B", key=2)])
-        result = asyncio.run(
-            _call(module, "get_gbif_species_list_by_county", {"latitude": 34.5, "longitude": -118.0})
-        )
+        result = asyncio.run(_call(module, "get_gbif_species_list_by_county", {"latitude": 34.5, "longitude": -118.0}))
         text = _text(result)
         assert "GBIF Species Presence by County" in text
         assert "Los Angeles County, CA" in text
@@ -165,9 +172,7 @@ class TestSpeciesByCountyTool:
     def test_no_counties_is_graceful(self):
         module = _load_server()
         _install_mock_counties(module, [])
-        result = asyncio.run(
-            _call(module, "get_gbif_species_list_by_county", {"latitude": 34.5, "longitude": -118.0})
-        )
+        result = asyncio.run(_call(module, "get_gbif_species_list_by_county", {"latitude": 34.5, "longitude": -118.0}))
         assert "Total Counties: 0" in _text(result)
 
 
@@ -175,9 +180,7 @@ class TestInputValidationThroughTool:
     def test_out_of_range_latitude_is_rejected(self):
         module = _load_server()
         with pytest.raises(Exception):
-            asyncio.run(
-                _call(module, "get_gbif_species_occurrences_in_roi", {"latitude": 999, "longitude": -106.5})
-            )
+            asyncio.run(_call(module, "get_gbif_species_occurrences_in_roi", {"latitude": 999, "longitude": -106.5}))
 
     def test_zero_buffer_is_rejected(self):
         module = _load_server()
