@@ -465,11 +465,6 @@ section {
     border: 1px solid rgba(148, 163, 184, 0.14);
 }
 
-/* The OpenAI mark ships as dark artwork; invert it for the dark panel. */
-.plugin-mark {
-    filter: brightness(0) invert(1);
-}
-
 .copy-button {
     position: absolute;
     top: 1rem;
@@ -523,6 +518,8 @@ section {
    MCP client row
    ============================================ */
 
+/* Preserve the original vertical logo-and-label composition while using
+   neutral interface symbols instead of product artwork. */
 .mcp-client-item {
     display: flex;
     flex-direction: column;
@@ -541,51 +538,37 @@ section {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* Grayscale the mark itself, not the badge sitting on top of it. */
-.mcp-client-logo img,
-.mcp-client-logo svg {
-    filter: grayscale(100%);
+    color: #64748b;
+    font-size: 1.35rem;
     opacity: 0.5;
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.mcp-client-item:hover .mcp-client-logo img,
-.mcp-client-item:hover .mcp-client-logo svg,
-.mcp-client-item:focus-visible .mcp-client-logo img,
-.mcp-client-item:focus-visible .mcp-client-logo svg {
-    filter: grayscale(0%);
+.mcp-client-item:hover .mcp-client-logo,
+.mcp-client-item:focus-visible .mcp-client-logo {
     opacity: 1;
 }
 
-.mcp-client-logo {
-    position: relative;
+/* Echo the original artwork's color return on hover without reproducing any
+   vendor mark. Codex uses a laptop-code icon; Desktop retains the plugin cue. */
+.client-claude:hover .mcp-client-logo,
+.client-claude:focus-visible .mcp-client-logo {
+    color: #d97757;
 }
 
-.mcp-client-logo svg,
-.mcp-client-logo img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
+.client-vscode:hover .mcp-client-logo,
+.client-vscode:focus-visible .mcp-client-logo {
+    color: #007acc;
 }
 
-/* Distinguishes the plugin from the plain Codex client, which shares its mark. */
-.mcp-client-badge {
-    position: absolute;
-    right: -5px;
-    bottom: -3px;
-    width: 15px;
-    height: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 8px;
-    color: #fff;
-    background: var(--brand-primary-dark);
-    border-radius: 9999px;
-    box-shadow: 0 0 0 2px #fafaf9;
+.client-codex:hover .mcp-client-logo,
+.client-codex:focus-visible .mcp-client-logo {
+    color: #111827;
+}
+
+.client-codex-desktop:hover .mcp-client-logo,
+.client-codex-desktop:focus-visible .mcp-client-logo {
+    color: var(--brand-primary-dark);
 }
 
 .mcp-client-name {
@@ -597,7 +580,8 @@ section {
     transition: color 0.3s ease;
 }
 
-.mcp-client-item:hover .mcp-client-name {
+.mcp-client-item:hover .mcp-client-name,
+.mcp-client-item:focus-visible .mcp-client-name {
     color: #334155;
 }
 

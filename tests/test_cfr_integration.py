@@ -66,7 +66,9 @@ def _router(url, params=None, timeout=None, **_kwargs):
     params = params or {}
     if "titles.json" in url:
         return _FakeResponse(
-            json_data={"titles": [{"number": 40, "up_to_date_as_of": "2026-01-01", "name": "Protection of Environment"}]}
+            json_data={
+                "titles": [{"number": 40, "up_to_date_as_of": "2026-01-01", "name": "Protection of Environment"}]
+            }
         )
     if "/renderer/" in url or "content/enhanced" in url:
         return _FakeResponse(text=SAMPLE_SECTION_HTML)
@@ -81,9 +83,7 @@ def _router(url, params=None, timeout=None, **_kwargs):
                         "type": "chapter",
                         "identifier": "I",
                         "label": "Chapter I",
-                        "children": [
-                            {"type": "part", "identifier": "Part 1502", "label": "Part 1502", "children": []}
-                        ],
+                        "children": [{"type": "part", "identifier": "Part 1502", "label": "Part 1502", "children": []}],
                     }
                 ],
             }
@@ -255,9 +255,7 @@ class TestBrowseStructureTool:
     def test_part_subtree_mode(self):
         module = _load_server()
         _install_mock_http()
-        result = asyncio.run(
-            _call(module, "cfr_browse_structure", {"title": 40, "part": 1502, "as_of": "2026-01-01"})
-        )
+        result = asyncio.run(_call(module, "cfr_browse_structure", {"title": 40, "part": 1502, "as_of": "2026-01-01"}))
         payload = _json_payload(result)
         assert payload["mode"] == "part_subtree"
         assert payload["root_node"]["identifier"] == "Part 1502"

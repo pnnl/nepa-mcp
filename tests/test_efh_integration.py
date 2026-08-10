@@ -67,9 +67,7 @@ def _install_mock_query(feature_map, warnings=None, truncated=False):
     def query_features(url, _layer_id, _geometry, *, service_name=None, **_kwargs):
         for key, feats in feature_map.items():
             if key in (service_name or "") or key in url:
-                return ArcGISFeatureQueryResult(
-                    features=feats, warnings=warnings or [], truncated=truncated
-                )
+                return ArcGISFeatureQueryResult(features=feats, warnings=warnings or [], truncated=truncated)
         return ArcGISFeatureQueryResult(features=[], warnings=warnings or [])
 
     from nepa_mcp_common.arcgis import ArcGISService
@@ -107,9 +105,7 @@ class TestToolRegistration:
 class TestHapcTool:
     def test_returns_markdown_with_hapc(self):
         module = _load_server()
-        _install_mock_query(
-            {"HAPC": [{"attributes": {"HAPC_Siten": "Estuaries", "FisheryM_5": "PFMC"}}]}
-        )
+        _install_mock_query({"HAPC": [{"attributes": {"HAPC_Siten": "Estuaries", "FisheryM_5": "PFMC"}}]})
         result = asyncio.run(_call(module, "get_efh_hapc", {"latitude": 46.5, "longitude": -120.5, "buffer_miles": 25}))
         text = _text(result)
         assert "Habitat Areas of Particular Concern" in text
@@ -152,9 +148,7 @@ class TestHmsToolAreaClipping:
     def test_shows_area_within_roi_and_source_label(self):
         module = _load_server()
         _install_mock_query({"species": [_efh_feature()]})
-        result = asyncio.run(
-            _call(module, "get_efh_hms_cps_groundfish", {"latitude": 46.5, "longitude": -120.5})
-        )
+        result = asyncio.run(_call(module, "get_efh_hms_cps_groundfish", {"latitude": 46.5, "longitude": -120.5}))
         text = _text(result)
         assert "Area within ROI:" in text
         assert "Source feature-area total (not clipped to ROI):" in text
@@ -163,9 +157,7 @@ class TestHmsToolAreaClipping:
     def test_truncated_result_shows_partial_area(self):
         module = _load_server()
         _install_mock_query({"species": [_efh_feature()]}, truncated=True)
-        result = asyncio.run(
-            _call(module, "get_efh_hms_cps_groundfish", {"latitude": 46.5, "longitude": -120.5})
-        )
+        result = asyncio.run(_call(module, "get_efh_hms_cps_groundfish", {"latitude": 46.5, "longitude": -120.5}))
         text = _text(result)
         assert "Partial area within ROI:" in text
 

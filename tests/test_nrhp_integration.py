@@ -105,9 +105,7 @@ class TestPropertyTool:
         _install_mock_query(
             {"Polygons": [_feature("111", "Palace of the Governors", Is_NHL="X", NARA_URL="https://nara/111")]}
         )
-        result = asyncio.run(
-            _call(module, _TOOL_NAME, {"latitude": 35.6, "longitude": -105.9, "buffer_miles": 25})
-        )
+        result = asyncio.run(_call(module, _TOOL_NAME, {"latitude": 35.6, "longitude": -105.9, "buffer_miles": 25}))
         text = _text(result)
         assert "National Register of Historic Places" in text
         assert "Palace of the Governors" in text
@@ -145,6 +143,4 @@ class TestInputValidationThroughTool:
     def test_zero_buffer_is_rejected(self):
         module = _load_server()
         with pytest.raises(Exception):
-            asyncio.run(
-                _call(module, _TOOL_NAME, {"latitude": 35.6, "longitude": -105.9, "buffer_miles": 0})
-            )
+            asyncio.run(_call(module, _TOOL_NAME, {"latitude": 35.6, "longitude": -105.9, "buffer_miles": 0}))

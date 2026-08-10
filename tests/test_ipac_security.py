@@ -21,11 +21,7 @@ SERVER_DIR = ROOT / "ipac"
 
 def _load_server():
     for module_name in list(sys.modules):
-        if (
-            module_name == "src"
-            or module_name.startswith("src.")
-            or module_name.startswith("_ipac_sec_")
-        ):
+        if module_name == "src" or module_name.startswith("src.") or module_name.startswith("_ipac_sec_"):
             sys.modules.pop(module_name, None)
     sys.path[:] = [entry for entry in sys.path if entry != str(SERVER_DIR)]
     sys.path.insert(0, str(SERVER_DIR))

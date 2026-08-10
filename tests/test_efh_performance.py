@@ -30,9 +30,7 @@ def _load_efh_api():
     server_dir = ROOT / "efh"
     sys.path.insert(0, str(server_dir))
     try:
-        spec = importlib.util.spec_from_file_location(
-            "_efh_perf_api", server_dir / "src" / "apis" / "efh_api.py"
-        )
+        spec = importlib.util.spec_from_file_location("_efh_perf_api", server_dir / "src" / "apis" / "efh_api.py")
         assert spec is not None and spec.loader is not None
         module = importlib.util.module_from_spec(spec)
         sys.modules["_efh_perf_api"] = module
@@ -95,9 +93,7 @@ class TestDeduplicationScaling:
     def test_many_salmon_watersheds_dedup_by_huc(self, monkeypatch):
         api = _load_efh_api()
         _patch_roi(api, monkeypatch)
-        features = [
-            {"attributes": {"HUC_8": i % 10, "HUC_8_Name": f"Watershed {i % 10}"}} for i in range(1000)
-        ]
+        features = [{"attributes": {"HUC_8": i % 10, "HUC_8_Name": f"Watershed {i % 10}"}} for i in range(1000)]
         _patch_features(api, monkeypatch, features)
         result = api.get_salmon_efh_in_roi(46.5, -120.5)
         assert result["total"] == 10

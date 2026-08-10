@@ -83,9 +83,7 @@ class TestNullFeaturesResponse:
 
         import requests
 
-        monkeypatch.setattr(
-            requests, "post", lambda *_a, **_k: _FakeResponse({"features": None})
-        )
+        monkeypatch.setattr(requests, "post", lambda *_a, **_k: _FakeResponse({"features": None}))
         result = api.get_counties_in_roi(34.5, -106.5)
         assert result["total_counties"] == 0
         assert result["counties"] == []

@@ -28,9 +28,7 @@ def _load_ipac_api():
     server_dir = ROOT / "ipac"
     sys.path.insert(0, str(server_dir))
     try:
-        spec = importlib.util.spec_from_file_location(
-            "_ipac_perf_api", server_dir / "src" / "apis" / "ipac_api.py"
-        )
+        spec = importlib.util.spec_from_file_location("_ipac_perf_api", server_dir / "src" / "apis" / "ipac_api.py")
         assert spec is not None and spec.loader is not None
         module = importlib.util.module_from_spec(spec)
         sys.modules["_ipac_perf_api"] = module
@@ -54,12 +52,8 @@ class _FakeResponse:
 
 def _patch(api, monkeypatch, resources):
     monkeypatch.setattr(api.ArcGISService, "create_roi_buffer", lambda *_a, **_k: SIMPLE_GEOMETRY)
-    monkeypatch.setattr(
-        api.ArcGISService, "simplify_polygon_geometry", lambda *_a, **_k: SIMPLE_GEOMETRY
-    )
-    monkeypatch.setattr(
-        api.requests, "post", lambda *_a, **_k: _FakeResponse({"resources": resources})
-    )
+    monkeypatch.setattr(api.ArcGISService, "simplify_polygon_geometry", lambda *_a, **_k: SIMPLE_GEOMETRY)
+    monkeypatch.setattr(api.requests, "post", lambda *_a, **_k: _FakeResponse({"resources": resources}))
 
 
 def _build_resources(n_species=0, n_birds=0, n_crithabs=0):
@@ -83,9 +77,7 @@ def _build_resources(n_species=0, n_birds=0, n_crithabs=0):
         }
         for i in range(n_birds)
     ]
-    crithabs = [
-        {"populationSid": {"val": f"POP{i}"}, "type": "Final"} for i in range(n_crithabs)
-    ]
+    crithabs = [{"populationSid": {"val": f"POP{i}"}, "type": "Final"} for i in range(n_crithabs)]
     return {"populationsBySid": populations, "migbirds": migbirds, "crithabs": crithabs}
 
 

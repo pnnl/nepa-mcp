@@ -58,8 +58,7 @@ class TestParsingThroughput:
         api = _load_counties_api()
         _patch_roi(api, monkeypatch)
         features = [
-            {"attributes": {"NAME": f"County {i}", "STATE": f"{i % 50:02d}", "GEOID": f"{i:05d}"}}
-            for i in range(5000)
+            {"attributes": {"NAME": f"County {i}", "STATE": f"{i % 50:02d}", "GEOID": f"{i:05d}"}} for i in range(5000)
         ]
         _patch_features(api, monkeypatch, features)
         start = time.perf_counter()
@@ -74,8 +73,7 @@ class TestParsingThroughput:
         _patch_roi(api, monkeypatch)
         # Reverse-ordered input to exercise the sort path.
         features = [
-            {"attributes": {"NAME": f"County {5000 - i:04d}", "STATE": f"{(5000 - i) % 50:02d}"}}
-            for i in range(5000)
+            {"attributes": {"NAME": f"County {5000 - i:04d}", "STATE": f"{(5000 - i) % 50:02d}"}} for i in range(5000)
         ]
         _patch_features(api, monkeypatch, features)
         start = time.perf_counter()
@@ -94,10 +92,7 @@ class TestFormatterThroughput:
             "center": {"latitude": 34.5, "longitude": -106.5},
             "buffer_miles": 25.0,
             "total_counties": 3000,
-            "counties": [
-                {"name": f"County {i}", "state": f"{i % 50:02d}", "fips": f"{i:05d}"}
-                for i in range(3000)
-            ],
+            "counties": [{"name": f"County {i}", "state": f"{i % 50:02d}", "fips": f"{i:05d}"} for i in range(3000)],
             "warnings": [],
         }
         start = time.perf_counter()

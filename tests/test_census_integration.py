@@ -128,9 +128,7 @@ class TestSocioeconomicTool:
     def test_returns_markdown_with_county_indicators(self):
         module = _load_server()
         _install_mock_network(module, [BERNALILLO])
-        result = asyncio.run(
-            _call(module, TOOL_NAME, {"latitude": 34.5, "longitude": -106.5, "buffer_miles": 25})
-        )
+        result = asyncio.run(_call(module, TOOL_NAME, {"latitude": 34.5, "longitude": -106.5, "buffer_miles": 25}))
         text = _text(result)
         assert "Bernalillo County, NM" in text
         assert "Median household income: $55,000" in text
@@ -139,18 +137,14 @@ class TestSocioeconomicTool:
     def test_empty_roi_is_graceful(self):
         module = _load_server()
         _install_mock_network(module, [])
-        result = asyncio.run(
-            _call(module, TOOL_NAME, {"latitude": 34.5, "longitude": -106.5})
-        )
+        result = asyncio.run(_call(module, TOOL_NAME, {"latitude": 34.5, "longitude": -106.5}))
         assert "No counties found in the region of interest." in _text(result)
 
     def test_missing_api_key_returns_error_message(self, monkeypatch):
         module = _load_server()
         monkeypatch.delenv("CENSUS_API_KEY", raising=False)
         _install_mock_network(module, [BERNALILLO])
-        result = asyncio.run(
-            _call(module, TOOL_NAME, {"latitude": 34.5, "longitude": -106.5})
-        )
+        result = asyncio.run(_call(module, TOOL_NAME, {"latitude": 34.5, "longitude": -106.5}))
         assert "CENSUS_API_KEY" in _text(result)
 
 
@@ -163,6 +157,4 @@ class TestInputValidationThroughTool:
     def test_zero_buffer_is_rejected(self):
         module = _load_server()
         with pytest.raises(Exception):
-            asyncio.run(
-                _call(module, TOOL_NAME, {"latitude": 34.5, "longitude": -106.5, "buffer_miles": 0})
-            )
+            asyncio.run(_call(module, TOOL_NAME, {"latitude": 34.5, "longitude": -106.5, "buffer_miles": 0}))

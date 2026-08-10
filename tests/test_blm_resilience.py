@@ -35,9 +35,7 @@ def _load_blm_api():
     server_dir = ROOT / "blm"
     sys.path.insert(0, str(server_dir))
     try:
-        spec = importlib.util.spec_from_file_location(
-            "_blm_resilience_api", server_dir / "src" / "apis" / "blm_api.py"
-        )
+        spec = importlib.util.spec_from_file_location("_blm_resilience_api", server_dir / "src" / "apis" / "blm_api.py")
         assert spec is not None and spec.loader is not None
         module = importlib.util.module_from_spec(spec)
         sys.modules["_blm_resilience_api"] = module

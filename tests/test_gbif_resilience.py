@@ -122,9 +122,7 @@ class TestUpstreamGbifFailure:
                 return _FakeResponse({}, status_code=429)
             return _FakeResponse(
                 {
-                    "results": [
-                        {"key": 1, "scientificName": "Sp A", "iucnRedListCategory": "EN", "eventDate": ""}
-                    ],
+                    "results": [{"key": 1, "scientificName": "Sp A", "iucnRedListCategory": "EN", "eventDate": ""}],
                     "endOfRecords": True,
                 }
             )
@@ -188,9 +186,7 @@ class TestCountiesUpstreamFailure:
         )
         import requests as req
 
-        monkeypatch.setattr(
-            api.requests, "get", lambda *_a, **_k: (_ for _ in ()).throw(req.exceptions.Timeout("t"))
-        )
+        monkeypatch.setattr(api.requests, "get", lambda *_a, **_k: (_ for _ in ()).throw(req.exceptions.Timeout("t")))
         result = api.get_gbif_species_by_county_sync(34.5, -118.0, 25.0)
         # County is still present, just with zero species.
         assert result["total_counties"] == 1

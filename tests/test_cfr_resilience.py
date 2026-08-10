@@ -27,9 +27,7 @@ def _load_cfr_api():
     server_dir = ROOT / "cfr"
     sys.path.insert(0, str(server_dir))
     try:
-        spec = importlib.util.spec_from_file_location(
-            "_cfr_resilience_api", server_dir / "src" / "apis" / "cfr_api.py"
-        )
+        spec = importlib.util.spec_from_file_location("_cfr_resilience_api", server_dir / "src" / "apis" / "cfr_api.py")
         assert spec is not None and spec.loader is not None
         module = importlib.util.module_from_spec(spec)
         sys.modules["_cfr_resilience_api"] = module

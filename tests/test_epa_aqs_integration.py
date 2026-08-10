@@ -220,9 +220,7 @@ class TestInputValidationThroughTool:
         module = _load_server()
         _install_mocks(module)
         with pytest.raises(Exception):
-            asyncio.run(
-                _call(module, "get_epa_aqs_air_quality_monitors", {"latitude": 999, "longitude": -106.5})
-            )
+            asyncio.run(_call(module, "get_epa_aqs_air_quality_monitors", {"latitude": 999, "longitude": -106.5}))
 
     def test_zero_buffer_is_rejected(self):
         module = _load_server()

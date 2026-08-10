@@ -107,9 +107,7 @@ class TestBothLayersFail:
         assert "error" in result
         assert "not a no-hit finding" in result["error"]
         # The distinguishing warning and per-layer failures are still recorded.
-        assert any(
-            "results are unavailable, not a no-hit finding" in w for w in result["warnings"]
-        )
+        assert any("results are unavailable, not a no-hit finding" in w for w in result["warnings"])
         assert sum("layer query failed" in w for w in result["warnings"]) == 2
 
     def test_formatter_renders_no_hit_text_but_keeps_outage_warning(self, monkeypatch):

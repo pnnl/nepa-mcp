@@ -52,7 +52,9 @@ def _patch_roi(api, monkeypatch):
     monkeypatch.setattr(api.ArcGISService, "create_roi_buffer", lambda *_a, **_k: SIMPLE_GEOMETRY)
 
 
-def _polygon_feature(*, entity="Test whale DPS", unit="Unit A", area=99_999.0, geometry=SIMPLE_GEOMETRY, comname="Test whale"):
+def _polygon_feature(
+    *, entity="Test whale DPS", unit="Unit A", area=99_999.0, geometry=SIMPLE_GEOMETRY, comname="Test whale"
+):
     feature = {
         "attributes": {
             "comname": comname,
@@ -156,9 +158,7 @@ class TestPolygonClipping:
         api = _load_noaa_api()
         feature = _polygon_feature(area=99_999.0)
         one = api._deduplicate_fragments([feature], 2, "polygon", roi_geometry=SIMPLE_GEOMETRY)[0]
-        duplicate = api._deduplicate_fragments(
-            [feature, feature], 2, "polygon", roi_geometry=SIMPLE_GEOMETRY
-        )[0]
+        duplicate = api._deduplicate_fragments([feature, feature], 2, "polygon", roi_geometry=SIMPLE_GEOMETRY)[0]
         # Union collapses identical geometry -> same clipped area,
         # but the source attribute total does double (provenance only).
         assert duplicate["area_sqkm"] == one["area_sqkm"]
@@ -180,9 +180,7 @@ class TestPolygonClipping:
 
     def test_without_roi_falls_back_to_source_attribute_area(self):
         api = _load_noaa_api()
-        habitat = api._deduplicate_fragments(
-            [_polygon_feature(area=42.0)], 2, "polygon"
-        )[0]
+        habitat = api._deduplicate_fragments([_polygon_feature(area=42.0)], 2, "polygon")[0]
         # No ROI supplied -> legacy source-attribute area, flagged as such.
         assert habitat["area_sqkm"] == 42.0
         assert habitat["source_area_sqkm"] == 42.0
@@ -245,9 +243,7 @@ class TestAreaCompleteness:
             "attributes": {"listentity": "Test whale DPS", "areasqkm": 2.0},
             "geometry": {"paths": [[[0.0, 0.0], [1.0, 1.0]]]},
         }
-        habitat = api._deduplicate_fragments(
-            [valid, invalid], 2, "polygon", roi_geometry=SIMPLE_GEOMETRY
-        )[0]
+        habitat = api._deduplicate_fragments([valid, invalid], 2, "polygon", roi_geometry=SIMPLE_GEOMETRY)[0]
         assert habitat["area_status"] == "ok"
         assert habitat["area_complete"] is False
         assert any("Line paths" in w for w in habitat["area_warnings"])

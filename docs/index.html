@@ -14,7 +14,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NEPA MCP Toolkit — Federal Environmental Data for AI Agents</title>
     <meta name="description" content="Model Context Protocol servers giving AI agents direct access to public federal data for NEPA screening, regulatory research, and permitting analysis.">
-    <meta name="author" content="Sarthak Chaturvedi">
 
     <meta property="og:title" content="NEPA MCP Toolkit">
     <meta property="og:description" content="12 federal agencies · 19 servers · 78 research capabilities · one protocol. Public federal data for AI-assisted NEPA workflows.">
@@ -53,7 +52,7 @@
     <!-- ?v= is a cache buster. GitHub Pages serves these assets with a long
          max-age, so a returning visitor keeps the old CSS and JS until the URL
          changes. Bump the value whenever site.css or site.js changes. -->
-    <link rel="stylesheet" href="assets/css/site.css?v=10">
+    <link rel="stylesheet" href="assets/css/site.css?v=11">
 </head>
 <body class="bg-slate-50 text-slate-900 antialiased">
 
@@ -159,8 +158,14 @@
 
                 <div class="fade-in-up delay-400 mt-6 pt-4">
                     <p class="text-xs text-slate-400 mb-3 font-medium uppercase tracking-widest">Works with</p>
-                    <div id="mcp-clients" class="flex flex-wrap justify-center items-start gap-6 md:gap-9"></div>
+                    <nav id="mcp-clients" class="flex flex-wrap justify-center items-start gap-6 md:gap-9" aria-label="Supported MCP clients">
+                        <a href="#quick-start" data-client-target="claude" class="mcp-client-item client-claude" title="Claude Code"><span class="mcp-client-logo"><i class="fas fa-terminal" aria-hidden="true"></i></span><span class="mcp-client-name">Claude Code</span></a>
+                        <a href="#quick-start" data-client-target="vscode" class="mcp-client-item client-vscode" title="VS Code"><span class="mcp-client-logo"><i class="fas fa-code" aria-hidden="true"></i></span><span class="mcp-client-name">VS Code</span></a>
+                        <a href="#quick-start" data-client-target="codex" class="mcp-client-item client-codex" title="Codex"><span class="mcp-client-logo"><i class="fas fa-laptop-code" aria-hidden="true"></i></span><span class="mcp-client-name">Codex</span></a>
+                        <a href="#codex-plugin" class="mcp-client-item client-codex-desktop" title="Codex Desktop"><span class="mcp-client-logo"><i class="fas fa-puzzle-piece" aria-hidden="true"></i></span><span class="mcp-client-name">Codex Desktop</span></a>
+                    </nav>
                 </div>
+
             </div>
         </div>
     </section>
@@ -271,7 +276,7 @@ pipx install .</code></pre>
                         </p>
                         <div class="transcript rounded-xl overflow-hidden">
                             <pre class="p-5 text-xs leading-relaxed overflow-x-auto"><code><span class="t-prompt">$ nepa-mcp doctor</span>
-nepa-mcp version: 0.1.0
+nepa-mcp version: <span data-release-version>0.1.0rc1</span>
 Python: 3.12.12
 Credential file: ~/…/nepa-mcp/credentials.env (not found)
 <span class="t-proof">Installed servers: 19</span>
@@ -345,7 +350,7 @@ epa_aqs credentials: optional, missing EPA_AQS_EMAIL, EPA_AQS_API_KEY</code></pr
                     <div class="lg:col-span-2 min-w-0">
                         <div class="flex items-center gap-3 mb-4">
                             <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                                <img src="assets/images/logos/openai.svg" alt="" class="w-5 h-5 object-contain plugin-mark" aria-hidden="true">
+                                <i class="fas fa-puzzle-piece text-teal-300 text-lg" aria-hidden="true"></i>
                             </div>
                             <p class="text-sm font-semibold text-white">Local marketplace</p>
                         </div>
@@ -502,6 +507,23 @@ codex plugin add nepa-mcp@nepa-mcp-local</code></pre>
                 <p class="text-xl text-slate-600 font-light">References maintained alongside the code</p>
             </div>
             <div id="doc-cards-grid" class="grid md:grid-cols-2 gap-6"></div>
+
+            <div class="mt-8 rounded-2xl border border-teal-200/70 bg-gradient-to-r from-teal-50/80 via-white to-slate-50 p-6 md:p-7 shadow-sm">
+                <div class="flex flex-col lg:flex-row lg:items-center gap-6">
+                    <div class="lg:max-w-sm lg:mr-auto">
+                        <p class="text-xs font-semibold text-teal-700 uppercase tracking-wider mb-2">Open-source project</p>
+                        <h3 class="text-xl font-semibold text-ink mb-2">Contribute &amp; Support</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">Development guidance, support boundaries, and community standards are maintained alongside the code.</p>
+                    </div>
+                    <nav class="flex flex-wrap gap-2" aria-label="Project governance and support">
+                        <a href="https://github.com/pnnl-int/nepa-mcp-server/blob/main/CONTRIBUTING.md" class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:border-teal-300 hover:text-teal-800 transition-colors"><i class="fas fa-code-branch text-teal-600" aria-hidden="true"></i>Contribution Guide</a>
+                        <a href="https://github.com/pnnl-int/nepa-mcp-server/blob/main/SUPPORT.md" class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:border-teal-300 hover:text-teal-800 transition-colors"><i class="fas fa-life-ring text-teal-600" aria-hidden="true"></i>Support</a>
+                        <a href="https://github.com/pnnl-int/nepa-mcp-server/blob/main/SECURITY.md" class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:border-teal-300 hover:text-teal-800 transition-colors"><i class="fas fa-shield-halved text-teal-600" aria-hidden="true"></i>Security</a>
+                        <a href="https://github.com/pnnl-int/nepa-mcp-server/blob/main/CODE_OF_CONDUCT.md" class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:border-teal-300 hover:text-teal-800 transition-colors"><i class="fas fa-people-group text-teal-600" aria-hidden="true"></i>Code of Conduct</a>
+                        <a href="https://github.com/pnnl-int/nepa-mcp-server/blob/main/MAINTAINERS.md" class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:border-teal-300 hover:text-teal-800 transition-colors"><i class="fas fa-diagram-project text-teal-600" aria-hidden="true"></i>Project Roles</a>
+                    </nav>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -525,9 +547,9 @@ codex plugin add nepa-mcp@nepa-mcp-local</code></pre>
                     <h4 class="text-white font-semibold mb-4">Resources</h4>
                     <ul class="space-y-3 text-sm">
                         <li><a href="https://github.com/pnnl-int/nepa-mcp-server/tree/main" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fab fa-github mr-2" aria-hidden="true"></i>Repository</a></li>
-                        <li><a href="https://github.com/pnnl-int/nepa-mcp-server/blob/main/docs/mcp-tool-catalog.md" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-list-check mr-2" aria-hidden="true"></i>Tool catalog</a></li>
-                        <li><a href="https://github.com/pnnl-int/nepa-mcp-server/issues" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-bug mr-2" aria-hidden="true"></i>Report an issue</a></li>
-                        <li><a href="https://github.com/pnnl-int/nepa-mcp-server/blob/main/LICENSE" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-scale-balanced mr-2" aria-hidden="true"></i>BSD 3-Clause License</a></li>
+                        <li><a href="https://github.com/pnnl-int/nepa-mcp-server/blob/main/SUPPORT.md" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-life-ring mr-2" aria-hidden="true"></i>Support</a></li>
+                        <li><a href="https://github.com/pnnl-int/nepa-mcp-server/blob/main/SECURITY.md" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-shield-halved mr-2" aria-hidden="true"></i>Security</a></li>
+                        <li class="inline-flex items-center text-slate-400"><i class="fas fa-scale-balanced mr-2" aria-hidden="true"></i><a href="https://github.com/pnnl-int/nepa-mcp-server/blob/main/LICENSE" class="hover:text-white transition-colors"><span data-license-name>BSD 2-Clause</span> License</a><span class="mx-1.5 text-slate-600" aria-hidden="true">·</span><a href="https://github.com/pnnl-int/nepa-mcp-server/blob/main/NOTICE" class="hover:text-white transition-colors">Notice</a></li>
                     </ul>
                 </div>
 
@@ -573,12 +595,20 @@ codex plugin add nepa-mcp@nepa-mcp-local</code></pre>
                     <p class="text-slate-400 text-xs">
                         <a href="https://github.com/pnnl-int/nepa-mcp-server/blob/main/CITATION.cff" class="underline decoration-slate-600 hover:decoration-slate-300">Cite this work</a>
                     </p>
+                    <details id="privacy" class="max-w-2xl mx-auto pt-2 text-xs text-slate-400">
+                        <summary class="inline-block cursor-pointer underline decoration-slate-600 hover:decoration-slate-300">Privacy &amp; analytics</summary>
+                        <p class="mt-3 leading-relaxed">
+                            This site uses Google Analytics 4 to measure aggregate page visits and interactions. Google may process device, browser, approximate-location, and usage information under its
+                            <a href="https://policies.google.com/privacy" class="underline decoration-slate-600 hover:decoration-slate-300">Privacy Policy</a>.
+                            The site has no account or project-data submission form.
+                        </p>
+                    </details>
                 </div>
             </div>
         </div>
     </footer>
 
-    <script src="assets/js/site-data.js?v=10"></script>
-    <script src="assets/js/site.js?v=10"></script>
+    <script src="assets/js/site-data.js?v=11"></script>
+    <script src="assets/js/site.js?v=11"></script>
 </body>
 </html>

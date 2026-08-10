@@ -119,7 +119,11 @@ class TestSpeciesRangesTool:
             }
         )
         result = asyncio.run(
-            _call(module, "get_noaa_all_species_ranges_in_roi", {"latitude": 46.5, "longitude": -120.5, "buffer_miles": 25})
+            _call(
+                module,
+                "get_noaa_all_species_ranges_in_roi",
+                {"latitude": 46.5, "longitude": -120.5, "buffer_miles": 25},
+            )
         )
         text = _text(result)
         assert "NOAA ESA-Listed Species Ranges" in text
@@ -128,7 +132,9 @@ class TestSpeciesRangesTool:
     def test_empty_is_graceful(self):
         module = _load_server()
         _install_mock_query({})
-        result = asyncio.run(_call(module, "get_noaa_all_species_ranges_in_roi", {"latitude": 46.5, "longitude": -120.5}))
+        result = asyncio.run(
+            _call(module, "get_noaa_all_species_ranges_in_roi", {"latitude": 46.5, "longitude": -120.5})
+        )
         assert "No NOAA ESA-listed species ranges found within the ROI." in _text(result)
 
 
@@ -149,11 +155,7 @@ class TestCriticalHabitatTool:
     def test_line_length_is_legacy_labeled(self):
         module = _load_server()
         _install_mock_query(
-            {
-                "lines": [
-                    {"attributes": {"LISTENTITY": "Test salmon DPS", "UNIT": "River", "Shape__Length": 1.0}}
-                ]
-            }
+            {"lines": [{"attributes": {"LISTENTITY": "Test salmon DPS", "UNIT": "River", "Shape__Length": 1.0}}]}
         )
         result = asyncio.run(
             _call(module, "get_noaa_critical_habitat_20210904_in_roi", {"latitude": 46.5, "longitude": -120.5})
@@ -180,7 +182,9 @@ class TestEFHTool:
                 ]
             }
         )
-        result = asyncio.run(_call(module, "get_atlantic_salmon_efh_hapc_in_roi", {"latitude": 44.8, "longitude": -68.8}))
+        result = asyncio.run(
+            _call(module, "get_atlantic_salmon_efh_hapc_in_roi", {"latitude": 44.8, "longitude": -68.8})
+        )
         text = _text(result)
         assert "Essential Fish Habitat" in text
         assert "Penobscot River" in text

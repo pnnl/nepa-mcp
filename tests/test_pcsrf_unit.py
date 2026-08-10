@@ -147,9 +147,7 @@ class TestCriticalHabitatDedupClip:
         api = _load_pcsrf_api()
         feature = _ch_poly_feature()
         one = api._deduplicate_ch_fragments([feature], "polygon", roi_geometry=SIMPLE_GEOMETRY)[0]
-        duplicate = api._deduplicate_ch_fragments(
-            [feature, feature], "polygon", roi_geometry=SIMPLE_GEOMETRY
-        )[0]
+        duplicate = api._deduplicate_ch_fragments([feature, feature], "polygon", roi_geometry=SIMPLE_GEOMETRY)[0]
 
         assert one["area_status"] == "ok"
         assert one["area_complete"] is True
@@ -226,9 +224,7 @@ class TestCriticalHabitatEndToEnd:
             monkeypatch,
             {
                 "polygons": [_ch_poly_feature(unit="Poly Unit")],
-                "lines": [
-                    {"attributes": {"LISTENTITY": "Test salmon DPS", "UNIT": "River", "Shape__Length": 1.0}}
-                ],
+                "lines": [{"attributes": {"LISTENTITY": "Test salmon DPS", "UNIT": "River", "Shape__Length": 1.0}}],
             },
         )
         result = api.get_critical_habitat_in_roi(46.5, -120.5, 25.0)

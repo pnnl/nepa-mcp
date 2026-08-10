@@ -16,17 +16,6 @@ var GITHUB_BLOB = 'https://github.com/pnnl-int/nepa-mcp-server/blob/main/';
    Static page content
    ============================================ */
 
-// The four surfaces this repository ships: .mcp.json (Claude Code),
-// .vscode/mcp.json (VS Code), config.template.toml (Codex), and
-// plugins/nepa-mcp (Codex plugin). Mirrors the README's "Works with" badges.
-var MCP_CLIENTS = [
-    { name: 'Claude Code', url: 'https://claude.com/product/claude-code', image: 'claude.png' },
-    { name: 'VS Code', url: 'https://code.visualstudio.com', image: 'vscode.png' },
-    { name: 'Codex', url: 'https://github.com/openai/codex', image: 'openai.svg' },
-    // Same product, different surface — an overlay badge keeps the two apart.
-    { name: 'Codex Desktop', url: '#codex-plugin', image: 'openai.svg', badge: 'fa-puzzle-piece' }
-];
-
 var FEATURE_CARDS = [
     {
         icon: 'fa-shield-halved',
@@ -408,38 +397,16 @@ function copyCode(e, elementId) {
    Static component rendering
    ============================================ */
 
-function renderMcpClients() {
-    var container = document.getElementById('mcp-clients');
-    if (!container) {
+function renderReleaseMetadata() {
+    if (!DATA || !DATA.release) {
         return;
     }
-    MCP_CLIENTS.forEach(function (client) {
-        var link = el('a', 'mcp-client-item');
-        link.href = client.url;
-        link.title = client.name;
-        // In-page anchors should not carry external-link semantics.
-        if (client.url.charAt(0) !== '#') {
-            link.rel = 'noopener';
-        }
 
-        var logo = el('div', 'mcp-client-logo');
-        var img = el('img');
-        img.src = 'assets/images/logos/' + client.image;
-        img.alt = client.name;
-        img.loading = 'lazy';
-        logo.appendChild(img);
-
-        if (client.badge) {
-            var badge = el('span', 'mcp-client-badge');
-            var badgeIcon = el('i', 'fas ' + client.badge);
-            badgeIcon.setAttribute('aria-hidden', 'true');
-            badge.appendChild(badgeIcon);
-            logo.appendChild(badge);
-        }
-
-        link.appendChild(logo);
-        link.appendChild(el('span', 'mcp-client-name', client.name));
-        container.appendChild(link);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-release-version]'), function (node) {
+        node.textContent = DATA.release.version;
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-license-name]'), function (node) {
+        node.textContent = DATA.release.licenseName;
     });
 }
 
@@ -526,6 +493,12 @@ function renderClientConfigs() {
         }
 
         panels.appendChild(panel);
+    });
+
+    Array.prototype.forEach.call(document.querySelectorAll('[data-client-target]'), function (link) {
+        link.addEventListener('click', function () {
+            select(link.dataset.clientTarget);
+        });
     });
 }
 
@@ -1474,7 +1447,7 @@ function init() {
         console.error('site-data.js did not load; regenerate it with scripts/generate_site_data.py');
     }
 
-    renderMcpClients();
+    renderReleaseMetadata();
     renderFeatureCards();
     renderClientConfigs();
     renderTransformRows();

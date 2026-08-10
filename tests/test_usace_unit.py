@@ -163,11 +163,7 @@ class TestWetlandSubregions:
         _patch_query(
             api,
             monkeypatch,
-            {
-                "Wetland Subregions": [
-                    {"attributes": {"ADS_SUB_NM": "Sub A", "ADS_REGSUP": "AW", "MLRARSYM": "42B"}}
-                ]
-            },
+            {"Wetland Subregions": [{"attributes": {"ADS_SUB_NM": "Sub A", "ADS_REGSUP": "AW", "MLRARSYM": "42B"}}]},
         )
         result = api.get_wetland_subregions_in_roi(34.5, -106.5)
         sub = result["subregions"][0]

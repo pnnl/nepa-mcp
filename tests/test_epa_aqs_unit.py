@@ -244,9 +244,7 @@ class TestFormatters:
                 "num_monitors": 1,
             }
         }
-        out = api.format_air_quality_summary(
-            [{"parameter_code": "88101"}], compliance, 34.5, -106.5, 25.0, 2024, 2024
-        )
+        out = api.format_air_quality_summary([{"parameter_code": "88101"}], compliance, 34.5, -106.5, 25.0, 2024, 2024)
         assert "Air Quality Baseline Assessment" in out
         assert "above selected standard value" in out.lower()
         assert "Pollutants above selected annual NAAQS value**: 1" in out

@@ -62,9 +62,7 @@ class _FakeResponse:
 
 def _patch_geometry(api, monkeypatch):
     monkeypatch.setattr(api.ArcGISService, "create_roi_buffer", lambda *_a, **_k: SIMPLE_GEOMETRY)
-    monkeypatch.setattr(
-        api.ArcGISService, "simplify_polygon_geometry", lambda *_a, **_k: SIMPLE_GEOMETRY
-    )
+    monkeypatch.setattr(api.ArcGISService, "simplify_polygon_geometry", lambda *_a, **_k: SIMPLE_GEOMETRY)
 
 
 class TestUpstreamRequestFailure:
@@ -99,9 +97,7 @@ class TestUpstreamRequestFailure:
     def test_http_error_status_is_wrapped(self, monkeypatch):
         api = _load_ipac_api()
         _patch_geometry(api, monkeypatch)
-        monkeypatch.setattr(
-            api.requests, "post", lambda *_a, **_k: _FakeResponse({}, status_code=500)
-        )
+        monkeypatch.setattr(api.requests, "post", lambda *_a, **_k: _FakeResponse({}, status_code=500))
         with pytest.raises(Exception) as exc:
             api.get_ipac_resources_in_roi(34.5, -106.5)
         assert "IPaC API request failed" in str(exc.value)
@@ -112,9 +108,7 @@ class TestMalformedPayload:
         api = _load_ipac_api()
         _patch_geometry(api, monkeypatch)
         # No "resources" key -> resources is None -> ValueError -> wrapped.
-        monkeypatch.setattr(
-            api.requests, "post", lambda *_a, **_k: _FakeResponse({"other": 1})
-        )
+        monkeypatch.setattr(api.requests, "post", lambda *_a, **_k: _FakeResponse({"other": 1}))
         with pytest.raises(Exception) as exc:
             api.get_ipac_resources_in_roi(34.5, -106.5)
         assert "Error parsing IPaC response" in str(exc.value)
@@ -122,9 +116,7 @@ class TestMalformedPayload:
     def test_resources_not_a_dict_raises(self, monkeypatch):
         api = _load_ipac_api()
         _patch_geometry(api, monkeypatch)
-        monkeypatch.setattr(
-            api.requests, "post", lambda *_a, **_k: _FakeResponse({"resources": []})
-        )
+        monkeypatch.setattr(api.requests, "post", lambda *_a, **_k: _FakeResponse({"resources": []}))
         with pytest.raises(Exception) as exc:
             api.get_ipac_resources_in_roi(34.5, -106.5)
         assert "Error parsing IPaC response" in str(exc.value)
@@ -146,9 +138,7 @@ class TestDegradedButUsable:
     def test_empty_resources_object_is_not_an_error(self, monkeypatch):
         api = _load_ipac_api()
         _patch_geometry(api, monkeypatch)
-        monkeypatch.setattr(
-            api.requests, "post", lambda *_a, **_k: _FakeResponse({"resources": {}})
-        )
+        monkeypatch.setattr(api.requests, "post", lambda *_a, **_k: _FakeResponse({"resources": {}}))
         result = api.get_ipac_resources_in_roi(34.5, -106.5)
         assert result["species_count"] == 0
         assert result["migbirds_count"] == 0

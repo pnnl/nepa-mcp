@@ -25,9 +25,7 @@ def _load_roi_api():
     server_dir = ROOT / "gis"
     sys.path.insert(0, str(server_dir))
     try:
-        spec = importlib.util.spec_from_file_location(
-            "_gis_perf_api", server_dir / "src" / "apis" / "roi_api.py"
-        )
+        spec = importlib.util.spec_from_file_location("_gis_perf_api", server_dir / "src" / "apis" / "roi_api.py")
         assert spec is not None and spec.loader is not None
         module = importlib.util.module_from_spec(spec)
         sys.modules["_gis_perf_api"] = module

@@ -29,9 +29,7 @@ def _load_gbif_api():
             sys.modules.pop(module_name, None)
     sys.path.insert(0, str(SERVER_DIR))
     try:
-        spec = importlib.util.spec_from_file_location(
-            "_gbif_perf_api", SERVER_DIR / "src" / "apis" / "gbif_api.py"
-        )
+        spec = importlib.util.spec_from_file_location("_gbif_perf_api", SERVER_DIR / "src" / "apis" / "gbif_api.py")
         assert spec is not None and spec.loader is not None
         module = importlib.util.module_from_spec(spec)
         sys.modules["_gbif_perf_api"] = module

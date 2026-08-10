@@ -14,8 +14,8 @@ registry. Before uploading project code:
 4. Confirm that the distribution contains no credentials or internal-only files.
 
 TestPyPI package names and versions are global and immutable. If
-`nepa-mcp==0.1.0` is uploaded, those files cannot be replaced. Publish a new
-version such as `0.1.1` or `0.1.0.post1` after making changes. If the
+`nepa-mcp==0.1.0rc1` is uploaded, those files cannot be replaced. Publish a new
+release candidate such as `0.1.0rc2` after making changes. If the
 `nepa-mcp` distribution name is unavailable, the distribution can use another
 name such as `nepa-mcp-toolkit` while retaining the `nepa-mcp` console command.
 
@@ -40,11 +40,11 @@ uv build
 ls -lh dist/
 ```
 
-Expected artifacts for version `0.1.0`:
+Expected artifacts for version `0.1.0rc1`:
 
 ```text
-dist/nepa_mcp-0.1.0-py3-none-any.whl
-dist/nepa_mcp-0.1.0.tar.gz
+dist/nepa_mcp-0.1.0rc1-py3-none-any.whl
+dist/nepa_mcp-0.1.0rc1.tar.gz
 ```
 
 Run the normal verification before publishing:
@@ -91,7 +91,7 @@ unset TEST_PYPI_TOKEN
 The project page should be available at:
 
 ```text
-https://test.pypi.org/project/nepa-mcp/0.1.0/
+https://test.pypi.org/project/nepa-mcp/0.1.0rc1/
 ```
 
 ## Test the published package
@@ -106,7 +106,7 @@ uv pip install \
   --python /tmp/nepa-testpypi/bin/python \
   --index-url https://test.pypi.org/simple/ \
   --extra-index-url https://pypi.org/simple/ \
-  nepa-mcp==0.1.0
+  nepa-mcp==0.1.0rc1
 
 /tmp/nepa-testpypi/bin/nepa-mcp --version
 /tmp/nepa-testpypi/bin/nepa-mcp list-servers

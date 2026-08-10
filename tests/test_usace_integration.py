@@ -94,7 +94,9 @@ class TestRegulatoryDistrictTool:
             module,
             {"Regulatory Boundary": [{"attributes": {"ERO_FORMALNAME": "Albuquerque District", "DIST_ABBR": "SPA"}}]},
         )
-        result = asyncio.run(_call(module, "get_usace_regulatory_district", {"latitude": 34.5, "longitude": -106.5, "buffer_miles": 25}))
+        result = asyncio.run(
+            _call(module, "get_usace_regulatory_district", {"latitude": 34.5, "longitude": -106.5, "buffer_miles": 25})
+        )
         text = _text(result)
         assert "USACE Regulatory Districts" in text
         assert "Albuquerque District" in text
@@ -144,4 +146,8 @@ class TestInputValidationThroughTool:
     def test_zero_buffer_is_rejected(self):
         module = _load_server()
         with pytest.raises(Exception):
-            asyncio.run(_call(module, "get_usace_regulatory_district", {"latitude": 34.5, "longitude": -106.5, "buffer_miles": 0}))
+            asyncio.run(
+                _call(
+                    module, "get_usace_regulatory_district", {"latitude": 34.5, "longitude": -106.5, "buffer_miles": 0}
+                )
+            )

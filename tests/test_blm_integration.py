@@ -103,9 +103,7 @@ class TestLandUsePlansTool:
     def test_empty_result_is_graceful(self, monkeypatch):
         module = _load_server()
         _install_mock_query(module, {})
-        result = asyncio.run(
-            _call(module, "get_blm_land_use_plans_in_roi", {"latitude": 38.5, "longitude": -111.5})
-        )
+        result = asyncio.run(_call(module, "get_blm_land_use_plans_in_roi", {"latitude": 38.5, "longitude": -111.5}))
         assert "No BLM land use plans found in the ROI." in _text(result)
 
 
@@ -116,9 +114,7 @@ class TestWildernessTool:
             module,
             {"wilderness": [{"attributes": {"NLCS_NAME": "Paria Canyon Wilderness", "ADMIN_ST": "AZ"}}]},
         )
-        result = asyncio.run(
-            _call(module, "get_blm_wilderness_areas_in_roi", {"latitude": 38.5, "longitude": -111.5})
-        )
+        result = asyncio.run(_call(module, "get_blm_wilderness_areas_in_roi", {"latitude": 38.5, "longitude": -111.5}))
         text = _text(result)
         assert "Paria Canyon Wilderness" in text
         assert "Wilderness Act of 1964" in text

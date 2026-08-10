@@ -1,4 +1,4 @@
-"""Generate the documentation site's data file from live server contracts."""
+"""Generate site metadata and inventory data from project and server sources."""
 
 from __future__ import annotations
 
@@ -7,6 +7,7 @@ import asyncio
 import json
 import logging
 import sys
+import tomllib
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Sequence
@@ -235,8 +236,18 @@ def build_site_data() -> dict[str, Any]:
 
     _verify(servers, tools, map_composer)
 
+    project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]
+    license_id = str(project["license"])
+
     return {
-        "generatedFrom": "nepa_mcp.registry plus each server's live MCP tools/list contract",
+        "generatedFrom": "pyproject.toml, nepa_mcp.registry, and each server's live MCP tools/list contract",
+        "release": {
+            "version": str(project["version"]),
+            "license": license_id,
+            "licenseName": license_id.replace("-", " ", 1),
+            "description": str(project["description"]),
+            "repository": str(project["urls"]["Repository"]),
+        },
         "counts": {
             "servers": len(servers),
             "tools": len(tools),
@@ -301,8 +312,8 @@ def render_site_data() -> str:
         "/**\n"
         " * NEPA MCP Toolkit - site data\n"
         " *\n"
-        " * Generated from the server registry and each server's live MCP tools/list\n"
-        " * contract. Do not edit manually. Regenerate with\n"
+        " * Generated from project metadata, the server registry, and each server's\n"
+        " * live MCP tools/list contract. Do not edit manually. Regenerate with\n"
         " * `uv run python scripts/generate_site_data.py`; add `--check` to verify.\n"
         " */\n"
         "\n"

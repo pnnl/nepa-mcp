@@ -10,6 +10,7 @@ venv/
 .ruff_cache/
 .pytest_cache/
 .playwright-cli/
+.playwright-mcp/
 .mypy_cache/
 .coverage
 coverage.xml

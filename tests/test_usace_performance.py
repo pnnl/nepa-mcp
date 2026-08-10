@@ -30,9 +30,7 @@ def _load_usace_api():
     server_dir = ROOT / "usace"
     sys.path.insert(0, str(server_dir))
     try:
-        spec = importlib.util.spec_from_file_location(
-            "_usace_perf_api", server_dir / "src" / "apis" / "usace_api.py"
-        )
+        spec = importlib.util.spec_from_file_location("_usace_perf_api", server_dir / "src" / "apis" / "usace_api.py")
         assert spec is not None and spec.loader is not None
         module = importlib.util.module_from_spec(spec)
         sys.modules["_usace_perf_api"] = module
@@ -76,9 +74,7 @@ class TestDeduplicationScaling:
     def test_many_subregions_dedup(self, monkeypatch):
         api = _load_usace_api()
         _patch_roi(api, monkeypatch)
-        features = [
-            {"attributes": {"ADS_SUB_NM": f"Sub {i % 10}", "ADS_REGSUP": "AW"}} for i in range(1000)
-        ]
+        features = [{"attributes": {"ADS_SUB_NM": f"Sub {i % 10}", "ADS_REGSUP": "AW"}} for i in range(1000)]
         _patch_features(api, monkeypatch, features)
         result = api.get_wetland_subregions_in_roi(34.5, -106.5)
         assert result["total_subregions"] == 10

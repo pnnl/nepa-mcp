@@ -30,9 +30,7 @@ def _load_padus_api():
     server_dir = ROOT / "padus"
     sys.path.insert(0, str(server_dir))
     try:
-        spec = importlib.util.spec_from_file_location(
-            "_padus_perf_api", server_dir / "src" / "apis" / "padus_api.py"
-        )
+        spec = importlib.util.spec_from_file_location("_padus_perf_api", server_dir / "src" / "apis" / "padus_api.py")
         assert spec is not None and spec.loader is not None
         module = importlib.util.module_from_spec(spec)
         sys.modules["_padus_perf_api"] = module
@@ -58,10 +56,7 @@ class TestParsingThroughput:
     def test_large_feature_set_parses_quickly(self, monkeypatch):
         api = _load_padus_api()
         _patch_roi(api, monkeypatch)
-        features = [
-            {"attributes": {"Own_Type": "FED", "Own_Name": f"Owner {i}", "GIS_Acres": i}}
-            for i in range(5000)
-        ]
+        features = [{"attributes": {"Own_Type": "FED", "Own_Name": f"Owner {i}", "GIS_Acres": i}} for i in range(5000)]
         _patch_features(api, monkeypatch, features)
         start = time.perf_counter()
         result = api.get_padus_in_roi(34.5, -106.5)
@@ -74,8 +69,7 @@ class TestParsingThroughput:
         api = _load_padus_api()
         _patch_roi(api, monkeypatch)
         features = [
-            {"attributes": {"Own_Type": f"T{i % 20}", "Own_Name": f"Owner {i}", "GIS_Acres": i}}
-            for i in range(5000)
+            {"attributes": {"Own_Type": f"T{i % 20}", "Own_Name": f"Owner {i}", "GIS_Acres": i}} for i in range(5000)
         ]
         _patch_features(api, monkeypatch, features)
         data = api.get_padus_in_roi(34.5, -106.5)

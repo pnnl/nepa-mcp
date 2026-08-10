@@ -6,6 +6,7 @@ import os
 import stat
 import subprocess
 import sys
+import tomllib
 from pathlib import Path
 
 from fastmcp import Client
@@ -39,6 +40,40 @@ EXPECTED_SERVERS = {
     "tribal",
     "usace",
 }
+EXPECTED_AUTHORS = [
+    "Sarthak Chaturvedi",
+    "Renuka Chintalapati",
+    "Sai Munikoti",
+    "Sameera Horawalavithana",
+]
+CANONICAL_REPOSITORY = "https://github.com/pnnl-int/nepa-mcp-server"
+
+
+def test_public_package_metadata_matches_the_approved_release_identity() -> None:
+    configuration = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    project = configuration["project"]
+    citation = (ROOT / "CITATION.cff").read_text(encoding="utf-8")
+    license_text = (ROOT / "LICENSE").read_text(encoding="utf-8")
+    notice_text = (ROOT / "NOTICE").read_text(encoding="utf-8")
+
+    assert project["version"] == "0.1.0rc1"
+    assert project["description"] == (
+        "MCP servers for federal environmental data, regulatory research, and geospatial screening"
+    )
+    assert [author["name"] for author in project["authors"]] == EXPECTED_AUTHORS
+    assert project["urls"]["Homepage"] == CANONICAL_REPOSITORY
+    assert project["urls"]["Repository"] == CANONICAL_REPOSITORY
+    assert project["urls"]["Issues"] == f"{CANONICAL_REPOSITORY}/issues"
+    assert project["license"] == "BSD-2-Clause"
+    assert project["license-files"] == ["LICENSE", "NOTICE"]
+    sdist_include = configuration["tool"]["hatch"]["build"]["targets"]["sdist"]["include"]
+    assert "/SECURITY.md" in sdist_include
+    assert f'repository-code: "{CANONICAL_REPOSITORY}"' in citation
+    assert "license: BSD-2-Clause" in citation
+    assert "BSD-3-Clause" not in citation
+    assert "under Contract DE-AC05-76RL01830" not in license_text
+    assert "under Contract DE-AC05-76RL01830" in notice_text
+    assert "Copyright Battelle Memorial Institute 2026" in license_text
 
 
 def test_registry_matches_the_public_server_inventory() -> None:

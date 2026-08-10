@@ -84,9 +84,7 @@ class TestUpstreamQueryFailure:
             if "Hawaiian Home Lands" in (service_name or ""):
                 raise RuntimeError("HHL layer down")
             if "Federal American Indian Reservations" in (service_name or ""):
-                return ArcGISFeatureQueryResult(
-                    features=[{"attributes": {"NAME": "Fed Res"}}], warnings=[]
-                )
+                return ArcGISFeatureQueryResult(features=[{"attributes": {"NAME": "Fed Res"}}], warnings=[])
             return ArcGISFeatureQueryResult(features=[], warnings=[])
 
         monkeypatch.setattr(api.ArcGISService, "query_features", query_features)
