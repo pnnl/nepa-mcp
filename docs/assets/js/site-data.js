@@ -11,8 +11,8 @@ var SITE_DATA = {
   "generatedFrom": "pyproject.toml, nepa_mcp.registry, and each server's live MCP tools/list contract",
   "release": {
     "version": "0.1.0rc1",
-    "license": "BSD-2-Clause",
-    "licenseName": "BSD 2-Clause",
+    "license": "BSD-3-Clause",
+    "licenseName": "BSD 3-Clause",
     "description": "MCP servers for federal environmental data, regulatory research, and geospatial screening",
     "repository": "https://github.com/pnnl-int/nepa-mcp-server"
   },
