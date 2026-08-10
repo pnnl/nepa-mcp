@@ -8,7 +8,7 @@ version = "0.1.0rc1"
 description = "MCP servers for federal environmental data, regulatory research, and geospatial screening"
 readme = "README.md"
 requires-python = ">=3.12"
-license = "BSD-2-Clause"
+license = "BSD-3-Clause"
 license-files = ["LICENSE", "NOTICE"]
 authors = [
     { name = "Sarthak Chaturvedi" },

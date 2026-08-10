@@ -64,16 +64,17 @@ def test_public_package_metadata_matches_the_approved_release_identity() -> None
     assert project["urls"]["Homepage"] == CANONICAL_REPOSITORY
     assert project["urls"]["Repository"] == CANONICAL_REPOSITORY
     assert project["urls"]["Issues"] == f"{CANONICAL_REPOSITORY}/issues"
-    assert project["license"] == "BSD-2-Clause"
+    assert project["license"] == "BSD-3-Clause"
     assert project["license-files"] == ["LICENSE", "NOTICE"]
     sdist_include = configuration["tool"]["hatch"]["build"]["targets"]["sdist"]["include"]
     assert "/SECURITY.md" in sdist_include
     assert f'repository-code: "{CANONICAL_REPOSITORY}"' in citation
-    assert "license: BSD-2-Clause" in citation
-    assert "BSD-3-Clause" not in citation
+    assert "license: BSD-3-Clause" in citation
+    assert "BSD-2-Clause" not in citation
     assert "under Contract DE-AC05-76RL01830" not in license_text
     assert "under Contract DE-AC05-76RL01830" in notice_text
     assert "Copyright Battelle Memorial Institute 2026" in license_text
+    assert "Neither the name of the copyright holder nor the names of its contributors" in license_text
 
 
 def test_registry_matches_the_public_server_inventory() -> None:

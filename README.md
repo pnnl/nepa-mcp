@@ -21,7 +21,7 @@
   <a href="https://gofastmcp.com/"><img alt="FastMCP 3.4.4" src="https://img.shields.io/badge/FastMCP-3.4.4-009688?style=flat-square" height="20"></a>
   <a href="https://docs.pydantic.dev/"><img alt="Pydantic 2.12+" src="https://img.shields.io/badge/Pydantic-2.12%2B-E92063?style=flat-square&amp;logo=pydantic&amp;logoColor=white" height="20"></a>
   <a href="https://shapely.readthedocs.io/"><img alt="Shapely 2.0+" src="https://img.shields.io/badge/Shapely-2.0%2B-2F6F3E?style=flat-square" height="20"></a>
-  <a href="https://github.com/pnnl-int/nepa-mcp-server/blob/main/LICENSE"><img alt="BSD 2-Clause License" src="https://img.shields.io/badge/License-BSD_2--Clause-F4B942?style=flat-square" height="20"></a>
+  <a href="https://github.com/pnnl-int/nepa-mcp-server/blob/main/LICENSE"><img alt="BSD 3-Clause License" src="https://img.shields.io/badge/License-BSD_3--Clause-F4B942?style=flat-square" height="20"></a>
   </p>
 
 </div>
@@ -292,21 +292,26 @@ issue-reporting guidance. Current repository-governance roles are listed in
 
 ## Acknowledgments
 
-Mike Parker and Daniel Nally provided NEPA subject-matter expertise during
-development. Tracy Fuentes provided NEPA subject-matter expertise during
-evaluation of the IPaC MCP server.
+[Mike Parker](https://www.pnnl.gov/people/mike-parker) and
+[Daniel Nally](https://www.pnnl.gov/people/dan-nally) provided NEPA
+subject-matter expertise during development.
+[Tracy Fuentes](https://www.pnnl.gov/people/tracy-fuentes) provided NEPA
+subject-matter expertise during evaluation of the IPaC MCP server.
 
-Anastasia Bernat provided GIS consultation during development.
+[Anastasia Bernat](https://www.pnnl.gov/people/anastasia-bernat) provided GIS
+consultation during development.
 
-Weili Xu provided consultation on plugin integration and MCP distribution.
+[Weili Xu](https://www.pnnl.gov/people/weili-xu) provided consultation on
+plugin integration and MCP distribution.
 
-Scott Spare, Derek Lilienthal, and David Kocen provided consultation on MCP
-deployment pathways and repository release hygiene.
+Scott Spare, [Derek Lilienthal](https://www.pnnl.gov/people/derek-lilienthal),
+and David Kocen provided consultation on MCP deployment pathways and repository
+release hygiene.
 
 ## License
 
 The repository's source code is available under the
-[BSD 2-Clause License](https://github.com/pnnl-int/nepa-mcp-server/blob/main/LICENSE). The accompanying [PNNL/DOE notice](https://github.com/pnnl-int/nepa-mcp-server/blob/main/NOTICE)
+[BSD 3-Clause License](https://github.com/pnnl-int/nepa-mcp-server/blob/main/LICENSE). The accompanying [PNNL/DOE notice](https://github.com/pnnl-int/nepa-mcp-server/blob/main/NOTICE)
 contains the sponsorship, warranty, endorsement, and views disclaimer.
 
 ## Citation
@@ -323,6 +328,6 @@ or cite it as:
   institution  = {Pacific Northwest National Laboratory},
   url          = {https://github.com/pnnl-int/nepa-mcp-server},
   version      = {0.1.0rc1},
-  license      = {BSD-2-Clause}
+  license      = {BSD-3-Clause}
 }
 ```

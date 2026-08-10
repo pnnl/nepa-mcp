@@ -13,4 +13,4 @@ authors:
     given-names: Sameera
 version: 0.1.0rc1
 repository-code: "https://github.com/pnnl-int/nepa-mcp-server"
-license: BSD-2-Clause
+license: BSD-3-Clause
