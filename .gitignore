@@ -38,6 +38,7 @@ handoffs/
 # Local outputs
 output/
 tmp/
+docs/expansion.html
 
 # Internal review and working documents
 EIDR/
