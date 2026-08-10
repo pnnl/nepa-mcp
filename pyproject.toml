@@ -13,6 +13,8 @@ license-files = ["LICENSE", "NOTICE"]
 authors = [
     { name = "Sarthak Chaturvedi" },
     { name = "Renuka Chintalapati" },
+    { name = "Daniel Nally" },
+    { name = "Mike Parker" },
     { name = "Sai Munikoti" },
     { name = "Sameera Horawalavithana" },
 ]

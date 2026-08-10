@@ -292,21 +292,17 @@ issue-reporting guidance. Current repository-governance roles are listed in
 
 ## Acknowledgments
 
-[Mike Parker](https://www.pnnl.gov/people/mike-parker) and
-[Daniel Nally](https://www.pnnl.gov/people/dan-nally) provided NEPA
-subject-matter expertise during development.
-[Tracy Fuentes](https://www.pnnl.gov/people/tracy-fuentes) provided NEPA
-subject-matter expertise during evaluation of the IPaC MCP server.
-
-[Anastasia Bernat](https://www.pnnl.gov/people/anastasia-bernat) provided GIS
+The authors acknowledge
+[Tracy Fuentes](https://www.pnnl.gov/people/tracy-fuentes) for NEPA
+subject-matter expertise during evaluation of the IPaC MCP server;
+[Weili Xu](https://www.pnnl.gov/people/weili-xu) for consultation on plugin
+integration and MCP distribution;
+[Scott Spare](https://www.linkedin.com/in/scottspare/),
+[Derek Lilienthal](https://www.pnnl.gov/people/derek-lilienthal), and
+[David Kocen](https://www.linkedin.com/in/david-kocen/) for consultation on MCP
+deployment pathways and repository release hygiene; and
+[Anastasia Bernat](https://www.pnnl.gov/people/anastasia-bernat) for GIS
 consultation during development.
-
-[Weili Xu](https://www.pnnl.gov/people/weili-xu) provided consultation on
-plugin integration and MCP distribution.
-
-Scott Spare, [Derek Lilienthal](https://www.pnnl.gov/people/derek-lilienthal),
-and David Kocen provided consultation on MCP deployment pathways and repository
-release hygiene.
 
 ## License
 
@@ -322,7 +318,7 @@ or cite it as:
 
 ```bibtex
 @software{nepa_mcp,
-  author       = {Chaturvedi, Sarthak and Chintalapati, Renuka and Munikoti, Sai and Horawalavithana, Sameera},
+  author       = {Chaturvedi, Sarthak and Chintalapati, Renuka and Nally, Daniel and Parker, Mike and Munikoti, Sai and Horawalavithana, Sameera},
   title        = {PermitAI NEPA MCP Toolkit: Federal Environmental Data, Regulatory Research, and Geospatial Screening},
   year         = {2026},
   institution  = {Pacific Northwest National Laboratory},

@@ -43,6 +43,8 @@ EXPECTED_SERVERS = {
 EXPECTED_AUTHORS = [
     "Sarthak Chaturvedi",
     "Renuka Chintalapati",
+    "Daniel Nally",
+    "Mike Parker",
     "Sai Munikoti",
     "Sameera Horawalavithana",
 ]
