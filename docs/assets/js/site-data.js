@@ -1,14 +1,21 @@
 /**
  * NEPA MCP Toolkit - site data
  *
- * Generated from the server registry and each server's live MCP tools/list
- * contract. Do not edit manually. Regenerate with
+ * Generated from project metadata, the server registry, and each server's
+ * live MCP tools/list contract. Do not edit manually. Regenerate with
  * `uv run python scripts/generate_site_data.py`; add `--check` to verify.
  */
 
 /* eslint-disable */
 var SITE_DATA = {
-  "generatedFrom": "nepa_mcp.registry plus each server's live MCP tools/list contract",
+  "generatedFrom": "pyproject.toml, nepa_mcp.registry, and each server's live MCP tools/list contract",
+  "release": {
+    "version": "0.1.0rc1",
+    "license": "BSD-2-Clause",
+    "licenseName": "BSD 2-Clause",
+    "description": "MCP servers for federal environmental data, regulatory research, and geospatial screening",
+    "repository": "https://github.com/pnnl-int/nepa-mcp-server"
+  },
   "counts": {
     "servers": 19,
     "tools": 46,
