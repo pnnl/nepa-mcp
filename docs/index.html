@@ -91,6 +91,10 @@
                     <a href="#tools" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap">Tools</a>
                     <a href="#layers" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap">Layers</a>
                     <a href="#documentation" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap">Docs</a>
+                    <!-- Cross-page link, so it sits apart from the in-page anchors. -->
+                    <a href="vision.html" class="text-sm font-medium text-teal-700 hover:text-teal-800 transition-colors whitespace-nowrap inline-flex items-center gap-1.5 border-l border-slate-200 pl-5 lg:pl-7">
+                        <i class="fas fa-cube text-xs" aria-hidden="true"></i>Vision
+                    </a>
                 </div>
             </div>
         </div>
@@ -104,6 +108,7 @@
                 <a href="#tools" class="hover:text-teal-700 transition-colors">Tools</a>
                 <a href="#layers" class="hover:text-teal-700 transition-colors">Layers</a>
                 <a href="#documentation" class="hover:text-teal-700 transition-colors">Docs</a>
+                <a href="vision.html" class="text-teal-700 font-semibold">Vision</a>
             </div>
         </div>
     </nav>
@@ -514,6 +519,15 @@ codex plugin add nepa-mcp@nepa-mcp-local</code></pre>
                         <p class="text-xs font-semibold text-teal-700 uppercase tracking-wider mb-2">Open-source project</p>
                         <h3 class="text-xl font-semibold text-ink mb-2">Contribute &amp; Support</h3>
                         <p class="text-sm text-slate-600 leading-relaxed">Development guidance, support boundaries, and community standards are maintained alongside the code.</p>
+                        <!-- Where the project is going, next to how to join it. -->
+                        <a href="vision.html" class="group mt-4 inline-flex items-start gap-3 rounded-xl border border-teal-200 bg-white/70 px-4 py-3 text-left transition-all hover:border-teal-400 hover:bg-white hover:shadow-md">
+                            <i class="fas fa-cube text-teal-600 mt-0.5" aria-hidden="true"></i>
+                            <span>
+                                <span class="block text-sm font-semibold text-ink">Vision</span>
+                                <span class="block text-xs text-slate-500 mt-0.5">Where this goes next: coverage across statute, jurisdiction, and project sector.</span>
+                            </span>
+                            <i class="fas fa-arrow-right text-xs text-teal-600 mt-1 transition-transform group-hover:translate-x-0.5" aria-hidden="true"></i>
+                        </a>
                     </div>
                     <nav class="flex flex-wrap gap-2" aria-label="Project governance and support">
                         <a href="https://github.com/pnnl-int/nepa-mcp-server/blob/main/CONTRIBUTING.md" class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:border-teal-300 hover:text-teal-800 transition-colors"><i class="fas fa-code-branch text-teal-600" aria-hidden="true"></i>Contribution Guide</a>
@@ -591,7 +605,7 @@ codex plugin add nepa-mcp@nepa-mcp-local</code></pre>
                 </div>
 
                 <div class="text-center space-y-2">
-                    <p class="text-slate-300 text-sm">Maintainer: Sarthak Chaturvedi · Contributor: Renuka Chintalapati</p>
+                    <p class="text-slate-300 text-sm"><span>Maintained by Sarthak Chaturvedi</span><span class="hidden sm:inline" aria-hidden="true"> · </span><span class="block sm:inline">Contributor: Renuka Chintalapati</span></p>
                     <details id="citation" class="max-w-3xl mx-auto pt-1 text-xs text-slate-400">
                         <summary class="inline-block cursor-pointer underline decoration-slate-600 hover:decoration-slate-300">Cite this work</summary>
                         <div class="mt-4 rounded-xl border border-teal-900/60 bg-slate-950/30 p-5 text-left shadow-inner">

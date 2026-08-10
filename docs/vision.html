@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y5M8MW8HSM"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-Y5M8MW8HSM');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Permitting Coverage | NEPA MCP Toolkit</title>
+    <meta name="description" content="Permitting is not limited to NEPA. Where the NEPA MCP Toolkit's coverage can extend along three axes: statutory framework, jurisdiction, and project sector.">
+
+    <meta property="og:title" content="Permitting Coverage | NEPA MCP Toolkit">
+    <meta property="og:description" content="NEPA at the federal level for energy infrastructure is one cell. Three axes out: statutory framework, jurisdiction, and project sector.">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <link rel="icon" href="assets/images/logos/project-logo.png">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?v=3.4.17"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Crimson+Pro:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="assets/css/site.css?v=11">
+
+<style>
+/* ============================================================
+   Permitting coverage: axonometric diagram
+   Geometry and camera live here; palette and type come from
+   site.css so the page reads as part of the toolkit site.
+   ============================================================ */
+
+/* Registered so the orbit angles interpolate, and so the labels can read the
+   live value off .vol to counter-rotate and stay camera-facing. */
+@property --rx { syntax:'<angle>'; inherits:true; initial-value:-20deg }
+@property --ry { syntax:'<angle>'; inherits:true; initial-value:26deg }
+@property --sx { syntax:'<number>'; inherits:false; initial-value:1 }
+@property --sy { syntax:'<number>'; inherits:false; initial-value:1 }
+@property --sz { syntax:'<number>'; inherits:false; initial-value:1 }
+
+.volume{
+    /* Lattice geometry: 6 statutes x 4 jurisdictions x 4 sectors.
+       The cell proportions carry the drawing's read, so they are fixed here and
+       the tick type is sized to fit them (see .lbl) rather than the reverse:
+       widening --cx to clear a long label stretches the whole volume. */
+    --cx:74px; --cy:42px; --cz:74px;
+    --nx:6;    --ny:4;    --nz:4;
+    --W:calc(var(--cx) * var(--nx));
+    --H:calc(var(--cy) * var(--ny));
+    --D:calc(var(--cz) * var(--nz));
+
+    --line:rgba(100,116,139,.34);
+    --line-soft:rgba(100,116,139,.19);
+    --ease:cubic-bezier(.16,1,.3,1);
+}
+
+.stage{
+    position:relative;
+    height:clamp(400px,42vw,580px);
+    perspective:2100px; perspective-origin:50% 42%;
+    touch-action:none; cursor:grab; overflow:hidden;
+}
+.stage:active{cursor:grabbing}
+.stage:focus-visible{outline:2px solid var(--brand-primary);outline-offset:-2px}
+
+.stage-in{
+    position:absolute;left:50%;top:50%;
+    /* --ox/--oy are measured in unscaled screen px, so they sit outside scale() */
+    transform:translate(calc(-50% + var(--ox,0px)),calc(-50% + var(--oy,0px))) scale(var(--fit,1));
+    transform-style:preserve-3d;
+}
+.vol{
+    position:relative;width:var(--W);height:var(--H);transform-style:preserve-3d;
+    --rx:-20deg;--ry:26deg;
+    transform:rotateX(var(--rx)) rotateY(var(--ry));
+    transition:--rx .9s var(--ease), --ry .9s var(--ease);
+}
+.stage.dragging .vol{transition:none}
+
+/* ---------- reference planes ---------- */
+.plane{position:absolute;transform-origin:0 0}
+.floor{
+    left:0;top:var(--H);width:var(--W);height:var(--D);
+    transform:translate3d(0,0,calc(-1 * var(--D))) rotateX(90deg);
+    background-color:rgba(var(--brand-primary-rgb),.04);
+    background-image:
+        repeating-linear-gradient(to right,var(--line) 0 1px,transparent 1px var(--cx)),
+        repeating-linear-gradient(to bottom,var(--line) 0 1px,transparent 1px var(--cz));
+    border-right:1px solid var(--line);border-top:1px solid var(--line);
+}
+.wall-left{
+    left:0;top:0;width:var(--D);height:var(--H);
+    transform:translate3d(0,0,calc(-1 * var(--D))) rotateY(-90deg);
+    background-color:rgba(15,23,42,.02);
+    background-image:
+        repeating-linear-gradient(to right,var(--line-soft) 0 1px,transparent 1px var(--cz)),
+        repeating-linear-gradient(to bottom,var(--line-soft) 0 1px,transparent 1px var(--cy));
+    border-top:1px solid var(--line-soft);
+}
+.wall-back{
+    left:0;top:0;width:var(--W);height:var(--H);
+    transform:translateZ(calc(-1 * var(--D)));
+    background-image:
+        repeating-linear-gradient(to right,var(--line-soft) 0 1px,transparent 1px var(--cx)),
+        repeating-linear-gradient(to bottom,var(--line-soft) 0 1px,transparent 1px var(--cy));
+    border-right:1px solid var(--line-soft);border-top:1px solid var(--line-soft);
+}
+
+/* ---------- boxes ---------- */
+.box{
+    position:absolute;left:0;top:0;width:var(--w);height:var(--h);
+    transform-style:preserve-3d;transform-origin:0 100% 0;
+    transform:
+        translate3d(var(--x,0px),calc(var(--H) - var(--y,0px) - var(--h)),calc(-1 * var(--z,0px)))
+        scale3d(var(--sx),var(--sy),var(--sz));
+}
+.box > i{position:absolute;left:0;top:0;display:block;transform-origin:0 0}
+.fr{width:var(--w);height:var(--h)}
+.bk{width:var(--w);height:var(--h);transform:translateZ(calc(-1 * var(--d)))}
+.tp{width:var(--w);height:var(--d);transform:rotateX(90deg) translateY(calc(-1 * var(--d)))}
+.bt{width:var(--w);height:var(--d);transform:translateY(var(--h)) rotateX(90deg) translateY(calc(-1 * var(--d)))}
+.lf{width:var(--d);height:var(--h);transform:translateZ(calc(-1 * var(--d))) rotateY(-90deg)}
+.rt{width:var(--d);height:var(--h);transform:translateX(var(--w)) translateZ(calc(-1 * var(--d))) rotateY(-90deg)}
+
+/* the addressable remainder */
+.wire{pointer-events:none}
+.wire > i{border:1px solid rgba(100,116,139,.4)}
+
+/* direction of travel */
+.slab{transition:opacity .45s ease,--sx .85s var(--ease),--sy .85s var(--ease),--sz .85s var(--ease)}
+.slab > i{
+    border:1px solid rgba(var(--brand-primary-rgb),.42);
+    background:rgba(var(--brand-primary-rgb),.06);
+}
+.slab > i.tp{background:rgba(var(--brand-primary-rgb),.12)}
+
+/* open sourced today */
+.today{transition:opacity .4s ease,--sx .6s cubic-bezier(.34,1.4,.5,1),--sy .6s cubic-bezier(.34,1.4,.5,1),--sz .6s cubic-bezier(.34,1.4,.5,1)}
+.today > i{background:var(--brand-primary);border:1px solid var(--brand-primary-darkest)}
+.today > i.fr{background:var(--brand-primary-dark)}
+.today > i.tp{background:#00a184;box-shadow:inset 0 0 0 3px var(--brand-accent)}
+
+/* ---------- camera-facing labels ----------
+   Each label sits at a 3D position inside .vol, then undoes the volume's
+   rotation so the type stays flat to the camera at any orbit angle. No
+   transition on --rx/--ry: the label inherits the value .vol is animating, so
+   it tracks the orbit exactly instead of lagging behind it. */
+.lbl{
+    position:absolute;left:0;top:0;width:0;height:0;
+    transform:translate3d(var(--lx),var(--ly),var(--lz)) rotateY(calc(-1 * var(--ry))) rotateX(calc(-1 * var(--rx)));
+    transform-style:preserve-3d;
+    transition:opacity .7s ease;
+}
+/* Sized to clear the longest statute tick ("NHPA §106") inside one --cx cell,
+   so the lattice keeps its proportions instead of widening to fit the type. */
+.lbl > span{
+    position:absolute;display:block;white-space:nowrap;
+    font-size:10px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;
+    color:#64748b;transition:color .3s;
+}
+.lbl.mid > span{transform:translate(-50%,0)}
+.lbl.right > span{transform:translate(-100%,-50%)}
+.lbl.left > span{transform:translate(0,-50%)}
+.lbl.on > span{color:var(--brand-primary-darker)}
+
+.axname > span{
+    font-size:11px;font-weight:700;letter-spacing:.16em;
+    color:#94a3b8;
+}
+.axname.on > span{color:var(--brand-primary)}
+
+/* origin tag, parked in the clear foreground with a leader measured in screen
+   space back to the cell it names */
+.tag > span{
+    font-size:10.5px;font-weight:500;letter-spacing:.1em;color:#334155;
+    background:#fff;padding:5px 10px;border-radius:9999px;
+    border:1px solid rgba(249,184,0,.85);box-shadow:0 1px 3px rgba(15,23,42,.07);
+}
+.tag > span b{color:var(--brand-primary-darker);font-weight:600}
+
+.leader{
+    position:absolute;left:0;top:0;height:1px;width:0;background:var(--brand-accent);
+    transform-origin:0 50%;pointer-events:none;opacity:0;transition:opacity .3s ease;
+}
+.leader::after{content:'';position:absolute;right:-2px;top:-2px;width:5px;height:5px;background:var(--brand-accent)}
+.stage.settled .leader{opacity:1}
+.stage.dragging .leader{opacity:0}
+
+/* ---------- legend + controls ---------- */
+.sw{width:15px;height:15px;flex:none;border:1px solid #94a3b8;border-radius:3px}
+.sw-today{background:var(--brand-primary);border-color:var(--brand-primary-darkest);box-shadow:inset 0 0 0 2px var(--brand-accent)}
+.sw-next{background:rgba(var(--brand-primary-rgb),.1);border-color:rgba(var(--brand-primary-rgb),.45)}
+.sw-open{border-color:rgba(100,116,139,.45);background:
+    repeating-linear-gradient(to right,rgba(100,116,139,.3) 0 1px,transparent 1px 5px),
+    repeating-linear-gradient(to bottom,rgba(100,116,139,.3) 0 1px,transparent 1px 5px)}
+
+/* ---------- assembly sequence ---------- */
+.stage .plane,.stage .wire,.stage .lbl{opacity:0}
+.stage .plane,.stage .wire{transition:opacity .7s ease}
+.today{--sx:0;--sy:0;--sz:0}
+.slab-x{--sx:0}
+.slab-y{--sy:0}
+.slab-z{--sz:0}
+.stage.play .floor{opacity:1;transition-delay:.05s}
+.stage.play .wall-left,.stage.play .wall-back{opacity:1;transition-delay:.18s}
+.stage.play .wire{opacity:1;transition-delay:2.1s}
+.stage.play .today{--sx:1;--sy:1;--sz:1;transition-delay:.5s}
+.stage.play .slab-x{--sx:1;transition-delay:.95s}
+.stage.play .slab-y{--sy:1;transition-delay:1.3s}
+.stage.play .slab-z{--sz:1;transition-delay:1.65s}
+.stage.play .lbl{opacity:1}
+.stage.play .tick-x{transition-delay:1.2s}
+.stage.play .tick-y{transition-delay:1.55s}
+.stage.play .tick-z{transition-delay:1.9s}
+.stage.play .tag{transition-delay:2.3s}
+
+/* axis isolation */
+.stage[data-focus] .slab{opacity:.13}
+.stage[data-focus="x"] .slab-x,
+.stage[data-focus="y"] .slab-y,
+.stage[data-focus="z"] .slab-z{opacity:1}
+.stage[data-focus="x"] .slab-x > i,
+.stage[data-focus="y"] .slab-y > i,
+.stage[data-focus="z"] .slab-z > i{
+    border-color:var(--brand-primary);
+    background:rgba(var(--brand-primary-rgb),.15);
+}
+
+/* Desktop is the target medium. Narrow viewports keep the shape and the axis
+   names but drop the tick runs, which cannot scale down and stay legible; the
+   axis captions below carry the same information. */
+@media (max-width:900px){
+    .volume{--cx:64px;--cy:38px;--cz:64px;--nx:3;--ny:3;--nz:3}
+    .stage{height:clamp(290px,58vw,360px)}
+    .lbl:not(.axname):not(.tag),.leader{display:none}
+}
+
+@media (prefers-reduced-motion:reduce){
+    .vol,.slab,.today,.lbl,.stage .plane,.stage .wire{transition:none !important}
+    .today,.slab-x,.slab-y,.slab-z{--sx:1;--sy:1;--sz:1}
+    .stage .plane,.stage .wire,.stage .lbl{opacity:1}
+}
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased">
+
+    <a href="#main-content" class="skip-to-content">Skip to main content</a>
+
+    <!-- Top banner -->
+    <div id="site-banner" class="bg-gradient-to-r from-slate-900 via-teal-900 to-slate-900 text-white text-center py-2.5 text-sm border-b border-slate-700">
+        <a href="https://github.com/pnnl-int/nepa-mcp-server/tree/main" class="hover:text-teal-300 transition-colors inline-flex items-center space-x-2">
+            <i class="fab fa-github" aria-hidden="true"></i>
+            <span>View Source Repository</span>
+        </a>
+    </div>
+
+    <!-- Header -->
+    <nav id="site-nav" class="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-slate-200/80 shadow-sm">
+        <div class="container mx-auto px-6 lg:px-8">
+            <div class="flex items-center gap-8 h-20">
+                <a href="index.html" class="inline-flex items-center gap-4 mr-auto">
+                    <img src="assets/images/logos/project-logo.png" alt="PermitAI" class="h-9 w-auto object-contain">
+                    <span class="block">
+                        <span class="flex items-center gap-2">
+                            <span class="text-xl font-semibold text-ink tracking-tight whitespace-nowrap">NEPA MCP</span>
+                            <span class="text-xs font-medium bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full whitespace-nowrap">+ Plugins</span>
+                        </span>
+                        <span class="block text-xs text-slate-500 font-light">Toolkit</span>
+                    </span>
+                </a>
+                <div class="hidden md:flex items-center gap-5 lg:gap-7">
+                    <a href="index.html#overview" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap">Overview</a>
+                    <a href="index.html#quick-start" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap">Quick&nbsp;Start</a>
+                    <a href="index.html#servers" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap">Servers</a>
+                    <a href="index.html#documentation" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap">Docs</a>
+                    <a href="vision.html" aria-current="page" class="text-sm font-semibold text-teal-700 whitespace-nowrap">Vision</a>
+                </div>
+            </div>
+        </div>
+        <div class="md:hidden border-t border-slate-200/80 overflow-x-auto">
+            <div class="flex items-center gap-5 px-6 py-3 whitespace-nowrap text-sm font-medium text-slate-600">
+                <a href="index.html#overview" class="hover:text-teal-700 transition-colors">Overview</a>
+                <a href="index.html#quick-start" class="hover:text-teal-700 transition-colors">Quick&nbsp;Start</a>
+                <a href="index.html#servers" class="hover:text-teal-700 transition-colors">Servers</a>
+                <a href="index.html#documentation" class="hover:text-teal-700 transition-colors">Docs</a>
+                <a href="vision.html" aria-current="page" class="text-teal-700 font-semibold">Vision</a>
+            </div>
+        </div>
+    </nav>
+
+    <main id="main-content">
+
+        <section class="hero-gradient pt-16 pb-14 lg:pt-20 lg:pb-16 px-6">
+            <div class="container mx-auto max-w-6xl">
+
+                <div class="text-center max-w-3xl mx-auto fade-in-up">
+                    <p class="text-xs text-teal-700 mb-4 font-semibold uppercase tracking-widest">Open-source vision</p>
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-light text-ink tracking-tight mb-5">
+                        Permitting <span class="font-semibold">Coverage</span>
+                    </h1>
+                    <p class="text-lg md:text-xl text-slate-600 font-light leading-relaxed">
+                        Today the toolkit answers NEPA questions, at the federal level, for energy
+                        infrastructure. That is one cell. Every tool takes a region of interest and
+                        returns cited records, so the same interface applies to other statutes, other
+                        jurisdictions, and other project types.
+                    </p>
+                </div>
+
+                <!-- The drawing -->
+                <div class="volume mt-12 lg:mt-14 fade-in-up delay-200">
+                    <div class="rounded-2xl border border-slate-200/80 bg-white shadow-sm overflow-hidden">
+
+                        <div class="flex items-center justify-between gap-4 px-5 md:px-7 py-4 border-b border-slate-100">
+                            <p class="text-xs font-semibold text-slate-500 uppercase tracking-widest">Axonometric projection, three axes</p>
+                            <p class="text-xs text-slate-400 uppercase tracking-widest hidden sm:block">
+                                <i class="fas fa-arrows-up-down-left-right mr-1.5" aria-hidden="true"></i>Drag to orbit
+                            </p>
+                        </div>
+
+                        <div class="stage px-2" id="stage" role="img" tabindex="0"
+                             aria-label="Axonometric diagram of the toolkit's permitting coverage. A single solid cell at the origin marks what is open sourced today: NEPA, at the federal level, for energy infrastructure. Three translucent slabs extrude from that cell along three axes. Statutory framework running right through ESA section 7, NHPA section 106, Clean Water Act section 404, Clean Air Act, and FLPMA; jurisdiction running up through Tribal, state, and regional and local; and project sector running back through minerals and mining, geothermal, and hydropower. A faint wireframe lattice enclosing them marks the ninety-six combinations this sketch draws.">
+                            <div class="stage-in" id="stageIn">
+                                <div class="vol" id="vol">
+
+                                    <div class="plane floor"></div>
+                                    <div class="plane wall-left"></div>
+                                    <div class="plane wall-back"></div>
+
+                                    <!-- addressable remainder -->
+                                    <div class="box wire" style="--w:var(--W);--h:var(--H);--d:var(--D);--x:0px;--y:0px;--z:0px">
+                                        <i class="fr"></i><i class="bk"></i><i class="tp"></i><i class="bt"></i><i class="lf"></i><i class="rt"></i>
+                                    </div>
+
+                                    <!-- direction of travel -->
+                                    <div class="box slab slab-x" style="--w:var(--W);--h:var(--cy);--d:var(--cz);--x:0px;--y:0px;--z:0px">
+                                        <i class="fr"></i><i class="bk"></i><i class="tp"></i><i class="bt"></i><i class="lf"></i><i class="rt"></i>
+                                    </div>
+                                    <div class="box slab slab-y" style="--w:var(--cx);--h:var(--H);--d:var(--cz);--x:0px;--y:0px;--z:0px">
+                                        <i class="fr"></i><i class="bk"></i><i class="tp"></i><i class="bt"></i><i class="lf"></i><i class="rt"></i>
+                                    </div>
+                                    <div class="box slab slab-z" style="--w:var(--cx);--h:var(--cy);--d:var(--D);--x:0px;--y:0px;--z:0px">
+                                        <i class="fr"></i><i class="bk"></i><i class="tp"></i><i class="bt"></i><i class="lf"></i><i class="rt"></i>
+                                    </div>
+
+                                    <!-- open sourced today -->
+                                    <div class="box today" style="--w:var(--cx);--h:var(--cy);--d:var(--cz);--x:0px;--y:0px;--z:0px">
+                                        <i class="fr"></i><i class="bk"></i><i class="tp"></i><i class="bt"></i><i class="lf"></i><i class="rt"></i>
+                                    </div>
+
+                                    <!-- X ticks: statutory framework, along the front-bottom edge -->
+                                    <div class="lbl mid tick-x" style="--lx:calc(0.5 * var(--cx));--ly:calc(var(--H) + 20px);--lz:0px"><span>NEPA</span></div>
+                                    <div class="lbl mid tick-x" style="--lx:calc(1.5 * var(--cx));--ly:calc(var(--H) + 20px);--lz:0px"><span>ESA &sect;7</span></div>
+                                    <div class="lbl mid tick-x" style="--lx:calc(2.5 * var(--cx));--ly:calc(var(--H) + 20px);--lz:0px"><span>NHPA &sect;106</span></div>
+                                    <div class="lbl mid tick-x" style="--lx:calc(3.5 * var(--cx));--ly:calc(var(--H) + 20px);--lz:0px"><span>CWA &sect;404</span></div>
+                                    <div class="lbl mid tick-x" style="--lx:calc(4.5 * var(--cx));--ly:calc(var(--H) + 20px);--lz:0px"><span>CAA NSR</span></div>
+                                    <div class="lbl mid tick-x" style="--lx:calc(5.5 * var(--cx));--ly:calc(var(--H) + 20px);--lz:0px"><span>FLPMA</span></div>
+                                    <!-- Axis names sit past the far end of their own tick run, not beside
+                                         it: under rotation a tick run climbs steeply across the screen, so
+                                         anything parked alongside it eventually collides. -->
+                                    <div class="lbl left tick-x axname ax-x" style="--lx:calc(var(--W) + 34px);--ly:calc(var(--H) + 30px);--lz:0px"><span>Statutory framework &nbsp;&rarr;</span></div>
+
+                                    <!-- Y ticks: jurisdiction, up the front-right edge -->
+                                    <div class="lbl left tick-y" style="--lx:calc(var(--W) + 18px);--ly:calc(var(--H) - 0.5 * var(--cy));--lz:0px"><span>Federal</span></div>
+                                    <div class="lbl left tick-y" style="--lx:calc(var(--W) + 18px);--ly:calc(var(--H) - 1.5 * var(--cy));--lz:0px"><span>Tribal</span></div>
+                                    <div class="lbl left tick-y" style="--lx:calc(var(--W) + 18px);--ly:calc(var(--H) - 2.5 * var(--cy));--lz:0px"><span>State</span></div>
+                                    <div class="lbl left tick-y" style="--lx:calc(var(--W) + 18px);--ly:calc(var(--H) - 3.5 * var(--cy));--lz:0px"><span>Regional &amp; local</span></div>
+                                    <div class="lbl left tick-y axname ax-y" style="--lx:calc(var(--W) + 18px);--ly:-8px;--lz:0px"><span>&uarr;&nbsp; Jurisdiction</span></div>
+
+                                    <!-- Z ticks: project sector, back along the left-bottom edge -->
+                                    <div class="lbl right tick-z" style="--lx:-26px;--ly:var(--H);--lz:calc(-0.5 * var(--cz))"><span>Energy</span></div>
+                                    <div class="lbl right tick-z" style="--lx:-26px;--ly:var(--H);--lz:calc(-1.5 * var(--cz))"><span>Minerals &amp; mining</span></div>
+                                    <div class="lbl right tick-z" style="--lx:-26px;--ly:var(--H);--lz:calc(-2.5 * var(--cz))"><span>Geothermal</span></div>
+                                    <div class="lbl right tick-z" style="--lx:-26px;--ly:var(--H);--lz:calc(-3.5 * var(--cz))"><span>Hydropower</span></div>
+                                    <div class="lbl right tick-z axname ax-z" style="--lx:-26px;--ly:var(--H);--lz:calc(-1 * var(--D) - 52px)"><span>Project sector &nbsp;&#8598;</span></div>
+
+                                    <!-- origin tag, parked in the open foreground below the lattice -->
+                                    <div class="lbl mid tag" id="tag" style="--lx:calc(0.5 * var(--cx));--ly:calc(var(--H) + 40px);--lz:calc(1.35 * var(--cz))">
+                                        <span>Open sourced: <b>NEPA &times; Federal &times; Energy</b></span>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="leader" id="leader" aria-hidden="true"></div>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-x-6 gap-y-3 px-5 md:px-7 py-4 border-t border-slate-100 bg-slate-50/60">
+                            <span class="flex items-center gap-2.5 text-xs font-medium text-slate-600 uppercase tracking-wider"><span class="sw sw-today"></span>Open sourced</span>
+                            <span class="flex items-center gap-2.5 text-xs font-medium text-slate-600 uppercase tracking-wider"><span class="sw sw-next"></span>Direction of travel</span>
+                            <span class="flex items-center gap-2.5 text-xs font-medium text-slate-600 uppercase tracking-wider"><span class="sw sw-open"></span>Addressable</span>
+                            <div class="flex flex-wrap gap-2 sm:ml-auto" role="group" aria-label="Isolate an axis">
+                                <button class="filter-chip" type="button" data-axis="x" aria-pressed="false">Statute</button>
+                                <button class="filter-chip" type="button" data-axis="y" aria-pressed="false">Jurisdiction</button>
+                                <button class="filter-chip" type="button" data-axis="z" aria-pressed="false">Sector</button>
+                                <button class="filter-chip" type="button" id="reset">Reset view</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Axis captions: the one thing the drawing cannot say on its own is what
+                         each direction means. Three lines, no section. -->
+                    <div class="grid md:grid-cols-3 gap-5 md:gap-7 mt-8 fade-in-up delay-300">
+                        <div>
+                            <p class="text-xs font-semibold text-teal-700 uppercase tracking-widest mb-2">
+                                <span class="mr-1.5" aria-hidden="true">&rarr;</span>Statutory framework
+                            </p>
+                            <p class="text-sm text-slate-600 leading-relaxed">
+                                A project rarely triggers NEPA alone. ESA, NHPA, the Clean Water Act, and
+                                the Clean Air Act often apply to the same project at the same time.
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold text-teal-700 uppercase tracking-widest mb-2">
+                                <span class="mr-1.5" aria-hidden="true">&uarr;</span>Jurisdiction
+                            </p>
+                            <p class="text-sm text-slate-600 leading-relaxed">
+                                Federal sources are covered today. States, Tribes, and regional bodies
+                                publish their own datasets, and a review has to account for those too.
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold text-teal-700 uppercase tracking-widest mb-2">
+                                <span class="mr-1.5" aria-hidden="true">&#8599;</span>Project sector
+                            </p>
+                            <p class="text-sm text-slate-600 leading-relaxed">
+                                Minerals and mining, geothermal, and hydropower each draw on datasets
+                                that an energy infrastructure review would not need.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mt-10 text-center">
+                        <p class="text-base md:text-lg text-slate-600 font-light max-w-2xl mx-auto leading-relaxed">
+                            The toolkit already covers 19 servers across 12 federal agencies. Each new
+                            dataset is a new adapter behind the same interface, and the code is public,
+                            so a state agency or research group can add its own data and contribute it
+                            back.
+                        </p>
+                        <div class="flex flex-wrap gap-4 justify-center mt-7">
+                            <a href="https://github.com/pnnl-int/nepa-mcp-server/blob/main/CONTRIBUTING.md" class="btn-premium text-white px-8 py-3.5 rounded-xl font-medium inline-flex items-center space-x-2">
+                                <i class="fas fa-code-branch text-sm" aria-hidden="true"></i>
+                                <span>Contribution Guide</span>
+                            </a>
+                            <a href="index.html#servers" class="bg-white text-ink px-8 py-3.5 rounded-xl font-medium border border-slate-300 hover:border-slate-400 transition-all hover:shadow-lg inline-flex items-center space-x-2">
+                                <i class="fas fa-server" aria-hidden="true"></i>
+                                <span>See what runs today</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer: the same three-column structure as index.html, minus the source
+         agency list, which belongs with the server inventory rather than here. -->
+    <footer class="bg-gradient-to-br from-slate-900 via-teal-950 to-slate-900 text-slate-300 py-14 px-6 border-t border-teal-900/50">
+        <div class="container mx-auto max-w-6xl">
+            <div class="grid md:grid-cols-3 gap-10 md:gap-12 mb-10">
+                <div class="text-left">
+                    <a href="index.html" class="inline-block mb-4">
+                        <img src="assets/images/logos/project-logo.png" alt="PermitAI" class="h-9 w-auto object-contain mb-3" loading="lazy">
+                        <span class="block text-lg font-semibold text-white">NEPA MCP Toolkit</span>
+                    </a>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Public federal data for AI-assisted NEPA screening and permitting research.
+                    </p>
+                </div>
+
+                <div class="md:text-center">
+                    <h4 class="text-white font-semibold mb-4">Explore</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="index.html" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-house mr-2" aria-hidden="true"></i>Toolkit overview</a></li>
+                        <li><a href="index.html#servers" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-server mr-2" aria-hidden="true"></i>Servers available today</a></li>
+                        <li><a href="index.html#documentation" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-book mr-2" aria-hidden="true"></i>Documentation</a></li>
+                        <li><a href="https://github.com/pnnl-int/nepa-mcp-server/blob/main/CONTRIBUTING.md" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-code-branch mr-2" aria-hidden="true"></i>Contribution guide</a></li>
+                    </ul>
+                </div>
+
+                <div class="md:text-right">
+                    <h4 class="text-white font-semibold mb-4">Source</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="https://github.com/pnnl-int/nepa-mcp-server/tree/main" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fab fa-github mr-2" aria-hidden="true"></i>Repository</a></li>
+                        <li><a href="https://github.com/pnnl-int/nepa-mcp-server/blob/main/SUPPORT.md" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-life-ring mr-2" aria-hidden="true"></i>Support</a></li>
+                        <li><a href="https://github.com/pnnl-int/nepa-mcp-server/blob/main/LICENSE" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-scale-balanced mr-2" aria-hidden="true"></i>BSD 3-Clause License</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- No sponsor or laboratory marks on this page: this coverage sketch is a
+                 maintainer's view of where the project could go, not work any sponsor
+                 has endorsed. Attribution is by name only. -->
+            <div class="border-t border-teal-900/30 pt-8 text-center">
+                <p class="text-slate-300 text-sm">Maintained by Sarthak Chaturvedi</p>
+            </div>
+        </div>
+    </footer>
+
+<script>
+(function () {
+    var stage = document.getElementById('stage');
+    var stageIn = document.getElementById('stageIn');
+    var vol = document.getElementById('vol');
+    var tag = document.getElementById('tag');
+    var leader = document.getElementById('leader');
+    if (!stage) return;
+
+    var HOME = { rx: -20, ry: 26 };
+    var view = { rx: HOME.rx, ry: HOME.ry };
+    var PAD = 14;
+
+    function apply() {
+        vol.style.setProperty('--rx', view.rx + 'deg');
+        vol.style.setProperty('--ry', view.ry + 'deg');
+    }
+
+    /* Fit by measurement rather than by assumed extents: the projected size of
+       the lattice plus its label aprons changes with the orbit angle, so read
+       the real union of every drawn element and solve for scale and offset.
+       Measuring at scale 1 keeps the arithmetic linear. */
+    function fit() {
+        var sw = stage.clientWidth, sh = stage.clientHeight;
+        if (!sw || !sh) return;
+
+        stageIn.style.setProperty('--fit', 1);
+        stageIn.style.setProperty('--ox', '0px');
+        stageIn.style.setProperty('--oy', '0px');
+
+        /* Measure the wireframe's six faces and each label's span, not their
+           parents: a preserve-3d element reports only its own projected box,
+           and .lbl is a zero-size anchor whose text lives in the child. */
+        var parts = vol.querySelectorAll('.wire > i, .lbl > span');
+        var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+        for (var i = 0; i < parts.length; i++) {
+            var r = parts[i].getBoundingClientRect();
+            if (!r.width && !r.height) continue;
+            if (r.left < minX) minX = r.left;
+            if (r.top < minY) minY = r.top;
+            if (r.right > maxX) maxX = r.right;
+            if (r.bottom > maxY) maxY = r.bottom;
+        }
+        if (minX === Infinity) return;
+
+        var box = stage.getBoundingClientRect();
+        var cx = box.left + sw / 2, cy = box.top + sh / 2;
+        var s = Math.min((sw - PAD * 2) / (maxX - minX), (sh - PAD * 2) / (maxY - minY));
+        s = Math.max(0.34, Math.min(1.06, s));
+
+        /* Re-centre on the scaled union: each edge's distance from the stage
+           centre scales by s, so the correction is the scaled midpoint offset. */
+        stageIn.style.setProperty('--fit', s);
+        stageIn.style.setProperty('--ox', -((minX + maxX) / 2 - cx) * s + 'px');
+        stageIn.style.setProperty('--oy', -((minY + maxY) / 2 - cy) * s + 'px');
+
+        drawLeader();
+    }
+
+    /* The view interpolates over ~0.9s, so redrawing only at the end would
+       leave the drawing mis-scaled for the whole transition. Track it per frame
+       instead, with a single loop no matter how many times this is called. */
+    var trackUntil = 0, tracking = false;
+    function track(ms) {
+        trackUntil = Math.max(trackUntil, performance.now() + ms);
+        if (tracking) return;
+        tracking = true;
+        (function step() {
+            fit();
+            if (performance.now() < trackUntil) requestAnimationFrame(step);
+            else tracking = false;
+        })();
+    }
+
+    /* Draw the leader in screen space, from the tag's top edge to the origin
+       cell's front-top edge, so it stays attached at any orbit angle. */
+    function drawLeader() {
+        if (!leader || !tag) return;
+        var cell = vol.querySelector('.today > i.tp');
+        var box = stage.getBoundingClientRect();
+        var t = tag.querySelector('span').getBoundingClientRect();
+        var c = cell.getBoundingClientRect();
+
+        var x1 = t.left + t.width / 2 - box.left, y1 = t.top - box.top;
+        var x2 = c.left + c.width / 2 - box.left, y2 = c.bottom - box.top;
+        var dx = x2 - x1, dy = y2 - y1;
+
+        leader.style.left = x1 + 'px';
+        leader.style.top = y1 + 'px';
+        leader.style.width = Math.sqrt(dx * dx + dy * dy) + 'px';
+        leader.style.transform = 'rotate(' + Math.atan2(dy, dx) + 'rad)';
+    }
+
+    apply();
+    /* The fit depends on measured label widths, so re-solve once the webfont
+       lands. Falls back to whatever metrics are available. */
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+    fit();
+    window.addEventListener('resize', fit);
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        drawLeader();
+        stage.classList.add('settled');
+    }
+
+    /* Assembly: origin cell first, then one slab per axis. */
+    requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+            stage.classList.add('play');
+            track(2700);
+            setTimeout(function () { drawLeader(); stage.classList.add('settled'); }, 2800);
+        });
+    });
+
+    /* ---- orbit ---- */
+    var drag = null;
+    stage.addEventListener('pointerdown', function (e) {
+        drag = { x: e.clientX, y: e.clientY, rx: view.rx, ry: view.ry };
+        stage.classList.add('dragging');
+        stage.setPointerCapture(e.pointerId);
+    });
+    stage.addEventListener('pointermove', function (e) {
+        if (!drag) return;
+        /* Clamped to the band swept for label collisions: shallower than -17deg
+           and the floor tick runs converge on each other, steeper than -40deg
+           and the front faces close up. */
+        view.ry = Math.max(14, Math.min(52, drag.ry + (e.clientX - drag.x) * 0.3));
+        view.rx = Math.max(-40, Math.min(-17, drag.rx - (e.clientY - drag.y) * 0.26));
+        apply();
+        /* Re-solve per move: the projected extents change with the angle, so a
+           stale scale would let the drawing overflow its frame mid-drag. */
+        fit();
+    });
+    function endDrag() {
+        if (!drag) return;
+        drag = null;
+        stage.classList.remove('dragging');
+        fit();
+    }
+    stage.addEventListener('pointerup', endDrag);
+    stage.addEventListener('pointercancel', endDrag);
+
+    stage.addEventListener('keydown', function (e) {
+        var step = e.shiftKey ? 12 : 5, hit = true;
+        if (e.key === 'ArrowLeft') view.ry = Math.max(14, view.ry - step);
+        else if (e.key === 'ArrowRight') view.ry = Math.min(52, view.ry + step);
+        else if (e.key === 'ArrowUp') view.rx = Math.max(-40, view.rx - step);
+        else if (e.key === 'ArrowDown') view.rx = Math.min(-17, view.rx + step);
+        else hit = false;
+        if (hit) { e.preventDefault(); apply(); track(1000); }
+    });
+
+    /* ---- axis isolation ---- */
+    var chips = [].slice.call(document.querySelectorAll('.filter-chip[data-axis]'));
+    var locked = null;
+
+    function paint(axis) {
+        if (axis) stage.setAttribute('data-focus', axis);
+        else stage.removeAttribute('data-focus');
+        ['x', 'y', 'z'].forEach(function (a) {
+            var on = axis === a;
+            vol.querySelectorAll('.tick-' + a).forEach(function (t) {
+                t.classList.toggle('on', on);
+            });
+        });
+    }
+    function hover(axis) { if (!locked) paint(axis); }
+
+    /* Hovering a chip previews its axis; clicking locks it. */
+    chips.forEach(function (chip) {
+        var axis = chip.getAttribute('data-axis');
+        chip.addEventListener('click', function () {
+            locked = locked === axis ? null : axis;
+            chips.forEach(function (c) {
+                c.setAttribute('aria-pressed', String(c.getAttribute('data-axis') === locked));
+            });
+            paint(locked);
+        });
+        chip.addEventListener('mouseenter', function () { hover(axis); });
+        chip.addEventListener('mouseleave', function () { hover(locked); });
+        chip.addEventListener('focus', function () { hover(axis); });
+        chip.addEventListener('blur', function () { hover(locked); });
+    });
+
+    document.getElementById('reset').addEventListener('click', function () {
+        view.rx = HOME.rx; view.ry = HOME.ry;
+        locked = null;
+        chips.forEach(function (c) { c.setAttribute('aria-pressed', 'false'); });
+        paint(null);
+        apply();
+        track(1000);
+    });
+})();
+</script>
+</body>
+</html>
