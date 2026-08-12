@@ -138,7 +138,7 @@ def cfr_resolve_citation(
 ) -> str:
     """Resolve a CFR citation (any depth) to its current verbatim text.
 
-    Accepts citations from "40 CFR 1502.14" through deep paragraph addressing
+    Accepts citations from "43 CFR 46.215" through deep paragraph addressing
     like "40 CFR 261.4(a)(20)(ii)(B)(1)". Returns the verbatim text at the
     addressed depth, the section heading, the ancestry breadcrumb, and any
     cross-references. When the addressed paragraph doesn't exist at `as_of`
@@ -146,7 +146,7 @@ def cfr_resolve_citation(
     `resolution_warning` field — never raises for navigation reasons.
 
     Args:
-        citation: Citation string. Examples: "40 CFR 1502.14",
+        citation: Citation string. Examples: "43 CFR 46.215",
             "33 CFR 328.3(a)", "40 CFR 261.4(a)(20)(ii)(B)(1)".
         as_of: YYYY-MM-DD; None = current (eCFR ~1 day lag).
         include_ancestry: Include the title->section breadcrumb (default True).
@@ -676,7 +676,7 @@ def cfr_rulemaking(
 
     When to use: discovering FR rulemaking activity by CFR location -- "what
     rules/notices touched this title/part over this window?" Returns a list.
-    To dereference a single FR citation you already have (e.g. "88 FR 3142"),
+    To dereference a single FR citation you already have (e.g. "90 FR 29498"),
     use cfr_resolve_fr_citation instead.
 
     Args:
@@ -893,7 +893,7 @@ def cfr_resolve_fr_citation(
     """Resolve a Federal Register citation to its source document and summary.
 
     CFR regulatory text routinely cites the Federal Register documents that
-    created or amended it (e.g. "88 FR 3142" in a section's source/authority
+    created or amended it (e.g. "90 FR 29498" in a section's source/authority
     line, surfaced as `fr_citations_in_text` by cfr_resolve_citation). This
     tool turns such a citation into the actual FR document: title, type, action,
     agencies, dates, and the FR `abstract` (the agency's own plain-language
@@ -906,8 +906,8 @@ def cfr_resolve_fr_citation(
     cfr_rulemaking.
 
     Args:
-        citation: Federal Register citation, e.g. "88 FR 3142" or
-            "88 Fed. Reg. 3142".
+        citation: Federal Register citation, e.g. "90 FR 29498" or
+            "90 Fed. Reg. 29498".
         include_body: Also inline the full document text from the GPO raw-text
             endpoint. Default False (returns compact metadata + abstract). Set
             True only when the full rule text is needed -- bodies can be large.

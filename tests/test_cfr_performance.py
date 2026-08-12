@@ -60,13 +60,13 @@ class TestVersionHistoryScaling:
         api = _load_cfr_api()
         _disable_cache(api, monkeypatch)
         events = [
-            {"date": f"2020-01-{(i % 28) + 1:02d}", "substantive": bool(i % 2), "identifier": "1502.14"}
+            {"date": f"2020-01-{(i % 28) + 1:02d}", "substantive": bool(i % 2), "identifier": "46.215"}
             for i in range(5000)
         ]
         monkeypatch.setattr(
             api.requests, "get", lambda *_a, **_k: _FakeResponse(json_data={"content_versions": events})
         )
-        cit = api.parse_cfr_citation("40 CFR 1502.14")
+        cit = api.parse_cfr_citation("43 CFR 46.215")
         start = time.perf_counter()
         subst = api.get_section_versions(cit, start_date="2020-01-01", end_date="2020-12-31", substantive_only=True)
         elapsed = time.perf_counter() - start
@@ -78,10 +78,10 @@ class TestSectionHTMLParsingThroughput:
     def test_deep_nested_html_parses_quickly(self, monkeypatch):
         api = _load_cfr_api()
         # Build a section with 1000 sibling paragraphs.
-        parts = ["<h4>&sect; 1502.14 Alternatives.</h4>"]
+        parts = ["<h4>&sect; 46.215 Categorical exclusions: Extraordinary circumstances.</h4>"]
         for i in range(1000):
             parts.append(
-                f'<div id="p-1502.14({i})"><p class="indent-1" data-title="1502.14({i})">Paragraph {i} text.</p></div>'
+                f'<div id="p-46.215({i})"><p class="indent-1" data-title="46.215({i})">Paragraph {i} text.</p></div>'
             )
         html = "\n".join(parts)
         start = time.perf_counter()
@@ -105,7 +105,7 @@ class TestCitationParsingThroughput:
         api = _load_cfr_api()
         start = time.perf_counter()
         for i in range(5000):
-            api.parse_cfr_citation(f"40 CFR {1500 + (i % 100)}.{i % 30}")
+            api.parse_cfr_citation(f"40 CFR {260 + (i % 100)}.{i % 30}")
         elapsed = time.perf_counter() - start
         assert elapsed < 2.0
 
@@ -113,13 +113,13 @@ class TestCitationParsingThroughput:
 class TestCorrelationScaling:
     def test_many_events_and_docs_correlate_bounded(self):
         api = _load_cfr_api()
-        events = [{"date": f"2023-{(i % 12) + 1:02d}-01", "title": 40, "part": 1502} for i in range(200)]
+        events = [{"date": f"2023-{(i % 12) + 1:02d}-01", "title": 43, "part": 46} for i in range(200)]
         docs = [
             {
                 "document_number": f"2023-{i:04d}",
                 "publication_date": f"2023-{(i % 12) + 1:02d}-01",
                 "type": "RULE",
-                "cfr_references": [{"title": 40, "part": 1502}],
+                "cfr_references": [{"title": 43, "part": 46}],
             }
             for i in range(200)
         ]

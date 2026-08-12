@@ -84,7 +84,7 @@ class TestUpstreamFailure:
             raise api.requests.exceptions.ConnectionError("dns fail")
 
         monkeypatch.setattr(api.requests, "get", boom)
-        cit = api.parse_cfr_citation("40 CFR 1502.14")
+        cit = api.parse_cfr_citation("43 CFR 46.215")
         with pytest.raises(api.CFRAPIError):
             api.get_section_versions(cit, start_date="2023-01-01", end_date="2023-12-31")
 
@@ -96,7 +96,7 @@ class TestUpstreamFailure:
             raise api.requests.exceptions.Timeout("timed out")
 
         monkeypatch.setattr(api.requests, "get", timeout)
-        cit = api.parse_cfr_citation("40 CFR 1502.14")
+        cit = api.parse_cfr_citation("43 CFR 46.215")
         with pytest.raises(api.CFRAPIError):
             api.get_section_versions(cit, start_date="2023-01-01", end_date="2023-12-31")
 
@@ -131,7 +131,7 @@ class TestRateLimitRetry:
             return _FakeResponse(json_data={"content_versions": [{"date": "2023-01-01", "substantive": True}]})
 
         monkeypatch.setattr(api.requests, "get", flaky)
-        cit = api.parse_cfr_citation("40 CFR 1502.14")
+        cit = api.parse_cfr_citation("43 CFR 46.215")
         events = api.get_section_versions(cit, start_date="2023-01-01", end_date="2023-12-31")
         assert len(events) == 1
         assert calls["n"] >= 2
@@ -148,7 +148,7 @@ class TestRateLimitRetry:
             return _FakeResponse(json_data={"content_versions": []})
 
         monkeypatch.setattr(api.requests, "get", flaky)
-        cit = api.parse_cfr_citation("40 CFR 1502.14")
+        cit = api.parse_cfr_citation("43 CFR 46.215")
         events = api.get_section_versions(cit, start_date="2023-01-01", end_date="2023-12-31")
         assert events == []
         assert calls["n"] >= 2
@@ -173,7 +173,7 @@ class TestMalformedPayloads:
         _disable_cache(api, monkeypatch)
         # extract_key='content_versions' absent -> default [].
         monkeypatch.setattr(api.requests, "get", lambda *_a, **_k: _FakeResponse(json_data={"unexpected": 1}))
-        cit = api.parse_cfr_citation("40 CFR 1502.14")
+        cit = api.parse_cfr_citation("43 CFR 46.215")
         events = api.get_section_versions(cit, start_date="2023-01-01", end_date="2023-12-31")
         assert events == []
 

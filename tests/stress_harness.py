@@ -57,12 +57,12 @@ CASES = {
 # Anything not listed falls back to the geo CASE args (filtered to the tool's schema).
 TOOL_ARG_OVERRIDES = {
     # cfr (non-geo)
-    "cfr_resolve_citation": {"citation": "40 CFR 1502.14"},
-    "cfr_browse_structure": {"citation": "40 CFR 1502"},
-    "cfr_history": {"citation": "40 CFR 1502.14"},
-    "cfr_compare_versions": {"citation": "40 CFR 1502.14", "date_a": "2020-01-01", "date_b": "2024-01-01"},
-    "cfr_rulemaking": {"cfr_title": 40, "cfr_part": 1502},
-    "cfr_resolve_fr_citation": {"citation": "88 FR 1"},
+    "cfr_resolve_citation": {"citation": "43 CFR 46.215"},
+    "cfr_browse_structure": {"title": 43, "part": 46},
+    "cfr_history": {"citation": "43 CFR 46.215"},
+    "cfr_compare_versions": {"citation": "43 CFR 46.215", "date_a": "2020-01-01", "date_b": "2024-01-01"},
+    "cfr_rulemaking": {"cfr_title": 43, "cfr_part": 46},
+    "cfr_resolve_fr_citation": {"citation": "90 FR 29498"},
     "cfr_resolve_executive_order": {"eo_number": 14008},
 }
 

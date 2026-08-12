@@ -91,7 +91,7 @@ class CFRCitation:
             self.paragraph_path = []
 
     def to_display(self) -> str:
-        """Format for display (e.g., '40 CFR 1500.1(a)(1)')."""
+        """Format for display (e.g., '43 CFR 46.205(c)(1)')."""
         if self.section:
             base = f"{self.title} CFR {self.part}.{self.section}"
             if self.paragraph_path:
@@ -107,14 +107,14 @@ def parse_cfr_citation(citation: str) -> CFRCitation:
     Parse a CFR citation string into structured components.
 
     Supports formats:
-    - "40 CFR 1500.1"
-    - "40 CFR § 1502.14"
-    - "40 CFR § 1502.14(a)"
-    - "40 C.F.R. Part 1500"
-    - "40 C.F.R. § 1500.1(a)(1)(ii)(B)(3)"   # arbitrary depth
-    - "Title 40, Part 1502, Section 14"
+    - "43 CFR 46.105"
+    - "43 CFR § 46.215"
+    - "43 CFR § 46.215(a)"
+    - "43 C.F.R. Part 46"
+    - "40 C.F.R. § 261.4(a)(20)(ii)(B)(1)"   # arbitrary depth
+    - "Title 43, Part 46, Section 215"
     - "title 50"                              # whole title (no part)
-    - "title 40 part 1502"
+    - "title 43 part 46"
 
     Paragraph levels are case-preserved in `paragraph_path`. The standalone
     `paragraph` field is set for backward compat to the joined string
@@ -131,7 +131,7 @@ def parse_cfr_citation(citation: str) -> CFRCitation:
     norm = re.sub(r"C\.F\.R\.", "CFR", norm, flags=re.IGNORECASE)
     norm = re.sub(r"\s+", " ", norm)
 
-    # ---- Pattern A: standard "40 CFR 1500.1(a)(1)..." ----
+    # ---- Pattern A: standard "43 CFR 46.205(c)(1)..." ----
     # Match the "title CFR (Part )?part(.section)?" head case-insensitively.
     head = re.match(
         r"\s*(\d+)\s*CFR\s*(?:PART\s*)?(\d+)(?:\.(\d+))?",
@@ -160,7 +160,7 @@ def parse_cfr_citation(citation: str) -> CFRCitation:
             raw=original,
         )
 
-    # ---- Pattern B: verbose "Title 40, Part 1502, Section 14" or "title 50" ----
+    # ---- Pattern B: verbose "Title 43, Part 46, Section 215" or "title 50" ----
     title_only = re.match(r"\s*TITLE\s*(\d+)\s*$", norm, re.IGNORECASE)
     if title_only:
         return CFRCitation(title=int(title_only.group(1)), raw=original)
@@ -180,7 +180,7 @@ def parse_cfr_citation(citation: str) -> CFRCitation:
 
     raise CFRCitationError(
         f"Cannot parse CFR citation: '{citation}'. "
-        "Expected format like '40 CFR 1500.1', '40 CFR Part 1500', "
+        "Expected format like '43 CFR 46.105', '43 CFR Part 46', "
         "'40 CFR 262.34(d)(5)(iv)(C)', or 'title 50'."
     )
 
@@ -1122,7 +1122,7 @@ def get_executive_order_document(
 # Federal Register volume N was published in year (1935 + N): vol 88 -> 2023.
 _FR_VOL_BASE_YEAR = 1935
 
-# "88 FR 3142" / "88 Fed. Reg. 3142" -> (volume, page).
+# "90 FR 29498" / "90 Fed. Reg. 29498" -> (volume, page).
 _FR_CITATION_RE = re.compile(
     r"(?P<volume>\d{1,3})\s*(?:FR|Fed\.?\s*Reg\.?)\s*(?P<page>\d{1,6})",
     re.IGNORECASE,
@@ -1132,8 +1132,8 @@ _FR_CITATION_RE = re.compile(
 def parse_fr_citation(citation: str) -> tuple[int, int]:
     """Parse a Federal Register citation into (volume, page).
 
-    Accepts "88 FR 3142", "88 Fed. Reg. 3142", and the data-reference form the
-    eCFR renderer emits ("88 FR 3142"). Raises CFRCitationError on malformed
+    Accepts "90 FR 29498", "90 Fed. Reg. 29498", and the data-reference form the
+    eCFR renderer emits ("90 FR 29498"). Raises CFRCitationError on malformed
     input.
     """
     if not citation:
@@ -1141,7 +1141,7 @@ def parse_fr_citation(citation: str) -> tuple[int, int]:
     m = _FR_CITATION_RE.search(citation)
     if not m:
         raise CFRCitationError(
-            f"Could not parse Federal Register citation '{citation}'. Expected a form like '88 FR 3142'."
+            f"Could not parse Federal Register citation '{citation}'. Expected a form like '90 FR 29498'."
         )
     return int(m.group("volume")), int(m.group("page"))
 

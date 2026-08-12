@@ -200,7 +200,8 @@ async def get_monitors_by_box(
         param_codes: List of parameter codes to query
 
     Returns:
-        List of monitor records (deduplicated)
+        List of monitor records (deduplicated by the AQS monitor identity:
+        state, county, site, parameter, and parameter occurrence code)
     """
     email, api_key = get_aqs_credentials()
     overall_start = time.time()
@@ -245,7 +246,13 @@ async def get_monitors_by_box(
             continue
 
         for monitor in result:
-            monitor_id = (monitor.get("state_code"), monitor.get("county_code"), monitor.get("site_number"))
+            monitor_id = (
+                monitor.get("state_code"),
+                monitor.get("county_code"),
+                monitor.get("site_number"),
+                monitor.get("parameter_code"),
+                monitor.get("poc"),
+            )
 
             if monitor_id not in monitor_ids:
                 monitor_ids.add(monitor_id)
@@ -482,6 +489,30 @@ def assess_naaqs_compliance(annual_data: List[Dict]) -> Dict[str, Dict]:
     return compliance
 
 
+def _monitor_pollutant_name(monitor: Dict) -> str:
+    """Return a display name from an AQS monitor record."""
+    name = monitor.get("parameter_name") or monitor.get("parameter")
+    if name:
+        return str(name)
+
+    parameter_code = str(monitor.get("parameter_code") or "")
+    return get_pollutant_name(parameter_code) if parameter_code else "Unknown"
+
+
+def _monitor_active_range(monitor: Dict) -> str:
+    """Format the operating period exposed by the AQS monitors endpoint."""
+    opened = monitor.get("open_date") or monitor.get("first_year_of_data")
+    closed = monitor.get("close_date") or monitor.get("last_year_of_data")
+
+    if opened and closed:
+        return f"{opened} - {closed}"
+    if opened:
+        return f"{opened} - Present"
+    if closed:
+        return f"Unknown - {closed}"
+    return "Unknown"
+
+
 def format_monitors_summary(monitors: List[Dict], lat: float, lon: float, buffer_miles: float) -> str:
     """
     Format monitor data as markdown summary.
@@ -510,7 +541,7 @@ def format_monitors_summary(monitors: List[Dict], lat: float, lon: float, buffer
     # Group by parameter
     by_param = {}
     for monitor in monitors:
-        param = monitor.get("parameter", "Unknown")
+        param = _monitor_pollutant_name(monitor)
         if param not in by_param:
             by_param[param] = []
         by_param[param].append(monitor)
@@ -521,10 +552,12 @@ def format_monitors_summary(monitors: List[Dict], lat: float, lon: float, buffer
         summary += f"**Count**: {len(mons)} monitors\n\n"
 
         for mon in mons[:5]:  # Show first 5
-            site_name = mon.get("local_site_name", "Unknown")
+            site_name = mon.get("local_site_name") or "Unknown"
             site_id = f"{mon.get('state_code', '')}-{mon.get('county_code', '')}-{mon.get('site_number', '')}"
-            years = f"{mon.get('first_year_of_data', '')} - {mon.get('last_year_of_data', '')}"
-            summary += f"- **{site_name}** (ID: {site_id}, Active: {years})\n"
+            poc = mon.get("poc")
+            poc_display = f", POC: {poc}" if poc is not None else ""
+            active_range = _monitor_active_range(mon)
+            summary += f"- **{site_name}** (ID: {site_id}{poc_display}, Active: {active_range})\n"
 
         if len(mons) > 5:
             summary += f"- ... and {len(mons) - 5} more\n"

@@ -199,13 +199,15 @@ class TestFormatters:
         out = api.format_monitors_summary(
             [
                 {
-                    "parameter": "PM2.5",
-                    "local_site_name": "Downtown",
-                    "state_code": "35",
-                    "county_code": "001",
-                    "site_number": "0001",
-                    "first_year_of_data": "2010",
-                    "last_year_of_data": "2024",
+                    "parameter_code": "44201",
+                    "parameter_name": "Ozone",
+                    "local_site_name": "Kennewick",
+                    "state_code": "53",
+                    "county_code": "005",
+                    "site_number": "0003",
+                    "poc": 1,
+                    "open_date": "2015-06-10",
+                    "close_date": None,
                 }
             ],
             34.5,
@@ -214,7 +216,31 @@ class TestFormatters:
         )
         assert "EPA Air Quality Monitors" in out
         assert "Total Monitors**: 1" in out
-        assert "Downtown" in out
+        assert "### Ozone" in out
+        assert "Kennewick" in out
+        assert "POC: 1" in out
+        assert "Active: 2015-06-10 - Present" in out
+        assert "Unknown" not in out
+
+    def test_monitors_summary_maps_parameter_code_when_name_is_absent(self):
+        api = _load_aqs_api()
+        out = api.format_monitors_summary(
+            [
+                {
+                    "parameter_code": "88101",
+                    "state_code": "53",
+                    "county_code": "005",
+                    "site_number": "0003",
+                    "first_year_of_data": "2010",
+                    "last_year_of_data": "2024",
+                }
+            ],
+            34.5,
+            -106.5,
+            25.0,
+        )
+        assert "### PM2.5" in out
+        assert "Active: 2010 - 2024" in out
 
     def test_monitors_summary_handles_empty(self):
         api = _load_aqs_api()
@@ -256,20 +282,95 @@ class TestFormatters:
 
 
 class TestAsyncBoxQueries:
-    def test_monitors_dedup_across_params(self, monkeypatch):
+    def test_monitors_preserve_pollutants_at_same_site(self, monkeypatch):
         api = _load_aqs_api()
         _set_creds(monkeypatch)
         monkeypatch.setattr(api, "RATE_LIMIT_SECONDS", 0.0)
 
-        monitor = {"state_code": "35", "county_code": "001", "site_number": "0001", "parameter": "PM2.5"}
-
-        def fake_sync(_endpoint, _params, max_retries=3):
-            return {"Data": [dict(monitor)]}
+        def fake_sync(_endpoint, params, max_retries=3):
+            parameter_code = params["param"]
+            return {
+                "Data": [
+                    {
+                        "state_code": "35",
+                        "county_code": "001",
+                        "site_number": "0001",
+                        "parameter_code": parameter_code,
+                        "parameter_name": {"88101": "PM2.5", "44201": "Ozone"}[parameter_code],
+                    }
+                ]
+            }
 
         monkeypatch.setattr(api, "_query_aqs_api_sync", fake_sync)
         bbox = {"minlat": 34.0, "maxlat": 35.0, "minlon": -107.0, "maxlon": -106.0}
-        monitors = asyncio.run(api.get_monitors_by_box(bbox, "20240101", "20241231", ["88101", "85101"]))
-        # Same site returned for both params -> deduplicated to one.
+        monitors = asyncio.run(api.get_monitors_by_box(bbox, "20240101", "20241231", ["88101", "44201"]))
+
+        assert len(monitors) == 2
+        assert {monitor["parameter_code"] for monitor in monitors} == {"88101", "44201"}
+
+        summary = api.format_monitors_summary(monitors, 34.5, -106.5, 25.0)
+        assert "### PM2.5" in summary
+        assert "### Ozone" in summary
+
+    def test_monitors_preserve_pocs_at_same_site_and_pollutant(self, monkeypatch):
+        api = _load_aqs_api()
+        _set_creds(monkeypatch)
+        monkeypatch.setattr(api, "RATE_LIMIT_SECONDS", 0.0)
+
+        def fake_sync(_endpoint, _params, max_retries=3):
+            return {
+                "Data": [
+                    {
+                        "state_code": "35",
+                        "county_code": "001",
+                        "site_number": "0001",
+                        "parameter_code": "88101",
+                        "parameter_name": "PM2.5",
+                        "poc": 1,
+                    },
+                    {
+                        "state_code": "35",
+                        "county_code": "001",
+                        "site_number": "0001",
+                        "parameter_code": "88101",
+                        "parameter_name": "PM2.5",
+                        "poc": 2,
+                    },
+                ]
+            }
+
+        monkeypatch.setattr(api, "_query_aqs_api_sync", fake_sync)
+        bbox = {"minlat": 34.0, "maxlat": 35.0, "minlon": -107.0, "maxlon": -106.0}
+        monitors = asyncio.run(api.get_monitors_by_box(bbox, "20240101", "20241231", ["88101"]))
+
+        assert len(monitors) == 2
+        assert {monitor["poc"] for monitor in monitors} == {1, 2}
+
+        summary = api.format_monitors_summary(monitors, 34.5, -106.5, 25.0)
+        assert "POC: 1" in summary
+        assert "POC: 2" in summary
+
+    def test_monitors_dedup_same_aqs_monitor(self, monkeypatch):
+        api = _load_aqs_api()
+        _set_creds(monkeypatch)
+        monkeypatch.setattr(api, "RATE_LIMIT_SECONDS", 0.0)
+
+        monitor = {
+            "state_code": "35",
+            "county_code": "001",
+            "site_number": "0001",
+            "parameter_code": "88101",
+            "parameter_name": "PM2.5",
+            "poc": 1,
+        }
+
+        def fake_sync(_endpoint, _params, max_retries=3):
+            return {"Data": [dict(monitor), dict(monitor)]}
+
+        monkeypatch.setattr(api, "_query_aqs_api_sync", fake_sync)
+        bbox = {"minlat": 34.0, "maxlat": 35.0, "minlon": -107.0, "maxlon": -106.0}
+        monitors = asyncio.run(api.get_monitors_by_box(bbox, "20240101", "20241231", ["88101"]))
+
         assert len(monitors) == 1
 
     def test_annual_data_aggregates_all_records(self, monkeypatch):

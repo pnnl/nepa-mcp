@@ -34,12 +34,15 @@ _TOOL_NAMES = {
 }
 
 SAMPLE_SECTION_HTML = """
-<h4 data-hierarchy-metadata='{"title":"40","part":"1502"}'>&sect; 1502.14 Alternatives.</h4>
-<p class="indent-0">This section is the heart of the environmental impact statement.</p>
-<div id="p-1502.14(a)">
-  <p class="indent-1" data-title="1502.14(a)">Evaluate reasonable alternatives.</p>
+<h4 data-hierarchy-metadata='{"title":"43","part":"46"}'>&sect; 46.205 Actions categorically excluded from further NEPA review.</h4>
+<p class="indent-0">Categorical Exclusion means a category of actions that a bureau has determined normally do not significantly affect the quality of the human environment.</p>
+<div id="p-46.205(c)">
+  <p class="indent-1" data-title="46.205(c)">DOI has provided for extraordinary circumstances in which a normally excluded action may have a significant environmental effect and require additional analysis.</p>
+  <div id="p-46.205(c)(1)">
+    <p class="indent-2" data-title="46.205(c)(1)">Any action that is normally categorically excluded must be evaluated to determine whether it meets any of the extraordinary circumstances in &sect; 46.215.</p>
+  </div>
 </div>
-<p class="citation">[<a class="fr-reference" href="https://x" data-reference="85 FR 43304">85 FR 43304</a>, July 16, 2020]</p>
+<p class="citation">[<a class="fr-reference" href="https://www.federalregister.gov/citation/91-FR-8758" data-reference="91 FR 8758">91 FR 8758</a>, Feb. 24, 2026]</p>
 """
 
 
@@ -66,9 +69,7 @@ def _router(url, params=None, timeout=None, **_kwargs):
     params = params or {}
     if "titles.json" in url:
         return _FakeResponse(
-            json_data={
-                "titles": [{"number": 40, "up_to_date_as_of": "2026-01-01", "name": "Protection of Environment"}]
-            }
+            json_data={"titles": [{"number": 43, "up_to_date_as_of": "2026-08-07", "name": "Public Lands: Interior"}]}
         )
     if "/renderer/" in url or "content/enhanced" in url:
         return _FakeResponse(text=SAMPLE_SECTION_HTML)
@@ -76,14 +77,14 @@ def _router(url, params=None, timeout=None, **_kwargs):
         return _FakeResponse(
             json_data={
                 "type": "title",
-                "identifier": "40",
-                "label": "Title 40",
+                "identifier": "43",
+                "label": "Title 43",
                 "children": [
                     {
                         "type": "chapter",
                         "identifier": "I",
                         "label": "Chapter I",
-                        "children": [{"type": "part", "identifier": "Part 1502", "label": "Part 1502", "children": []}],
+                        "children": [{"type": "part", "identifier": "Part 46", "label": "Part 46", "children": []}],
                     }
                 ],
             }
@@ -92,8 +93,8 @@ def _router(url, params=None, timeout=None, **_kwargs):
         return _FakeResponse(
             json_data={
                 "content_versions": [
-                    {"date": "2023-01-05", "substantive": True, "identifier": "1502.14", "part": 1502, "title": 40},
-                    {"date": "2023-06-01", "substantive": False, "identifier": "1502.14", "part": 1502, "title": 40},
+                    {"date": "2025-07-03", "substantive": True, "identifier": "46.215", "part": 46, "title": 43},
+                    {"date": "2026-02-24", "substantive": True, "identifier": "46.215", "part": 46, "title": 43},
                 ]
             }
         )
@@ -101,8 +102,8 @@ def _router(url, params=None, timeout=None, **_kwargs):
         return _FakeResponse(
             json_data={
                 "ancestors": [
-                    {"type": "title", "identifier": "40", "label": "Title 40"},
-                    {"type": "part", "identifier": "1502", "label": "Part 1502"},
+                    {"type": "title", "identifier": "43", "label": "Title 43"},
+                    {"type": "part", "identifier": "46", "label": "Part 46"},
                 ]
             }
         )
@@ -111,16 +112,16 @@ def _router(url, params=None, timeout=None, **_kwargs):
             json_data={
                 "results": [
                     {
-                        "document_number": "2023-0001",
-                        "title": "Update to NEPA Regulations",
+                        "document_number": "2025-12433",
+                        "title": "National Environmental Policy Act Implementing Regulations",
                         "type": "Rule",
-                        "abstract": "Amends alternatives analysis.",
-                        "publication_date": "2023-01-05",
-                        "effective_on": "2023-01-05",
-                        "citation": "88 FR 3142",
-                        "start_page": 3142,
-                        "end_page": 3160,
-                        "cfr_references": [{"title": 40, "part": 1502}],
+                        "abstract": "Partially rescinds and updates DOI's NEPA implementing regulations.",
+                        "publication_date": "2025-07-03",
+                        "effective_on": "2025-07-03",
+                        "citation": "90 FR 29498",
+                        "start_page": 29498,
+                        "end_page": 29507,
+                        "cfr_references": [{"title": 43, "part": 46}],
                         "executive_order_number": None,
                     }
                 ]
@@ -129,14 +130,14 @@ def _router(url, params=None, timeout=None, **_kwargs):
     if "/documents/" in url:  # single FR document
         return _FakeResponse(
             json_data={
-                "document_number": "2023-0001",
-                "title": "Update to NEPA Regulations",
+                "document_number": "2025-12433",
+                "title": "National Environmental Policy Act Implementing Regulations",
                 "type": "Rule",
-                "abstract": "Amends alternatives analysis.",
-                "publication_date": "2023-01-05",
-                "citation": "88 FR 3142",
-                "start_page": 3142,
-                "end_page": 3160,
+                "abstract": "Partially rescinds and updates DOI's NEPA implementing regulations.",
+                "publication_date": "2025-07-03",
+                "citation": "90 FR 29498",
+                "start_page": 29498,
+                "end_page": 29507,
             }
         )
     return _FakeResponse(json_data={})
@@ -212,11 +213,11 @@ class TestResolveCitationTool:
         module = _load_server()
         _install_mock_http()
         result = asyncio.run(
-            _call(module, "cfr_resolve_citation", {"citation": "40 CFR 1502.14(a)", "as_of": "2026-01-01"})
+            _call(module, "cfr_resolve_citation", {"citation": "43 CFR 46.205(c)(1)", "as_of": "2026-08-07"})
         )
         payload = _json_payload(result)
-        assert payload["citation"]["display"] == "40 CFR 1502.14(a)"
-        assert payload["addressed_node"]["citation"] == "1502.14(a)"
+        assert payload["citation"]["display"] == "43 CFR 46.205(c)(1)"
+        assert payload["addressed_node"]["citation"] == "46.205(c)(1)"
         assert payload["ancestry"], "ancestry should be populated from mocked API"
 
     def test_bad_citation_returns_error_envelope(self):
@@ -229,7 +230,7 @@ class TestResolveCitationTool:
     def test_part_only_citation_rejected_gracefully(self):
         module = _load_server()
         _install_mock_http()
-        result = asyncio.run(_call(module, "cfr_resolve_citation", {"citation": "40 CFR Part 1502"}))
+        result = asyncio.run(_call(module, "cfr_resolve_citation", {"citation": "43 CFR Part 46"}))
         payload = _json_payload(result)
         assert payload["error"] == "CFRCitationError"
         assert "section-level" in payload["message"]
@@ -247,18 +248,18 @@ class TestBrowseStructureTool:
     def test_title_tree_mode(self):
         module = _load_server()
         _install_mock_http()
-        result = asyncio.run(_call(module, "cfr_browse_structure", {"title": 40, "as_of": "2026-01-01"}))
+        result = asyncio.run(_call(module, "cfr_browse_structure", {"title": 43, "as_of": "2026-08-07"}))
         payload = _json_payload(result)
         assert payload["mode"] == "title_tree"
-        assert payload["root_node"]["identifier"] == "40"
+        assert payload["root_node"]["identifier"] == "43"
 
     def test_part_subtree_mode(self):
         module = _load_server()
         _install_mock_http()
-        result = asyncio.run(_call(module, "cfr_browse_structure", {"title": 40, "part": 1502, "as_of": "2026-01-01"}))
+        result = asyncio.run(_call(module, "cfr_browse_structure", {"title": 43, "part": 46, "as_of": "2026-08-07"}))
         payload = _json_payload(result)
         assert payload["mode"] == "part_subtree"
-        assert payload["root_node"]["identifier"] == "Part 1502"
+        assert payload["root_node"]["identifier"] == "Part 46"
 
 
 class TestHistoryTool:
@@ -269,14 +270,14 @@ class TestHistoryTool:
             _call(
                 module,
                 "cfr_history",
-                {"citation": "40 CFR 1502.14", "start_date": "2023-01-01", "end_date": "2023-12-31"},
+                {"citation": "43 CFR 46.215", "start_date": "2025-01-01", "end_date": "2026-12-31"},
             )
         )
         payload = _json_payload(result)
         assert payload["event_count"] == 2
-        assert payload["substantive_count"] == 1
+        assert payload["substantive_count"] == 2
 
-    def test_substantive_only_filters(self):
+    def test_substantive_only_preserves_current_substantive_events(self):
         module = _load_server()
         _install_mock_http()
         result = asyncio.run(
@@ -284,15 +285,15 @@ class TestHistoryTool:
                 module,
                 "cfr_history",
                 {
-                    "citation": "40 CFR 1502.14",
-                    "start_date": "2023-01-01",
-                    "end_date": "2023-12-31",
+                    "citation": "43 CFR 46.215",
+                    "start_date": "2025-01-01",
+                    "end_date": "2026-12-31",
                     "substantive_only": True,
                 },
             )
         )
         payload = _json_payload(result)
-        assert payload["event_count"] == 1
+        assert payload["event_count"] == 2
 
 
 class TestRulemakingTool:
@@ -303,12 +304,12 @@ class TestRulemakingTool:
             _call(
                 module,
                 "cfr_rulemaking",
-                {"cfr_title": 40, "cfr_part": 1502, "start_date": "2023-01-01", "end_date": "2023-12-31"},
+                {"cfr_title": 43, "cfr_part": 46, "start_date": "2025-01-01", "end_date": "2025-12-31"},
             )
         )
         payload = _json_payload(result)
         assert payload["document_count"] == 1
-        assert payload["documents"][0]["document_number"] == "2023-0001"
+        assert payload["documents"][0]["document_number"] == "2025-12433"
 
 
 class TestResolveFRCitationTool:

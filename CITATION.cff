@@ -5,16 +5,21 @@ type: software
 authors:
   - family-names: Chaturvedi
     given-names: Sarthak
+    website: "https://sarthakchat.github.io/"
   - family-names: Chintalapati
     given-names: Renuka
   - family-names: Nally
     given-names: Daniel
+    website: "https://www.pnnl.gov/people/dan-nally"
   - family-names: Parker
     given-names: Mike
+    website: "https://www.pnnl.gov/people/mike-parker"
   - family-names: Munikoti
     given-names: Sai
+    website: "https://www.pnnl.gov/people/sai-munikoti"
   - family-names: Horawalavithana
     given-names: Sameera
+    website: "https://www.pnnl.gov/people/sameera-horawalavithana"
 version: 0.1.0rc1
 repository-code: "https://github.com/pnnl-int/nepa-mcp-server"
 license: BSD-3-Clause
