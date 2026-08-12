@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y5M8MW8HSM"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-Y5M8MW8HSM');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spatial Context | NEPA MCP Toolkit</title>
+    <meta name="description" content="Thirty-two map overlays, one question each: does the project area intersect this layer? A section through the toolkit's spatial coverage across nine federal permitting resource areas.">
+
+    <meta property="og:title" content="Spatial Context | NEPA MCP Toolkit">
+    <meta property="og:description" content="A section through the toolkit's spatial coverage: 24 groups across nine bands, drawn, queryable, or still an outline.">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <link rel="icon" href="assets/images/logos/project-logo.png">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?v=3.4.17"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Crimson+Pro:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="assets/css/site.css?v=14">
+
+<style>
+/* ============================================================
+   Spatial context: one drawing, one projection.
+
+   The coverage sheet (vision.html) is axonometric and orbits. Repeating that
+   camera would read as decoration, so this sheet is a fixed-camera oblique
+   section through the map-layer stack.
+
+   Coverage is encoded as leaf count, not as fill or hatching: every group of
+   layers is its own leaf, so the reader can count what the toolkit holds and see
+   where the laminate thins to outlines. Palette and type come from site.css.
+   ============================================================ */
+
+.plate svg{display:block;width:100%;height:auto;overflow:visible}
+
+/* Drafting type, sized in user units so it scales with the viewBox rather than
+   with the viewport. */
+.dt{font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;fill:#475569}
+.dt-num{font-size:9px;font-weight:600;letter-spacing:.06em;fill:#a8b3c2;font-variant-numeric:tabular-nums}
+.gt{font-size:10px;font-weight:500;letter-spacing:.05em;fill:#64748b}
+
+/* ---------- the stack ---------- */
+.band{transition:opacity .35s ease;cursor:pointer}
+.leaf-face{transition:fill .3s ease,stroke-opacity .3s ease,stroke-width .3s ease}
+/* Three states, one progression: painted, outlined, dashed.
+   drawn  — a Map Composer overlay, ready to put on a map
+   query  — a server returns it for a region of interest, but nothing draws it
+   open   — neither, yet */
+.f-drawn{fill:rgba(0,145,117,.10);stroke:var(--brand-primary);stroke-opacity:.55;stroke-width:1}
+.f-query{fill:none;stroke:var(--brand-primary);stroke-opacity:.5;stroke-width:1}
+.f-open{fill:none;stroke:#64748b;stroke-opacity:.4;stroke-width:1;stroke-dasharray:5 4}
+
+.bracket{fill:none;stroke:#cbd5e1;stroke-width:1}
+.band-name{transition:fill .3s ease}
+.stack .band:hover .leaf-face{stroke-opacity:.8}
+
+/* The project area, gold, reserved for it across the whole series. */
+.core-face{fill:var(--brand-accent);fill-opacity:.17;stroke:#c98f00;stroke-width:.9}
+.core-cap{fill:var(--brand-accent);stroke:#c98f00;stroke-width:1}
+.core-rule{stroke:#c98f00;stroke-width:1;stroke-dasharray:3 3;opacity:.7}
+
+/* ---------- assembly: the laminate builds from the bedrock up ----------
+   This block sits ahead of the selection rules on purpose. `.stack.play X` and
+   `.stack[data-band] X` carry the same specificity, so source order decides, and
+   selection has to be the one that wins. */
+.stack .leaf{opacity:0;transform:translateY(calc(var(--dy,0px) + 10px));transition:opacity .4s ease,transform .5s cubic-bezier(.16,1,.3,1)}
+.stack.play .leaf{opacity:1;transform:translateY(var(--dy,0px))}
+.band-block{transform:translateY(var(--dy,0px));transition:transform .5s cubic-bezier(.16,1,.3,1)}
+.stack .core-grp,.stack .band-block,.stack .bracket{opacity:0;transition:opacity .5s ease}
+.stack.play .core-grp{opacity:1;transition-delay:.85s}
+.stack.play .band-block,.stack.play .bracket{opacity:1;transition-delay:.7s}
+
+/* ---------- selection ----------
+   Opening a band quiets the rest of the laminate rather than removing it: the
+   whole stack staying on the sheet is the point of drawing it this way. */
+.stack[data-band] .band{opacity:.13}
+.stack[data-band] .band.sel{opacity:1}
+.stack[data-band] .band.sel .f-drawn{fill:rgba(0,145,117,.15);stroke-opacity:.9;stroke-width:1.3}
+.stack[data-band] .band.sel .f-query{stroke-opacity:.85;stroke-width:1.3}
+.stack[data-band] .band.sel .f-open{stroke-opacity:.7;stroke-width:1.2}
+
+/* Band names label the laminate at rest; group names label the leaves once a band
+   is open. They share the same left margin, so only one set shows at a time. */
+.grp-name{opacity:0;transition:opacity .3s ease}
+.stack[data-band] .band.sel .grp-name{opacity:1}
+.stack[data-band] .band-block{opacity:0;transition:opacity .25s ease}
+
+/* ---------- an opened group's layers ----------
+   Thin, inset, stroke-only leaves: they are detail on a plane, so they must not
+   compete with the plane itself. */
+.sleaf{
+    opacity:0;pointer-events:none;
+    transform:translateY(var(--dy,0px));
+    transition:opacity .3s ease,transform .5s cubic-bezier(.16,1,.3,1);
+}
+.sleaf.on{opacity:1}
+.s-drawn{fill:rgba(0,145,117,.05);stroke:var(--brand-primary);stroke-opacity:.4;stroke-width:.8}
+.s-query{fill:none;stroke:var(--brand-primary);stroke-opacity:.35;stroke-width:.8}
+.s-open{fill:none;stroke:#94a3b8;stroke-opacity:.45;stroke-width:.8;stroke-dasharray:4 3}
+
+/* A white halo so a name stays readable where leaves overlap. */
+.sub-lbl{
+    font-size:8px;font-weight:500;fill:#475569;
+    paint-order:stroke;stroke:#fff;stroke-width:2.4px;stroke-linejoin:round;
+}
+.sub-lbl tspan{font-weight:400;fill:#a8b3c2}
+
+/* ---------- the panel ---------- */
+.pnl-band{
+    display:block;width:100%;text-align:left;
+    padding:.7rem .8rem;border-radius:.6rem;
+    border:1px solid transparent;
+    transition:background .2s ease,border-color .2s ease;
+    cursor:pointer;
+}
+.pnl-band:hover{background:#fff;border-color:#e2e8f0}
+.pnl-band[aria-pressed='true']{background:#fff;border-color:rgba(var(--brand-primary-rgb),.35)}
+
+.grp{border-top:1px solid #eef2f7}
+.grp:first-of-type{border-top:0}
+.grp-toggle{
+    display:flex;align-items:center;gap:.5rem;width:100%;
+    padding:.55rem .1rem;text-align:left;cursor:pointer;
+}
+.grp-head{
+    font-size:11.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;
+    color:#475569;
+}
+.grp-toggle:hover .grp-head{color:var(--brand-primary-dark)}
+.grp-n{
+    font-size:10px;color:#a8b3c2;font-variant-numeric:tabular-nums;margin-left:auto;
+}
+.grp-chev{font-size:8px;color:#b0bac7;transition:transform .25s ease;width:.55rem}
+.grp-toggle[aria-expanded='true'] .grp-chev{transform:rotate(90deg)}
+.grp-rows{padding:0 0 .55rem 1.05rem}
+.ly-row{display:flex;align-items:baseline;gap:.5rem;font-size:12.5px;line-height:1.5;color:#334155}
+.ly-row .pub{margin-left:auto;font-size:10.5px;color:#a8b3c2;white-space:nowrap;font-variant-numeric:tabular-nums}
+/* One custom property drives both fills, so a filled dot and a ring of the same
+   hue mean "drawn" and "queryable but not drawn" without doubling the rules. */
+.dot{--c:#b0bac7;width:8px;height:8px;flex:none;border-radius:2px;margin-top:.38rem;background:var(--c)}
+.dot.ring{background:transparent;border:1.5px solid var(--c)}
+
+/* Departments, not bureaus: five owners keeps the sheet calm where a hue per
+   publishing office would not, and the office is named in the row. */
+.d-doi{--c:#0f766e}
+.d-dod{--c:#4338ca}
+.d-usda{--c:#15803d}
+.d-doc{--c:#0369a1}
+.d-multi{--c:#57534e}
+
+/* A group's state, stated once on its heading rather than on every row. */
+.tag{font-size:8.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+     padding:.08rem .34rem;border-radius:.25rem;white-space:nowrap}
+.tag-drawn{background:rgba(var(--brand-primary-rgb),.13);color:var(--brand-primary-dark)}
+.tag-query{background:#eaeff5;color:#5b6b7f}
+.tag-open{color:#a8b3c2;border:1px dashed #cbd5e1}
+
+/* The key carries a `flex` utility, which ties with Tailwind's `[hidden]` rule on
+   specificity and wins on source order. Naming both puts the matter to rest. */
+.deptkey[hidden]{display:none}
+.dept-dot{width:9px;height:9px;flex:none;border-radius:2px}
+
+.sw{width:15px;height:15px;flex:none;border:1px solid #94a3b8;border-radius:3px}
+.sw-drawn{background:rgba(var(--brand-primary-rgb),.12);border-color:rgba(var(--brand-primary-rgb),.6)}
+.sw-query{border-color:rgba(var(--brand-primary-rgb),.55);background:#fff}
+.sw-open{border-style:dashed;border-color:rgba(100,116,139,.55);background:#fff}
+.sw-core{background:var(--brand-accent);border-color:#c98f00}
+
+/* Desktop is the target medium. This drawing is carried by its labels, so
+   scaling it to a phone would shrink the type past reading. It keeps its
+   proportions and pans instead. */
+@media (max-width:1023px){
+    .plate-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .plate-scroll svg{min-width:560px}
+}
+
+@media (prefers-reduced-motion:reduce){
+    .band,.leaf,.sleaf,.leaf-face,.core-grp,.grp-name,.band-block,.grp-chev{transition:none !important}
+    .stack .leaf{opacity:1;transform:none}
+    .stack .core-grp,.stack .band-block,.stack .bracket{opacity:1}
+}
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased">
+
+    <a href="#main-content" class="skip-to-content">Skip to main content</a>
+
+    <!-- Top banner -->
+    <div id="site-banner" class="bg-gradient-to-r from-slate-900 via-teal-900 to-slate-900 text-white text-center py-2.5 text-sm border-b border-slate-700">
+        <a href="https://github.com/pnnl-int/nepa-mcp-server/tree/main" class="hover:text-teal-300 transition-colors inline-flex items-center space-x-2">
+            <i class="fab fa-github" aria-hidden="true"></i>
+            <span>View Source Repository</span>
+        </a>
+    </div>
+
+    <!-- Header -->
+    <nav id="site-nav" class="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-slate-200/80 shadow-sm">
+        <div class="container mx-auto px-6 lg:px-8">
+            <div class="flex items-center gap-8 h-20">
+                <a href="index.html" class="inline-flex items-center gap-4 mr-auto">
+                    <img src="assets/images/logos/project-logo.png" alt="PermitAI" class="h-9 w-auto object-contain">
+                    <span class="block">
+                        <span class="flex items-center gap-2">
+                            <span class="text-xl font-semibold text-ink tracking-tight whitespace-nowrap">NEPA MCP</span>
+                            <span class="text-xs font-medium bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full whitespace-nowrap">+ Plugins</span>
+                        </span>
+                        <span class="block text-xs text-slate-500 font-light">Toolkit</span>
+                    </span>
+                </a>
+                <div class="hidden md:flex items-center gap-5 lg:gap-7">
+                    <a href="index.html#overview" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap">Overview</a>
+                    <a href="index.html#quick-start" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap">Quick&nbsp;Start</a>
+                    <a href="index.html#servers" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap">Servers</a>
+                    <a href="index.html#documentation" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap">Docs</a>
+                    <div class="nav-menu">
+                        <button type="button" aria-haspopup="true" class="text-sm font-semibold text-teal-700 whitespace-nowrap inline-flex items-center gap-1.5">
+                            <i class="fas fa-cube text-xs" aria-hidden="true"></i>Vision <i class="fas fa-chevron-down text-[9px] opacity-60" aria-hidden="true"></i>
+                        </button>
+                        <div class="nav-pop">
+                            <a href="vision.html">
+                                <span class="flex items-start gap-2.5">
+                                    <i class="fas fa-cube text-teal-600 text-xs mt-1" aria-hidden="true"></i>
+                                    <span>
+                                        <span class="block text-sm font-medium text-ink">Permitting coverage</span>
+                                        <span class="block text-xs text-slate-500 mt-0.5">Statute, jurisdiction, sector</span>
+                                    </span>
+                                </span>
+                            </a>
+                            <a href="gis.html" aria-current="page">
+                                <span class="flex items-start gap-2.5">
+                                    <i class="fas fa-layer-group text-teal-600 text-xs mt-1" aria-hidden="true"></i>
+                                    <span>
+                                        <span class="block text-sm font-semibold text-teal-700">Spatial context</span>
+                                        <span class="block text-xs text-slate-500 mt-0.5">The GIS layer stack</span>
+                                    </span>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="md:hidden border-t border-slate-200/80 overflow-x-auto nav-scroll">
+            <div class="flex items-center gap-5 px-6 py-3 whitespace-nowrap text-sm font-medium text-slate-600">
+                <a href="index.html#overview" class="hover:text-teal-700 transition-colors">Overview</a>
+                <a href="index.html#quick-start" class="hover:text-teal-700 transition-colors">Quick&nbsp;Start</a>
+                <a href="index.html#servers" class="hover:text-teal-700 transition-colors">Servers</a>
+                <a href="index.html#documentation" class="hover:text-teal-700 transition-colors">Docs</a>
+                <span class="text-slate-400 uppercase text-xs tracking-widest pl-1">Vision</span>
+                <a href="vision.html" class="hover:text-teal-700 transition-colors">Coverage</a>
+                <a href="gis.html" aria-current="page" class="text-teal-700 font-semibold">GIS</a>
+            </div>
+        </div>
+    </nav>
+
+    <main id="main-content">
+
+        <section class="hero-gradient pt-16 pb-14 lg:pt-20 lg:pb-16 px-6">
+            <div class="container mx-auto max-w-6xl">
+
+                <div class="text-center max-w-3xl mx-auto fade-in-up">
+                    <p class="text-xs text-teal-700 mb-4 font-semibold uppercase tracking-widest">Open-source vision</p>
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-light text-ink tracking-tight mb-5">
+                        Spatial <span class="font-semibold">Context</span>
+                    </h1>
+                    <p class="text-lg md:text-xl text-slate-600 font-light leading-relaxed">
+                        Thirty-two overlays, one question each: does the project area intersect this
+                        layer? A section through what the stack holds, and what it does not.
+                    </p>
+                    <p class="mt-6 text-sm text-slate-500">
+                        Companion sheet:
+                        <a href="vision.html" class="text-teal-700 font-medium hover:text-teal-800 underline decoration-teal-300 underline-offset-2">Permitting Coverage</a>
+                    </p>
+                </div>
+
+                <div class="plate mt-12 lg:mt-14 fade-in-up delay-200">
+                    <div class="rounded-2xl border border-slate-200/80 bg-white shadow-sm overflow-hidden">
+
+                        <div class="flex items-center justify-between gap-4 px-5 md:px-7 py-4 border-b border-slate-100">
+                            <p class="text-xs font-semibold text-slate-500 uppercase tracking-widest">Oblique section &mdash; nine bands, twenty-four groups</p>
+                            <p class="text-xs text-slate-400 uppercase tracking-widest hidden sm:block">
+                                <i class="fas fa-hand-pointer mr-1.5" aria-hidden="true"></i>Open a band
+                            </p>
+                            <p class="text-xs text-slate-400 uppercase tracking-widest sm:hidden">
+                                <i class="fas fa-arrows-left-right mr-1.5" aria-hidden="true"></i>Swipe
+                            </p>
+                        </div>
+
+                        <div class="grid lg:grid-cols-[minmax(0,1fr)_340px]">
+
+                            <div class="plate-scroll px-4 md:px-6 py-6 lg:border-r border-slate-100 flex flex-col justify-center">
+                                <svg class="stack" id="stack" viewBox="0 0 585 668" role="img"
+                                     aria-label="Oblique section through the toolkit’s spatial coverage. Twenty-four thin leaves are stacked into nine bands, with the project area punched through all of them as a vertical core. From the bottom: land use and management, biological resources, water resources, air quality, cultural resources, community and receptors, jurisdiction and authority, precedent and process, and infrastructure and facilities. A filled leaf is a map overlay Map Composer draws; an outlined leaf is data a server already returns for a region of interest but nothing draws; a dashed leaf is neither yet. The bands and the layers in each group are listed beside the drawing.">
+                                    <!-- Leaves, brackets, band and group labels are generated from the same
+                                         table that fills the panel, so the two cannot drift apart. -->
+                                </svg>
+                            </div>
+
+                            <!-- The reading column. At rest it indexes the whole laminate; opening a
+                                 band swaps it for that band's groups and named layers. -->
+                            <!-- Top-aligned: an opened band can make the drawing tall, and a
+                                 centred index would float in the middle of the column. -->
+                            <div class="px-5 md:px-6 py-6 bg-slate-50/50 lg:bg-transparent">
+                                <div id="panel" class="w-full"></div>
+                            </div>
+                        </div>
+
+                        <div class="px-5 md:px-7 py-4 border-t border-slate-100 bg-slate-50/60">
+                            <div class="flex flex-wrap items-center gap-x-6 gap-y-3">
+                                <span class="flex items-center gap-2.5 text-xs font-medium text-slate-600 uppercase tracking-wider"><span class="sw sw-drawn"></span>Drawn</span>
+                                <span class="flex items-center gap-2.5 text-xs font-medium text-slate-600 uppercase tracking-wider"><span class="sw sw-query"></span>Queryable</span>
+                                <span class="flex items-center gap-2.5 text-xs font-medium text-slate-600 uppercase tracking-wider"><span class="sw sw-open"></span>Open</span>
+                                <span class="flex items-center gap-2.5 text-xs font-medium text-slate-600 uppercase tracking-wider"><span class="sw sw-core"></span>Project area</span>
+                                <button class="filter-chip sm:ml-auto" type="button" id="stackReset">Whole stack</button>
+                            </div>
+                            <div class="deptkey mt-3 flex flex-wrap items-center gap-x-5 gap-y-2" id="deptKey" hidden>
+                                <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">Published by</span>
+                                <span class="flex items-center gap-2 text-xs text-slate-600"><span class="dept-dot" style="background:#0f766e"></span>Interior</span>
+                                <span class="flex items-center gap-2 text-xs text-slate-600"><span class="dept-dot" style="background:#4338ca"></span>Defense</span>
+                                <span class="flex items-center gap-2 text-xs text-slate-600"><span class="dept-dot" style="background:#15803d"></span>Agriculture</span>
+                                <span class="flex items-center gap-2 text-xs text-slate-600"><span class="dept-dot" style="background:#0369a1"></span>Commerce</span>
+                                <span class="flex items-center gap-2 text-xs text-slate-600"><span class="dept-dot" style="background:#57534e"></span>Other federal</span>
+                                <span class="flex items-center gap-2 text-xs text-slate-500"><span class="dept-dot" style="border:1px solid #b0bac7"></span>Not drawn</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-12 text-center">
+                        <p class="text-base md:text-lg text-slate-600 font-light max-w-2xl mx-auto leading-relaxed">
+                            Map Composer assembles a project area&rsquo;s layers into a single map.
+                            Thirty-two are drawn today, and the rest of the toolkit already reaches
+                            further than the map does. Each addition is another adapter behind the
+                            same interface.
+                        </p>
+                        <div class="flex flex-wrap gap-4 justify-center mt-7">
+                            <a href="https://github.com/pnnl-int/nepa-mcp-server/blob/main/CONTRIBUTING.md" class="btn-premium text-white px-8 py-3.5 rounded-xl font-medium inline-flex items-center space-x-2">
+                                <i class="fas fa-code-branch text-sm" aria-hidden="true"></i>
+                                <span>Contribution Guide</span>
+                            </a>
+                            <a href="index.html#layers" class="bg-white text-ink px-8 py-3.5 rounded-xl font-medium border border-slate-300 hover:border-slate-400 transition-all hover:shadow-lg inline-flex items-center space-x-2">
+                                <i class="fas fa-layer-group" aria-hidden="true"></i>
+                                <span>The 32 layers today</span>
+                            </a>
+                            <a href="vision.html" class="bg-white text-ink px-8 py-3.5 rounded-xl font-medium border border-slate-300 hover:border-slate-400 transition-all hover:shadow-lg inline-flex items-center space-x-2">
+                                <i class="fas fa-cube" aria-hidden="true"></i>
+                                <span>Permitting coverage</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer: the same three-column structure as index.html, minus the source
+         agency list, which belongs with the server inventory rather than here. -->
+    <footer class="bg-gradient-to-br from-slate-900 via-teal-950 to-slate-900 text-slate-300 py-14 px-6 border-t border-teal-900/50">
+        <div class="container mx-auto max-w-6xl">
+            <div class="grid md:grid-cols-3 gap-10 md:gap-12 mb-10">
+                <div class="text-left">
+                    <a href="index.html" class="inline-block mb-4">
+                        <img src="assets/images/logos/project-logo.png" alt="PermitAI" class="h-9 w-auto object-contain mb-3" loading="lazy">
+                        <span class="block text-lg font-semibold text-white">NEPA MCP Toolkit</span>
+                    </a>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Public federal data for AI-assisted NEPA screening and permitting research.
+                    </p>
+                </div>
+
+                <div class="md:text-center">
+                    <h4 class="text-white font-semibold mb-4">Explore</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="index.html" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-house mr-2" aria-hidden="true"></i>Toolkit overview</a></li>
+                        <li><a href="index.html#layers" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-layer-group mr-2" aria-hidden="true"></i>Map layers available today</a></li>
+                        <li><a href="vision.html" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-cube mr-2" aria-hidden="true"></i>Permitting coverage</a></li>
+                        <li><a href="https://github.com/pnnl-int/nepa-mcp-server/blob/main/CONTRIBUTING.md" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-code-branch mr-2" aria-hidden="true"></i>Contribution guide</a></li>
+                    </ul>
+                </div>
+
+                <div class="md:text-right">
+                    <h4 class="text-white font-semibold mb-4">Source</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="https://github.com/pnnl-int/nepa-mcp-server/tree/main" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fab fa-github mr-2" aria-hidden="true"></i>Repository</a></li>
+                        <li><a href="https://github.com/pnnl-int/nepa-mcp-server/blob/main/SUPPORT.md" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-life-ring mr-2" aria-hidden="true"></i>Support</a></li>
+                        <li><a href="https://github.com/pnnl-int/nepa-mcp-server/blob/main/LICENSE" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-scale-balanced mr-2" aria-hidden="true"></i>BSD 3-Clause License</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- No sponsor or laboratory marks on this page: this is a maintainer's view
+                 of where the project could go, not work any sponsor has endorsed.
+                 Attribution is by name only. -->
+            <div class="border-t border-teal-900/30 pt-8 text-center">
+                <p class="text-slate-300 text-sm">Maintained by <a href="https://sarthakchat.github.io/" target="_blank" rel="noopener noreferrer" class="underline-offset-2 decoration-slate-500 hover:text-white hover:underline transition-colors">Sarthak Chaturvedi</a></p>
+            </div>
+        </div>
+    </footer>
+
+<script>
+(function () {
+    var stack = document.getElementById('stack');
+    var panelEl = document.getElementById('panel');
+    var deptKey = document.getElementById('deptKey');
+    if (!stack || !panelEl) return;
+
+    var NS = 'http://www.w3.org/2000/svg';
+
+    /* ============================================================
+       The table. Layer names and publishers come from the live catalog
+       (map_composer LAYER_METADATA); a group with `open: true` is one the
+       catalog does not carry. Drawn counts here sum to the real 32: 28 in the
+       bedrock band, 2 jurisdictional, 1 precedent, plus the project-area frame
+       that is drawn as the core rather than as a leaf.
+       ============================================================ */
+    var BANDS = [
+        {
+            key: 'land', name: ['Land use', '&amp; management'], plain: 'Land use & management',
+            groups: [
+                { name: 'Federal managers', state: 'drawn', rows: [
+                    { n: 'Protected lands', p: 'PAD-US', d: 'doi' },
+                    { n: 'National forests', p: 'USFS', d: 'usda' },
+                    { n: 'Roadless areas', p: 'USFS', d: 'usda' },
+                    { n: 'Park units', p: 'NPS', d: 'doi' }
+                ] },
+                { name: 'BLM planning', state: 'drawn', rows: [
+                    { n: 'Surface management', p: 'BLM', d: 'doi' },
+                    { n: 'Land use plans', p: 'BLM', d: 'doi' },
+                    { n: 'Plans in revision', p: 'BLM', d: 'doi' },
+                    { n: 'Wilderness study areas', p: 'BLM', d: 'doi' },
+                    { n: 'National monuments', p: 'BLM', d: 'doi' },
+                    { n: 'No surface occupancy', p: 'BLM', d: 'doi' }
+                ] },
+                { name: 'Trails, parcels &amp; fire', state: 'drawn', rows: [
+                    { n: 'National trails', p: 'BLM', d: 'doi' },
+                    { n: 'LWCF parcels', p: 'BLM', d: 'doi' },
+                    { n: 'Fire perimeters', p: 'NIFC', d: 'multi' }
+                ] }
+            ]
+        },
+        {
+            key: 'bio', name: ['Biological', 'resources'], plain: 'Biological resources',
+            groups: [
+                { name: 'Habitat overlays', state: 'drawn', rows: [
+                    { n: 'Critical habitat', p: 'USFWS', d: 'doi' },
+                    { n: 'Wildlife refuges', p: 'USFWS', d: 'doi' },
+                    { n: 'Sage-grouse habitat', p: 'BLM', d: 'doi' },
+                    { n: 'Sagebrush focal areas', p: 'BLM', d: 'doi' },
+                    { n: 'Wild horse HMAs', p: 'BLM', d: 'doi' }
+                ] },
+                { name: 'Species queries', state: 'query', rows: [
+                    { n: 'IPaC species list', p: 'USFWS', d: 'doi' },
+                    { n: 'ESA species ranges', p: 'NOAA', d: 'doc' },
+                    { n: 'Critical habitat', p: 'NOAA', d: 'doc' },
+                    { n: 'Species occurrences', p: 'GBIF', d: 'multi' }
+                ] },
+                { name: 'Fisheries &amp; birds', state: 'query', rows: [
+                    { n: 'Essential fish habitat', p: 'NOAA', d: 'doc' },
+                    { n: 'Habitat areas of concern', p: 'NOAA', d: 'doc' },
+                    { n: 'Salmon EFH by watershed', p: 'NOAA', d: 'doc' },
+                    { n: 'Migratory birds', p: 'USFWS', d: 'doi' }
+                ] }
+            ]
+        },
+        {
+            key: 'water', name: ['Water', 'resources'], plain: 'Water resources',
+            groups: [
+                { name: 'Corps jurisdiction', state: 'drawn', rows: [
+                    { n: 'Regulatory districts', p: 'USACE', d: 'dod' },
+                    { n: 'Wetland regions', p: 'USACE', d: 'dod' },
+                    { n: 'Wetland subregions', p: 'USACE', d: 'dod' }
+                ] },
+                { name: 'Hydrography', state: 'drawn', rows: [
+                    { n: 'Perennial streams', p: 'USGS', d: 'doi' },
+                    { n: 'Stream areas', p: 'USGS', d: 'doi' },
+                    { n: 'Lakes &amp; ponds', p: 'USGS', d: 'doi' },
+                    { n: 'Reservoirs', p: 'USGS', d: 'doi' },
+                    { n: 'Estuaries', p: 'USGS', d: 'doi' },
+                    { n: 'Glaciers &amp; ice', p: 'USGS', d: 'doi' },
+                    { n: 'Water infrastructure', p: 'USGS', d: 'doi' }
+                ] },
+                { name: 'Wetlands &amp; floodplain', state: 'query', rows: [
+                    { n: 'Wetlands inventory', p: 'USFWS', d: 'doi' },
+                    { n: 'Flood hazard zones', p: 'FEMA', d: 'multi' },
+                    { n: 'Levees', p: 'FEMA', d: 'multi' },
+                    { n: 'Water areas', p: 'FEMA', d: 'multi' }
+                ] }
+            ]
+        },
+        {
+            key: 'air', name: ['Air', 'quality'], plain: 'Air quality',
+            groups: [
+                { name: 'Monitors &amp; baseline', state: 'query', rows: [
+                    { n: 'Monitoring stations', p: 'EPA AQS', d: 'multi' },
+                    { n: 'Annual criteria pollutants', p: 'EPA AQS', d: 'multi' },
+                    { n: 'Baseline screening', p: 'EPA AQS', d: 'multi' }
+                ] },
+                { name: 'Attainment &amp; visibility', state: 'open', rows: [
+                    { n: 'Nonattainment areas' },
+                    { n: 'Class I areas' },
+                    { n: 'Conformity thresholds' }
+                ] }
+            ]
+        },
+        {
+            key: 'cultural', name: ['Cultural', 'resources'], plain: 'Cultural resources',
+            groups: [
+                { name: 'Historic properties', state: 'query', rows: [
+                    { n: 'Listed properties', p: 'NRHP', d: 'doi' }
+                ] },
+                { name: 'Sensitivity &amp; consultation', state: 'open', rows: [
+                    { n: 'Archaeological sensitivity' },
+                    { n: 'Traditional cultural properties' },
+                    { n: 'Area of potential effects' }
+                ] }
+            ]
+        },
+        {
+            key: 'community', name: ['Community', '&amp; receptors'], plain: 'Community & receptors',
+            groups: [
+                { name: 'Demographics &amp; screening', state: 'query', rows: [
+                    { n: 'Socioeconomic indicators', p: 'Census ACS', d: 'doc' },
+                    { n: 'NEPAssist screening', p: 'EPA', d: 'multi' }
+                ] },
+                { name: 'Receptors &amp; access', state: 'open', rows: [
+                    { n: 'Residences' },
+                    { n: 'Noise receptors' },
+                    { n: 'Language access' }
+                ] }
+            ]
+        },
+        {
+            key: 'jurisdiction', name: ['Jurisdiction', '&amp; authority'], plain: 'Jurisdiction & authority',
+            groups: [
+                { name: 'Civil boundaries', state: 'drawn', rows: [
+                    { n: 'County boundaries', p: 'Census', d: 'doc' },
+                    { n: 'Tribal lands', p: 'Census', d: 'doc' }
+                ] },
+                { name: 'Nested geography', state: 'open', rows: [
+                    { n: 'Adjacent counties' },
+                    { n: 'State boundaries' },
+                    { n: 'Municipalities' },
+                    { n: 'Township and range' }
+                ] },
+                { name: 'Agency offices', state: 'open', rows: [
+                    { n: 'BLM field office' },
+                    { n: 'Forest ranger district' },
+                    { n: 'USFWS field office' },
+                    { n: 'SHPO and THPO' }
+                ] }
+            ]
+        },
+        {
+            key: 'precedent', name: ['Precedent', '&amp; process'], plain: 'Precedent & process',
+            groups: [
+                { name: 'Planning outlines', state: 'drawn', rows: [
+                    { n: 'Western EIS boundaries', p: 'BLM', d: 'doi' }
+                ] },
+                { name: 'Prior review areas', state: 'open', rows: [
+                    { n: 'EIS project areas' },
+                    { n: 'EA project areas' },
+                    { n: 'ePlanning projects' }
+                ] },
+                { name: 'Review outcomes', state: 'open', rows: [
+                    { n: 'Level of review' },
+                    { n: 'Schedule to decision' },
+                    { n: 'Mitigation imposed' }
+                ] }
+            ]
+        },
+        {
+            key: 'infrastructure', name: ['Infrastructure', '&amp; facilities'], plain: 'Infrastructure & facilities',
+            groups: [
+                { name: 'Transport &amp; access', state: 'open', rows: [
+                    { n: 'Roads' },
+                    { n: 'Rail' },
+                    { n: 'Airports and airspace' }
+                ] },
+                { name: 'Utilities &amp; corridors', state: 'open', rows: [
+                    { n: 'Transmission lines' },
+                    { n: 'Substations' },
+                    { n: 'Pipeline corridors' }
+                ] },
+                { name: 'Public facilities', state: 'open', rows: [
+                    { n: 'Water and wastewater' },
+                    { n: 'Waste and disposal sites' }
+                ] }
+            ]
+        }
+    ];
+
+    /* ---------- geometry ----------
+       One oblique leaf per group, stacked bottom-first with a wider gap between
+       bands than between the leaves inside one. Opening a group inserts a thinner
+       leaf per layer above it, and everything higher moves up to make room, so the
+       stack accordions instead of overlapping itself. */
+    var X0 = 165, W = 290, DX = 110, DY = -34;
+    var PITCH = 18, BAND_GAP = 38, BOTTOM = 640;
+    var SUB_PITCH = 14;
+    /* Sub-leaf: inset, narrower, and on the same oblique slope (-18/58 matches
+       -34/110), so an opened group reads as detail of its own plane. */
+    var SX = 211, SW = 210, SDX = 58, SDY = -18;
+    var LBL_X = 151, BR_X = 157;
+    var AP = { x: 327, w: 24, dx: 10, dy: -3, v: -14 };
+
+    function el(name, attrs) {
+        var n = document.createElementNS(NS, name);
+        for (var k in attrs) n.setAttribute(k, attrs[k]);
+        return n;
+    }
+    function leafPath(y) {
+        return 'M' + X0 + ',' + y + ' L' + (X0 + W) + ',' + y +
+               ' L' + (X0 + W + DX) + ',' + (y + DY) + ' L' + (X0 + DX) + ',' + (y + DY) + ' Z' +
+               ' M' + AP.x + ',' + (y + AP.v) + ' L' + (AP.x + AP.w) + ',' + (y + AP.v) +
+               ' L' + (AP.x + AP.w + AP.dx) + ',' + (y + AP.v + AP.dy) +
+               ' L' + (AP.x + AP.dx) + ',' + (y + AP.v + AP.dy) + ' Z';
+    }
+    function subPath(y) {
+        return 'M' + SX + ',' + y + ' L' + (SX + SW) + ',' + y +
+               ' L' + (SX + SW + SDX) + ',' + (y + SDY) + ' L' + (SX + SDX) + ',' + (y + SDY) + ' Z';
+    }
+
+    /* Base positions, with nothing expanded. Every element is authored here and
+       then moved by a --dy that layout() sets, so the accordion is one CSS
+       transition rather than a redraw. */
+    var cursor = BOTTOM;
+    BANDS.forEach(function (band) {
+        band.groups.forEach(function (grp, gi) {
+            grp.base = cursor - gi * PITCH;
+        });
+        cursor = grp0(band) - BAND_GAP;
+        band.tally = { drawn: 0, query: 0, open: 0 };
+        band.groups.forEach(function (g) { band.tally[g.state] += g.rows.length; });
+        band.leaves = band.groups.length;
+    });
+    function grp0(band) { return band.groups[band.groups.length - 1].base; }
+
+    BANDS.forEach(function (band, bi) {
+        var g = el('g', { class: 'band', 'data-band': band.key });
+        var yb = band.groups[0].base, yt = grp0(band);
+
+        band.bracket = el('path', { class: 'bracket',
+            d: 'M' + (BR_X + 5) + ',' + yt + ' L' + BR_X + ',' + yt +
+               ' L' + BR_X + ',' + yb + ' L' + (BR_X + 5) + ',' + yb });
+        g.appendChild(band.bracket);
+
+        band.groups.forEach(function (grp, gi) {
+            var y = grp.base;
+
+            /* Sub-leaves first, so the group's own plane reads in front of them. */
+            grp.subs = grp.rows.map(function (r, ri) {
+                var sl = el('g', { class: 'sleaf' });
+                sl.appendChild(el('path', { class: 's-' + grp.state, d: subPath(y) }));
+                var t = el('text', { class: 'sub-lbl', x: SX + 10, y: y - 6 });
+                t.innerHTML = r.n + (r.p ? '  <tspan>' + r.p + '</tspan>' : '');
+                sl.appendChild(t);
+                g.appendChild(sl);
+                return sl;
+            });
+
+            var lf = el('g', {
+                class: 'leaf', 'data-gi': gi,
+                style: 'transition-delay:' + (0.04 * (bi * 3 + gi)).toFixed(2) + 's'
+            });
+            lf.appendChild(el('path', {
+                class: 'leaf-face f-' + grp.state, 'fill-rule': 'evenodd', d: leafPath(y)
+            }));
+            var gn = el('text', { class: 'gt grp-name', x: LBL_X, y: y - 3, 'text-anchor': 'end' });
+            gn.innerHTML = grp.name;
+            lf.appendChild(gn);
+            /* A group opens from the drawing as well as from the reading column;
+               the band must not close underneath the click. */
+            lf.addEventListener('click', function (e) {
+                if (sel !== band.key) return;
+                e.stopPropagation();
+                toggleGroup(gi);
+            });
+            g.appendChild(lf);
+            grp.el = lf;
+        });
+
+        var mid = (yb + yt) / 2;
+        band.baseMid = mid;
+        var blk = el('g', { class: 'band-block' });
+        var n1 = el('text', { class: 'dt band-name', x: LBL_X, y: mid - 7, 'text-anchor': 'end' });
+        n1.innerHTML = band.name[0];
+        var n2 = el('text', { class: 'dt band-name', x: LBL_X, y: mid + 6, 'text-anchor': 'end' });
+        n2.innerHTML = band.name[1];
+        var n3 = el('text', { class: 'dt-num', x: LBL_X, y: mid + 20, 'text-anchor': 'end' });
+        n3.textContent = band.tally.drawn ? band.tally.drawn + ' drawn'
+                       : band.tally.query ? 'queryable' : 'open';
+        blk.appendChild(n1); blk.appendChild(n2); blk.appendChild(n3);
+        g.appendChild(blk);
+        band.block = blk;
+
+        stack.appendChild(g);
+    });
+
+    /* The core is the hole the section was cut through, so it has to reach past
+       whatever the topmost leaf currently is. */
+    var core = el('g', { class: 'core-grp', 'pointer-events': 'none' });
+    var coreParts = {
+        front: el('path', { class: 'core-face' }),
+        side: el('path', { class: 'core-face' }),
+        cap: el('path', { class: 'core-cap' }),
+        rule: el('path', { class: 'core-rule' }),
+        label: el('text', { class: 'dt', x: 345, 'text-anchor': 'middle', fill: '#a16207' })
+    };
+    coreParts.label.textContent = 'Project area';
+    ['front', 'side', 'cap', 'rule', 'label'].forEach(function (k) { core.appendChild(coreParts[k]); });
+    stack.appendChild(core);
+
+    /* ---------- the accordion ---------- */
+    var expanded = {};
+    function gkey(bandKey, gi) { return bandKey + '/' + gi; }
+
+    /* The viewBox is not animatable, so tween it: without this the card height
+       snaps while the leaves are still gliding. */
+    var vbFrom = null, vbTo = null, vbT0 = 0, vbRAF = null;
+    function setViewBox(top, height, animate) {
+        var target = [top, height];
+        if (!animate || !vbTo) {
+            vbTo = target;
+            stack.setAttribute('viewBox', '0 ' + top + ' 585 ' + height);
+            return;
+        }
+        vbFrom = vbTo.slice();
+        vbTo = target;
+        vbT0 = performance.now();
+        if (vbRAF) return;
+        (function step(now) {
+            var t = Math.min(1, ((now || performance.now()) - vbT0) / 480);
+            var e = 1 - Math.pow(1 - t, 3);
+            var top2 = vbFrom[0] + (vbTo[0] - vbFrom[0]) * e;
+            var h2 = vbFrom[1] + (vbTo[1] - vbFrom[1]) * e;
+            stack.setAttribute('viewBox', '0 ' + top2.toFixed(1) + ' 585 ' + h2.toFixed(1));
+            if (t < 1) vbRAF = requestAnimationFrame(step);
+            else { vbRAF = null; vbFrom = null; }
+        })();
+    }
+
+    function layout(animate) {
+        var cur = BOTTOM, minY = BOTTOM;
+
+        BANDS.forEach(function (band) {
+            /* Focus and context: while one band is open the others compress to thin
+               striations. They stay on the sheet, because the whole laminate is the
+               argument, but they stop spending height on labels nobody is reading. */
+            var focused = !sel || sel === band.key;
+            var pitch = focused ? PITCH : 8;
+            var gap = focused ? BAND_GAP : 18;
+
+            band.groups.forEach(function (grp, gi) {
+                grp.y = cur;
+                var open = !!expanded[gkey(band.key, gi)];
+                if (open) {
+                    grp.rows.forEach(function (r, ri) { r.y = cur - (ri + 1) * SUB_PITCH; });
+                    cur -= grp.rows.length * SUB_PITCH;
+                }
+                minY = Math.min(minY, cur);
+                cur -= pitch;
+            });
+            cur -= (gap - pitch);
+        });
+
+        BANDS.forEach(function (band) {
+            band.groups.forEach(function (grp, gi) {
+                var open = !!expanded[gkey(band.key, gi)];
+                grp.el.style.setProperty('--dy', (grp.y - grp.base) + 'px');
+                grp.subs.forEach(function (sl, ri) {
+                    /* Collapsed sub-leaves park on their group's plane, so they look
+                       like they came out of it rather than fading in from nowhere. */
+                    var ty = open ? grp.rows[ri].y : grp.y;
+                    sl.style.setProperty('--dy', (ty - grp.base) + 'px');
+                    sl.classList.toggle('on', open && sel === band.key);
+                });
+            });
+            var yb = band.groups[0].y, yt = band.groups[band.groups.length - 1].y;
+            var ytTop = yt - (expanded[gkey(band.key, band.groups.length - 1)]
+                ? band.groups[band.groups.length - 1].rows.length * SUB_PITCH : 0);
+            band.bracket.setAttribute('d',
+                'M' + (BR_X + 5) + ',' + ytTop + ' L' + BR_X + ',' + ytTop +
+                ' L' + BR_X + ',' + yb + ' L' + (BR_X + 5) + ',' + yb);
+            band.block.style.setProperty('--dy', (((yb + ytTop) / 2) - band.baseMid) + 'px');
+        });
+
+        var cTop = minY + AP.v - 14, cBot = BOTTOM + AP.v + 21;
+        coreParts.front.setAttribute('d', 'M327,' + cTop + ' L351,' + cTop + ' L351,' + cBot + ' L327,' + cBot + ' Z');
+        coreParts.side.setAttribute('d', 'M351,' + cTop + ' L361,' + (cTop - 3) + ' L361,' + (cBot - 3) + ' L351,' + cBot + ' Z');
+        coreParts.cap.setAttribute('d', 'M327,' + cTop + ' L351,' + cTop + ' L361,' + (cTop - 3) + ' L337,' + (cTop - 3) + ' Z');
+        coreParts.rule.setAttribute('d', 'M345,' + (cTop - 3) + ' V' + (cTop - 17));
+        coreParts.label.setAttribute('y', cTop - 24);
+
+        var top = minY + DY - 44, bottom = BOTTOM + 28;
+        setViewBox(Math.round(top), Math.round(bottom - top), animate);
+    }
+
+    function toggleGroup(gi) {
+        if (!sel) return;
+        var k = gkey(sel, gi);
+        expanded[k] = !expanded[k];
+        renderBand(bandByKey(sel));
+        layout(true);
+    }
+    function bandByKey(k) {
+        return BANDS.filter(function (b) { return b.key === k; })[0];
+    }
+
+    /* ---------- the reading column ---------- */
+    var STATE_LABEL = { drawn: 'Drawn', query: 'Queryable', open: 'Open' };
+
+    /* Read out only the states a band actually has, so "queryable" never gets
+       rounded into either drawn or missing. */
+    function tallyLine(band) {
+        return ['drawn', 'query', 'open']
+            .filter(function (k) { return band.tally[k]; })
+            .map(function (k) { return band.tally[k] + ' ' + STATE_LABEL[k].toLowerCase(); })
+            .join(' &middot; ');
+    }
+    function groupNames(band) {
+        return band.groups.map(function (g) { return g.name; }).join(' &middot; ');
+    }
+
+    function renderIndex() {
+        var h = '<p class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">The laminate</p>';
+        BANDS.forEach(function (band) {
+            h += '<button class="pnl-band" type="button" data-open="' + band.key + '" aria-pressed="false">' +
+                 '<span class="flex items-baseline gap-2">' +
+                   '<span class="text-[14.5px] font-semibold text-ink">' + band.plain + '</span>' +
+                   '<span class="ml-auto text-[10.5px] tabular-nums ' +
+                     (band.tally.drawn ? 'text-teal-700' : 'text-slate-400') + '">' + tallyLine(band) + '</span>' +
+                 '</span>' +
+                 '<span class="block mt-1 text-[11.5px] leading-snug text-slate-500">' + groupNames(band) + '</span>' +
+                 '</button>';
+        });
+        panelEl.innerHTML = h;
+        panelEl.querySelectorAll('[data-open]').forEach(function (b) {
+            b.addEventListener('click', function () { paint(b.getAttribute('data-open')); });
+        });
+    }
+
+    function renderBand(band) {
+        var h = '<button class="text-xs font-semibold text-teal-700 uppercase tracking-widest mb-3 inline-flex items-center gap-1.5" type="button" id="pnlBack">' +
+                '<i class="fas fa-arrow-left text-[10px]" aria-hidden="true"></i>All bands</button>' +
+                '<p class="text-xl font-semibold text-ink leading-tight">' + band.plain + '</p>' +
+                '<p class="text-[11px] text-slate-400 uppercase tracking-widest mt-1 mb-4">' +
+                band.leaves + ' groups &middot; ' + tallyLine(band) + '</p>';
+
+        band.groups.forEach(function (g, gi) {
+            var open = !!expanded[gkey(band.key, gi)];
+            h += '<div class="grp">' +
+                 '<button class="grp-toggle" type="button" data-gi="' + gi + '" aria-expanded="' + open + '">' +
+                   '<i class="fas fa-chevron-right grp-chev" aria-hidden="true"></i>' +
+                   '<span class="grp-head">' + g.name + '</span>' +
+                   '<span class="grp-n">' + g.rows.length + '</span>' +
+                   '<span class="tag tag-' + g.state + '">' + STATE_LABEL[g.state] + '</span>' +
+                 '</button>';
+            if (open) {
+                h += '<div class="grp-rows">';
+                g.rows.forEach(function (r) {
+                    /* A ring rather than a fill for anything the map does not draw:
+                       same hue, unpainted. */
+                    var ring = g.state === 'drawn' ? '' : ' ring';
+                    h += '<div class="ly-row">' +
+                           '<span class="dot' + ring + (r.d ? ' d-' + r.d : '') + '"></span>' +
+                           '<span>' + r.n + '</span>' +
+                           (r.p ? '<span class="pub">' + r.p + '</span>' : '') +
+                         '</div>';
+                });
+                h += '</div>';
+            }
+            h += '</div>';
+        });
+        panelEl.innerHTML = h;
+        document.getElementById('pnlBack').addEventListener('click', function () { paint(null); });
+        panelEl.querySelectorAll('.grp-toggle').forEach(function (b) {
+            b.addEventListener('click', function () { toggleGroup(Number(b.getAttribute('data-gi'))); });
+        });
+    }
+
+    var sel = null;
+    function paint(key) {
+        sel = key;
+        if (key) stack.setAttribute('data-band', key);
+        else stack.removeAttribute('data-band');
+
+        stack.querySelectorAll('.band').forEach(function (g) {
+            g.classList.toggle('sel', g.getAttribute('data-band') === key);
+        });
+        deptKey.hidden = !key;
+
+        /* Opening a band opens all of it: every group, every layer, in the drawing
+           and in the reading column at once. Picking a single group is what the
+           group's own plane and chevron are for. */
+        expanded = {};
+        if (key) {
+            var band = bandByKey(key);
+            band.groups.forEach(function (g, gi) { expanded[gkey(key, gi)] = true; });
+            renderBand(band);
+        } else {
+            renderIndex();
+        }
+        layout(true);
+    }
+
+    stack.querySelectorAll('.band').forEach(function (g) {
+        g.addEventListener('click', function () {
+            var k = g.getAttribute('data-band');
+            paint(sel === k ? null : k);
+        });
+    });
+    document.getElementById('stackReset').addEventListener('click', function () { paint(null); });
+
+    layout(false);
+    paint(null);
+
+    /* Opens assembled: the laminate has to be countable before a band means
+       anything. */
+    requestAnimationFrame(function () {
+        requestAnimationFrame(function () { stack.classList.add('play'); });
+    });
+
+    /* The per-leaf delay is there to build the stack one leaf at a time. Left in
+       place it would also stagger every accordion move, so leaves that should
+       travel together arrive up to a second apart. Clear it once built. */
+    setTimeout(function () {
+        stack.querySelectorAll('.leaf').forEach(function (l) { l.style.transitionDelay = ''; });
+    }, 1500);
+})();
+</script>
+</body>
+</html>

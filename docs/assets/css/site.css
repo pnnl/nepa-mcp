@@ -1018,6 +1018,123 @@ section {
 }
 
 /* ============================================
+   Vision menu
+
+   The two vision sheets sit under one label. "Coverage" and "GIS" do not read as
+   a pair on their own, and neither says that both are the open-source vision
+   rather than shipped documentation.
+   ============================================ */
+
+.nav-menu {
+    position: relative;
+}
+
+.nav-pop {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 0.55rem);
+    min-width: 15.5rem;
+    padding: 0.4rem;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    box-shadow: 0 14px 36px rgba(15, 23, 42, 0.12);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+    z-index: 60;
+}
+
+/* focus-within carries the keyboard path, so the menu needs no script. */
+.nav-menu:hover .nav-pop,
+.nav-menu:focus-within .nav-pop {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+}
+
+.nav-pop a {
+    display: block;
+    padding: 0.5rem 0.7rem;
+    border-radius: 0.5rem;
+    transition: background 0.15s ease;
+}
+
+.nav-pop a:hover,
+.nav-pop a:focus-visible {
+    background: #f1f5f9;
+}
+
+/* ============================================
+   Vision disclosure
+
+   One card on the index that opens to the two vision sheets. Their own titles do
+   not explain themselves to someone who has not met them yet, so "Vision" is the
+   thing on the page and the sheets sit inside it.
+   ============================================ */
+
+.vision-disclose {
+    border: 1px solid rgba(153, 246, 228, 0.9);
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.7);
+    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.vision-disclose:hover,
+.vision-disclose[open] {
+    border-color: rgba(var(--brand-primary-rgb), 0.4);
+    background: #fff;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
+}
+
+.vision-disclose > summary {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    /* Both are needed to drop the native triangle across browsers. */
+    list-style: none;
+}
+
+.vision-disclose > summary::-webkit-details-marker {
+    display: none;
+}
+
+.vision-disclose > summary:focus-visible {
+    outline: 2px solid var(--brand-primary);
+    outline-offset: 2px;
+    border-radius: 0.7rem;
+}
+
+.vision-chev {
+    margin-left: auto;
+    margin-top: 0.3rem;
+    font-size: 0.6875rem;
+    color: var(--brand-primary);
+    transition: transform 0.25s ease;
+}
+
+.vision-disclose[open] .vision-chev {
+    transform: rotate(180deg);
+}
+
+.vision-sheet {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    margin: 0 0.5rem 0.5rem;
+    padding: 0.6rem 0.7rem;
+    border-radius: 0.55rem;
+    transition: background 0.15s ease;
+}
+
+.vision-sheet:hover {
+    background: rgba(var(--brand-primary-rgb), 0.06);
+}
+
+/* ============================================
    Reduced motion
    ============================================ */
 

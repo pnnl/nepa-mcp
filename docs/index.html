@@ -52,7 +52,7 @@
     <!-- ?v= is a cache buster. GitHub Pages serves these assets with a long
          max-age, so a returning visitor keeps the old CSS and JS until the URL
          changes. Bump the value whenever site.css or site.js changes. -->
-    <link rel="stylesheet" href="assets/css/site.css?v=11">
+    <link rel="stylesheet" href="assets/css/site.css?v=14">
 </head>
 <body class="bg-slate-50 text-slate-900 antialiased">
 
@@ -91,10 +91,34 @@
                     <a href="#tools" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap">Tools</a>
                     <a href="#layers" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap">Layers</a>
                     <a href="#documentation" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap">Docs</a>
-                    <!-- Cross-page link, so it sits apart from the in-page anchors. -->
-                    <a href="vision.html" class="text-sm font-medium text-teal-700 hover:text-teal-800 transition-colors whitespace-nowrap inline-flex items-center gap-1.5 border-l border-slate-200 pl-5 lg:pl-7">
-                        <i class="fas fa-cube text-xs" aria-hidden="true"></i>Vision
-                    </a>
+                    <!-- Cross-page links, so they sit apart from the in-page anchors. -->
+                    <div class="border-l border-slate-200 pl-5 lg:pl-7">
+                        <div class="nav-menu">
+                        <button type="button" aria-haspopup="true" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap inline-flex items-center gap-1.5">
+                            <i class="fas fa-cube text-xs" aria-hidden="true"></i>Vision <i class="fas fa-chevron-down text-[9px] opacity-60" aria-hidden="true"></i>
+                        </button>
+                        <div class="nav-pop">
+                            <a href="vision.html">
+                                <span class="flex items-start gap-2.5">
+                                    <i class="fas fa-cube text-teal-600 text-xs mt-1" aria-hidden="true"></i>
+                                    <span>
+                                        <span class="block text-sm font-medium text-ink">Permitting coverage</span>
+                                        <span class="block text-xs text-slate-500 mt-0.5">Statute, jurisdiction, sector</span>
+                                    </span>
+                                </span>
+                            </a>
+                            <a href="gis.html">
+                                <span class="flex items-start gap-2.5">
+                                    <i class="fas fa-layer-group text-teal-600 text-xs mt-1" aria-hidden="true"></i>
+                                    <span>
+                                        <span class="block text-sm font-medium text-ink">Spatial context</span>
+                                        <span class="block text-xs text-slate-500 mt-0.5">The GIS layer stack</span>
+                                    </span>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -108,7 +132,9 @@
                 <a href="#tools" class="hover:text-teal-700 transition-colors">Tools</a>
                 <a href="#layers" class="hover:text-teal-700 transition-colors">Layers</a>
                 <a href="#documentation" class="hover:text-teal-700 transition-colors">Docs</a>
-                <a href="vision.html" class="text-teal-700 font-semibold">Vision</a>
+                <span class="text-slate-400 uppercase text-xs tracking-widest pl-1">Vision</span>
+                <a href="vision.html" class="text-teal-700 font-semibold">Coverage</a>
+                <a href="gis.html" class="text-teal-700 font-semibold">GIS</a>
             </div>
         </div>
     </nav>
@@ -519,15 +545,36 @@ codex plugin add nepa-mcp@nepa-mcp-local</code></pre>
                         <p class="text-xs font-semibold text-teal-700 uppercase tracking-wider mb-2">Open-source project</p>
                         <h3 class="text-xl font-semibold text-ink mb-2">Contribute &amp; Support</h3>
                         <p class="text-sm text-slate-600 leading-relaxed">Development guidance, support boundaries, and community standards are maintained alongside the code.</p>
-                        <!-- Where the project is going, next to how to join it. -->
-                        <a href="vision.html" class="group mt-4 inline-flex items-start gap-3 rounded-xl border border-teal-200 bg-white/70 px-4 py-3 text-left transition-all hover:border-teal-400 hover:bg-white hover:shadow-md">
-                            <i class="fas fa-cube text-teal-600 mt-0.5" aria-hidden="true"></i>
-                            <span>
-                                <span class="block text-sm font-semibold text-ink">Vision</span>
-                                <span class="block text-xs text-slate-500 mt-0.5">Where this goes next: coverage across statute, jurisdiction, and project sector.</span>
-                            </span>
-                            <i class="fas fa-arrow-right text-xs text-teal-600 mt-1 transition-transform group-hover:translate-x-0.5" aria-hidden="true"></i>
-                        </a>
+                        <!-- One entry, not two. "Permitting coverage" and "Spatial context"
+                             do not explain themselves on a page that has not introduced
+                             them; "Vision" does, and opens to both. A native disclosure,
+                             so it works without script and takes the keyboard for free. -->
+                        <details class="vision-disclose mt-4">
+                            <summary>
+                                <i class="fas fa-cube text-teal-600 mt-0.5" aria-hidden="true"></i>
+                                <span>
+                                    <span class="block text-sm font-semibold text-ink">Vision</span>
+                                    <span class="block text-xs text-slate-500 mt-0.5">Where the toolkit goes next.</span>
+                                </span>
+                                <i class="fas fa-chevron-down vision-chev" aria-hidden="true"></i>
+                            </summary>
+                            <a href="vision.html" class="vision-sheet group">
+                                <i class="fas fa-cube text-teal-600 text-xs mt-1" aria-hidden="true"></i>
+                                <span>
+                                    <span class="block text-sm font-medium text-ink">Permitting coverage</span>
+                                    <span class="block text-xs text-slate-500 mt-0.5">Statute, jurisdiction, and project sector, drawn as a volume.</span>
+                                </span>
+                                <i class="fas fa-arrow-right text-xs text-teal-600 mt-1 ml-auto transition-transform group-hover:translate-x-0.5" aria-hidden="true"></i>
+                            </a>
+                            <a href="gis.html" class="vision-sheet group">
+                                <i class="fas fa-layer-group text-teal-600 text-xs mt-1" aria-hidden="true"></i>
+                                <span>
+                                    <span class="block text-sm font-medium text-ink">Spatial context</span>
+                                    <span class="block text-xs text-slate-500 mt-0.5">A section through the layer stack: what it holds, and what it does not.</span>
+                                </span>
+                                <i class="fas fa-arrow-right text-xs text-teal-600 mt-1 ml-auto transition-transform group-hover:translate-x-0.5" aria-hidden="true"></i>
+                            </a>
+                        </details>
                     </div>
                     <nav class="flex flex-wrap gap-2" aria-label="Project governance and support">
                         <a href="https://github.com/pnnl-int/nepa-mcp-server/blob/main/CONTRIBUTING.md" class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:border-teal-300 hover:text-teal-800 transition-colors"><i class="fas fa-code-branch text-teal-600" aria-hidden="true"></i>Contribution Guide</a>
