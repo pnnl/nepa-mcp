@@ -452,7 +452,7 @@ var SITE_DATA = {
           "type": "string",
           "required": true,
           "default": "",
-          "description": "Citation string. Examples: \"40 CFR 1502.14\", \"33 CFR 328.3(a)\", \"40 CFR 261.4(a)(20)(ii)(B)(1)\".",
+          "description": "Citation string. Examples: \"43 CFR 46.215\", \"33 CFR 328.3(a)\", \"40 CFR 261.4(a)(20)(ii)(B)(1)\".",
           "choices": []
         },
         {
@@ -538,7 +538,7 @@ var SITE_DATA = {
           "type": "string",
           "required": true,
           "default": "",
-          "description": "Federal Register citation, e.g. \"88 FR 3142\" or \"88 Fed. Reg. 3142\".",
+          "description": "Federal Register citation, e.g. \"90 FR 29498\" or \"90 Fed. Reg. 29498\".",
           "choices": []
         },
         {
