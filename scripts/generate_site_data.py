@@ -177,12 +177,19 @@ async def discover() -> tuple[list[ToolRecord], dict[str, Any]]:
 def collect_map_composer(module: Any) -> dict[str, Any]:
     """Read the Map Composer layer catalog and profile membership from source."""
     metadata: dict[str, dict[str, str]] = module.LAYER_METADATA
+    source_urls: dict[str, str] = module.LAYER_SOURCE_URLS
     profiles: dict[str, list[str]] = module.LAYER_PROFILES
     default_layers: list[str] = list(module.DEFAULT_LAYERS)
 
     missing = [layer for layer in default_layers if layer not in metadata]
     if missing:
         raise ValueError(f"layers missing from LAYER_METADATA: {', '.join(missing)}")
+    missing_source_urls = [layer for layer in default_layers if layer not in source_urls]
+    if missing_source_urls:
+        raise ValueError(f"layers missing from LAYER_SOURCE_URLS: {', '.join(missing_source_urls)}")
+    unknown_source_urls = [layer for layer in source_urls if layer not in default_layers]
+    if unknown_source_urls:
+        raise ValueError(f"unknown layers in LAYER_SOURCE_URLS: {', '.join(unknown_source_urls)}")
 
     for profile, layer_ids in profiles.items():
         unknown = [layer for layer in layer_ids if layer not in default_layers]
@@ -195,6 +202,8 @@ def collect_map_composer(module: Any) -> dict[str, Any]:
             "category": metadata[layer_id]["category"],
             "title": metadata[layer_id]["title"],
             "source": metadata[layer_id]["source"],
+            "sourceUrl": source_urls[layer_id],
+            "sourceLinkLabel": "Geometry service" if layer_id == "roi" else "Source service",
             "geometry": metadata[layer_id]["geometry"],
             "reviewUse": metadata[layer_id]["review_use"],
             "profiles": sorted(profile for profile, layer_ids in profiles.items() if layer_id in layer_ids),

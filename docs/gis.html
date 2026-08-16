@@ -33,7 +33,7 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-    <link rel="stylesheet" href="assets/css/site.css?v=14">
+    <link rel="stylesheet" href="assets/css/site.css?v=16">
 
 <style>
 /* ============================================================
@@ -897,7 +897,20 @@
     }
 
     var sel = null;
+    var assemblyDone = false, assemblyTimer = null;
+    function finishAssembly() {
+        if (assemblyDone) return;
+        assemblyDone = true;
+        if (assemblyTimer) window.clearTimeout(assemblyTimer);
+        stack.querySelectorAll('.leaf').forEach(function (l) {
+            l.style.transitionDelay = '';
+        });
+    }
     function paint(key) {
+        /* If a visitor opens a band while the entrance is still building, the
+           accordion takes over immediately. Retaining the entrance stagger
+           here would leave later leaves waiting nearly a second to move. */
+        if (key) finishAssembly();
         sel = key;
         if (key) stack.setAttribute('data-band', key);
         else stack.removeAttribute('data-band');
@@ -941,9 +954,7 @@
     /* The per-leaf delay is there to build the stack one leaf at a time. Left in
        place it would also stagger every accordion move, so leaves that should
        travel together arrive up to a second apart. Clear it once built. */
-    setTimeout(function () {
-        stack.querySelectorAll('.leaf').forEach(function (l) { l.style.transitionDelay = ''; });
-    }, 1500);
+    assemblyTimer = window.setTimeout(finishAssembly, 1500);
 })();
 </script>
 </body>

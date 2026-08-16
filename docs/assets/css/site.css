@@ -944,6 +944,27 @@ section {
     line-height: 1.45;
 }
 
+.layer-source-link {
+    color: var(--brand-primary-dark);
+    font-weight: 600;
+    white-space: nowrap;
+    text-decoration: underline;
+    text-decoration-color: rgba(var(--brand-primary-rgb), 0.3);
+    text-underline-offset: 2px;
+    transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+.layer-source-link:hover {
+    color: var(--brand-primary-darker);
+    text-decoration-color: currentColor;
+}
+
+.layer-source-link:focus-visible {
+    outline: 2px solid var(--brand-primary);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
 .layer-geometry {
     display: inline-block;
     font-size: 0.625rem;

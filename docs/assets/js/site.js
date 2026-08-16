@@ -1297,7 +1297,16 @@ function renderLayerCards() {
             card.appendChild(top);
 
             card.appendChild(el('code', 'layer-card-id', layer.id));
-            card.appendChild(el('p', 'layer-card-meta mt-1.5', layer.source));
+            var source = el('p', 'layer-card-meta mt-1.5');
+            source.appendChild(document.createTextNode(layer.source + ' · '));
+            var sourceLink = el('a', 'layer-source-link', layer.sourceLinkLabel + ' ↗');
+            sourceLink.href = layer.sourceUrl;
+            sourceLink.target = '_blank';
+            sourceLink.rel = 'noopener noreferrer';
+            sourceLink.setAttribute('aria-label',
+                layer.sourceLinkLabel + ' for ' + layer.title + ' (opens in a new tab)');
+            source.appendChild(sourceLink);
+            card.appendChild(source);
             card.appendChild(el('p', 'layer-card-meta mt-1.5 text-slate-500 italic', layer.reviewUse));
             grid.appendChild(card);
         });

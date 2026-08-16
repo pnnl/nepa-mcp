@@ -1923,6 +1923,8 @@ var SITE_DATA = {
         "category": "Region of Interest",
         "title": "Project Location and Buffer",
         "source": "User-specified coordinates (calculated via ArcGIS geometry service)",
+        "sourceUrl": "https://utility.arcgisonline.com/arcgis/rest/services/Geometry/GeometryServer",
+        "sourceLinkLabel": "Geometry service",
         "geometry": "Point + Polygon",
         "reviewUse": "Defines the project area used for map-based screening",
         "profiles": [
@@ -1938,6 +1940,8 @@ var SITE_DATA = {
         "category": "Tribal",
         "title": "Tribal Lands",
         "source": "U.S. Census Bureau TIGERweb AIANNHA",
+        "sourceUrl": "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/AIANNHA/MapServer",
+        "sourceLinkLabel": "Source service",
         "geometry": "Polygon",
         "reviewUse": "Provides geographic context for early coordination and project-area review",
         "profiles": [
@@ -1950,6 +1954,8 @@ var SITE_DATA = {
         "category": "Administrative",
         "title": "County Boundaries",
         "source": "U.S. Census Bureau TIGERweb",
+        "sourceUrl": "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/tigerWMS_Current/MapServer",
+        "sourceLinkLabel": "Source service",
         "geometry": "Polygon",
         "reviewUse": "Provides administrative context for scoping and related county-level data",
         "profiles": [
@@ -1962,6 +1968,8 @@ var SITE_DATA = {
         "category": "Species and Habitat",
         "title": "Critical Habitat",
         "source": "U.S. Fish and Wildlife Service Critical Habitat FeatureServer",
+        "sourceUrl": "https://services.arcgis.com/QVENGdaPbd4LUkLV/arcgis/rest/services/USFWS_Critical_Habitat/FeatureServer",
+        "sourceLinkLabel": "Source service",
         "geometry": "Polygon",
         "reviewUse": "Identifies mapped habitat for closer biological-resource review",
         "profiles": [
@@ -1975,6 +1983,8 @@ var SITE_DATA = {
         "category": "Species and Habitat",
         "title": "National Wildlife Refuges",
         "source": "U.S. Fish and Wildlife Service National Wildlife Refuge System",
+        "sourceUrl": "https://services.arcgis.com/QVENGdaPbd4LUkLV/arcgis/rest/services/National_Wildlife_Refuge_System_Boundaries/FeatureServer",
+        "sourceLinkLabel": "Source service",
         "geometry": "Polygon",
         "reviewUse": "Identifies refuge boundaries for land and resource context",
         "profiles": [
@@ -1988,6 +1998,8 @@ var SITE_DATA = {
         "category": "Water Resources (USACE)",
         "title": "USACE Regulatory Districts",
         "source": "U.S. Army Corps of Engineers regulatory boundary service",
+        "sourceUrl": "https://services7.arcgis.com/n1YM8pTrFmm7L4hs/ArcGIS/rest/services/usace_cw_districts/FeatureServer",
+        "sourceLinkLabel": "Source service",
         "geometry": "Polygon",
         "reviewUse": "Identifies the relevant USACE district for agency follow-up",
         "profiles": [
@@ -2001,6 +2013,8 @@ var SITE_DATA = {
         "category": "Water Resources (USACE)",
         "title": "Wetland Delineation Regions",
         "source": "USACE COE wetland regions service",
+        "sourceUrl": "https://services7.arcgis.com/n1YM8pTrFmm7L4hs/ArcGIS/rest/services/coe_wetland_regions/FeatureServer",
+        "sourceLinkLabel": "Source service",
         "geometry": "Polygon",
         "reviewUse": "Provides regional wetland-delineation method context",
         "profiles": [
@@ -2014,6 +2028,8 @@ var SITE_DATA = {
         "category": "Water Resources (USACE)",
         "title": "Wetland Delineation Subregions",
         "source": "USACE COE wetland subregions service",
+        "sourceUrl": "https://services7.arcgis.com/n1YM8pTrFmm7L4hs/ArcGIS/rest/services/coe_wetland_subregions/FeatureServer",
+        "sourceLinkLabel": "Source service",
         "geometry": "Polygon",
         "reviewUse": "Provides subregional wetland-delineation context",
         "profiles": [
@@ -2026,6 +2042,8 @@ var SITE_DATA = {
         "category": "Water Resources (USGS NHD)",
         "title": "Lakes and Ponds",
         "source": "USGS National Hydrography Dataset",
+        "sourceUrl": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer",
+        "sourceLinkLabel": "Source service",
         "geometry": "Polygon",
         "reviewUse": "Maps lakes and ponds for water-resource screening",
         "profiles": [
@@ -2038,6 +2056,8 @@ var SITE_DATA = {
         "category": "Water Resources (USGS NHD)",
         "title": "Reservoirs",
         "source": "USGS National Hydrography Dataset",
+        "sourceUrl": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer",
+        "sourceLinkLabel": "Source service",
         "geometry": "Polygon",
         "reviewUse": "Maps reservoirs for water-resource and infrastructure context",
         "profiles": [
@@ -2050,6 +2070,8 @@ var SITE_DATA = {
         "category": "Water Resources (USGS NHD)",
         "title": "Estuaries",
         "source": "USGS National Hydrography Dataset",
+        "sourceUrl": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer",
+        "sourceLinkLabel": "Source service",
         "geometry": "Polygon",
         "reviewUse": "Maps estuarine features for coastal and water-resource context",
         "profiles": [
@@ -2062,6 +2084,8 @@ var SITE_DATA = {
         "category": "Water Resources (USGS NHD)",
         "title": "Glaciers and Ice Masses",
         "source": "USGS National Hydrography Dataset",
+        "sourceUrl": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer",
+        "sourceLinkLabel": "Source service",
         "geometry": "Polygon",
         "reviewUse": "Maps glaciers and ice masses for baseline environmental context",
         "profiles": [
@@ -2074,6 +2098,8 @@ var SITE_DATA = {
         "category": "Water Resources (USGS NHD)",
         "title": "Perennial Stream Centerlines",
         "source": "USGS National Hydrography Dataset",
+        "sourceUrl": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer",
+        "sourceLinkLabel": "Source service",
         "geometry": "Polyline",
         "reviewUse": "Maps perennial hydrography for water-resource screening",
         "profiles": [
@@ -2087,6 +2113,8 @@ var SITE_DATA = {
         "category": "Water Resources (USGS NHD)",
         "title": "River and Stream Areas",
         "source": "USGS National Hydrography Dataset",
+        "sourceUrl": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer",
+        "sourceLinkLabel": "Source service",
         "geometry": "Polygon",
         "reviewUse": "Maps river and stream areas for water-resource screening",
         "profiles": [
@@ -2099,6 +2127,8 @@ var SITE_DATA = {
         "category": "Water Resources (USGS NHD)",
         "title": "Water Infrastructure (Dams, Springs, Gages, Wells, Intakes)",
         "source": "USGS National Hydrography Dataset",
+        "sourceUrl": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer",
+        "sourceLinkLabel": "Source service",
         "geometry": "Point",
         "reviewUse": "Provides water-infrastructure and monitoring context",
         "profiles": [
@@ -2111,6 +2141,8 @@ var SITE_DATA = {
         "category": "Federal Lands (non-BLM)",
         "title": "Federal Protected Lands",
         "source": "USGS Protected Areas Database (PAD-US 4.1), filtered to non-BLM federal managers",
+        "sourceUrl": "https://edits.nationalmap.gov/arcgis/rest/services/PAD-US/PAD_US_4_1/MapServer",
+        "sourceLinkLabel": "Source service",
         "geometry": "Polygon",
         "reviewUse": "Identifies mapped federal land managers and protected areas",
         "profiles": [
@@ -2124,6 +2156,8 @@ var SITE_DATA = {
         "category": "Federal Lands (non-BLM)",
         "title": "National Forest System Boundaries",
         "source": "USDA Forest Service Enterprise Data Warehouse",
+        "sourceUrl": "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_ForestSystemBoundaries_01/MapServer",
+        "sourceLinkLabel": "Source service",
         "geometry": "Polygon",
         "reviewUse": "Provides National Forest System and land-management context",
         "profiles": [
@@ -2137,6 +2171,8 @@ var SITE_DATA = {
         "category": "Federal Lands (non-BLM)",
         "title": "Inventoried Roadless Areas (2001 Rule)",
         "source": "USDA Forest Service Enterprise Data Warehouse",
+        "sourceUrl": "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_InventoriedRoadlessAreas2001_01/MapServer",
+        "sourceLinkLabel": "Source service",
         "geometry": "Polygon",
         "reviewUse": "Identifies inventoried roadless areas for land-use context",
         "profiles": [
@@ -2149,6 +2185,8 @@ var SITE_DATA = {
         "category": "Federal Lands (non-BLM)",
         "title": "National Park Service Unit Boundaries",
         "source": "NPS Land Resources Division Boundary and Tract Data Service",
+        "sourceUrl": "https://services1.arcgis.com/fBc8EJBxQRMcHlei/arcgis/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer",
+        "sourceLinkLabel": "Source service",
         "geometry": "Polygon",
         "reviewUse": "Identifies National Park Service units for land and resource context",
         "profiles": [
@@ -2162,6 +2200,8 @@ var SITE_DATA = {
         "category": "Federal Lands (BLM)",
         "title": "BLM Surface Management",
         "source": "USGS Protected Areas Database (PAD-US 4.1), filtered to BLM",
+        "sourceUrl": "https://edits.nationalmap.gov/arcgis/rest/services/PAD-US/PAD_US_4_1/MapServer",
+        "sourceLinkLabel": "Source service",
         "geometry": "Polygon",
         "reviewUse": "Identifies mapped BLM-managed lands",
         "profiles": [
@@ -2174,6 +2214,8 @@ var SITE_DATA = {
         "category": "Federal Lands (BLM)",
         "title": "Approved Land Use Plans (RMPs)",
         "source": "BLM National ArcGIS Portal",
+        "sourceUrl": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_Land_Use_Plans_Approved_2022/FeatureServer",
+        "sourceLinkLabel": "Source service",
         "geometry": "Polygon",
         "reviewUse": "Provides approved BLM land-use-plan context",
         "profiles": [
@@ -2187,6 +2229,8 @@ var SITE_DATA = {
         "category": "Federal Lands (BLM)",
         "title": "Land Use Plans Under Revision",
         "source": "BLM National ArcGIS Portal",
+        "sourceUrl": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_Revision_Development_Land_Use_Plans/FeatureServer",
+        "sourceLinkLabel": "Source service",
         "geometry": "Polygon",
         "reviewUse": "Identifies BLM planning areas with revisions in progress",
         "profiles": [
@@ -2199,6 +2243,8 @@ var SITE_DATA = {
         "category": "Federal Lands (BLM)",
         "title": "Wilderness Study Areas",
         "source": "BLM National Conservation Lands System",
+        "sourceUrl": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/NLCS_Wilderness_Study_Areas/FeatureServer",
+        "sourceLinkLabel": "Source service",
         "geometry": "Polygon",
         "reviewUse": "Identifies mapped wilderness study areas",
         "profiles": [
@@ -2211,6 +2257,8 @@ var SITE_DATA = {
         "category": "Federal Lands (BLM)",
         "title": "National Monuments and Conservation Areas",
         "source": "BLM National Conservation Lands System",
+        "sourceUrl": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_NLCS_National_Monuments_National_Conservation_Areas_Polygons/FeatureServer",
+        "sourceLinkLabel": "Source service",
         "geometry": "Polygon",
         "reviewUse": "Identifies mapped monuments and conservation areas",
         "profiles": [
@@ -2223,6 +2271,8 @@ var SITE_DATA = {
         "category": "Federal Lands (BLM)",
         "title": "No Surface Occupancy Restrictions",
         "source": "BLM National ArcGIS Portal",
+        "sourceUrl": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/Rights_of_Way/FeatureServer",
+        "sourceLinkLabel": "Source service",
         "geometry": "Polygon",
         "reviewUse": "Provides mapped right-of-way and surface-use context",
         "profiles": [
@@ -2235,6 +2285,8 @@ var SITE_DATA = {
         "category": "Habitat Protection",
         "title": "Greater Sage-Grouse Habitat Management Areas",
         "source": "BLM National ArcGIS Portal (2026 ROD)",
+        "sourceUrl": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_WesternUS_GRSG_ROD_HabitatMgmtAreas_Feb_2026/FeatureServer",
+        "sourceLinkLabel": "Source service",
         "geometry": "Polygon",
         "reviewUse": "Provides greater sage-grouse habitat-management context",
         "profiles": [
@@ -2247,6 +2299,8 @@ var SITE_DATA = {
         "category": "Habitat Protection",
         "title": "Sagebrush Focal Areas",
         "source": "BLM National ArcGIS Portal",
+        "sourceUrl": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_WesternUS_GRSG_Sagebrush_Focal_Areas_v2/FeatureServer",
+        "sourceLinkLabel": "Source service",
         "geometry": "Polygon",
         "reviewUse": "Identifies mapped sagebrush focal areas",
         "profiles": [
@@ -2259,6 +2313,8 @@ var SITE_DATA = {
         "category": "Habitat Protection",
         "title": "Wild Horse and Burro Herd Management Areas",
         "source": "BLM National ArcGIS Portal",
+        "sourceUrl": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_Wild_Horse_and_Burro_Heard_Mgmt_Area_Polygons/FeatureServer",
+        "sourceLinkLabel": "Source service",
         "geometry": "Polygon",
         "reviewUse": "Identifies wild horse and burro management areas",
         "profiles": [
@@ -2271,6 +2327,8 @@ var SITE_DATA = {
         "category": "Contextual",
         "title": "National Scenic and Historic Trails",
         "source": "BLM National ArcGIS Portal",
+        "sourceUrl": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/National_Scenic_and_Historic_Trails_NSHT/FeatureServer",
+        "sourceLinkLabel": "Source service",
         "geometry": "Polyline",
         "reviewUse": "Provides national trail and corridor context",
         "profiles": [
@@ -2283,6 +2341,8 @@ var SITE_DATA = {
         "category": "Contextual",
         "title": "Historical Fire Perimeters",
         "source": "National Interagency Fire Center authoritative fire history",
+        "sourceUrl": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/InterAgencyFirePerimeterHistory_All_Years_View/FeatureServer",
+        "sourceLinkLabel": "Source service",
         "geometry": "Polygon",
         "reviewUse": "Provides historical disturbance context",
         "profiles": [
@@ -2294,6 +2354,8 @@ var SITE_DATA = {
         "category": "Contextual",
         "title": "Land and Water Conservation Fund Parcels",
         "source": "BLM National ArcGIS Portal",
+        "sourceUrl": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_Land_and_Water_Conservation_Fund_LWCF_Polygons/FeatureServer",
+        "sourceLinkLabel": "Source service",
         "geometry": "Polygon",
         "reviewUse": "Identifies mapped Land and Water Conservation Fund parcels",
         "profiles": [
@@ -2306,6 +2368,8 @@ var SITE_DATA = {
         "category": "Contextual",
         "title": "Western US EIS Planning Boundaries",
         "source": "BLM National ArcGIS Portal",
+        "sourceUrl": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_WesternUS_EIS_Boundaries/FeatureServer",
+        "sourceLinkLabel": "Source service",
         "geometry": "Polygon",
         "reviewUse": "Identifies prior EIS planning boundaries for contextual review",
         "profiles": [
