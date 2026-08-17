@@ -14,7 +14,7 @@ var SITE_DATA = {
     "license": "BSD-3-Clause",
     "licenseName": "BSD 3-Clause",
     "description": "MCP servers for federal environmental data, regulatory research, and geospatial screening",
-    "repository": "https://github.com/pnnl-int/nepa-mcp-server"
+    "repository": "https://github.com/pnnl/nepa-mcp"
   },
   "counts": {
     "servers": 19,

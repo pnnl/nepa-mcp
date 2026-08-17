@@ -10,7 +10,7 @@
 
 var DATA = typeof SITE_DATA !== 'undefined' ? SITE_DATA : null;
 
-var GITHUB_BLOB = 'https://github.com/pnnl-int/nepa-mcp-server/blob/main/';
+var GITHUB_BLOB = 'https://github.com/pnnl/nepa-mcp/blob/main/';
 
 /* ============================================
    Static page content
