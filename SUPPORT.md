@@ -6,7 +6,7 @@ support, or an availability commitment for upstream agency services.
 
 ## Bugs
 
-Use the [GitHub issue tracker](https://github.com/pnnl-int/nepa-mcp-server/issues)
+Use the [GitHub issue tracker](https://github.com/pnnl/nepa-mcp/issues)
 for reproducible defects in this repository. Include:
 
 - the NEPA MCP version and installation method;

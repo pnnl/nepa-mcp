@@ -45,9 +45,9 @@ dependencies = [
 nepa-mcp = "nepa_mcp.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/pnnl-int/nepa-mcp-server"
-Repository = "https://github.com/pnnl-int/nepa-mcp-server"
-Issues = "https://github.com/pnnl-int/nepa-mcp-server/issues"
+Homepage = "https://github.com/pnnl/nepa-mcp"
+Repository = "https://github.com/pnnl/nepa-mcp"
+Issues = "https://github.com/pnnl/nepa-mcp/issues"
 
 [dependency-groups]
 dev = [

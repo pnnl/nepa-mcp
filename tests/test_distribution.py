@@ -48,7 +48,7 @@ EXPECTED_AUTHORS = [
     "Sai Munikoti",
     "Sameera Horawalavithana",
 ]
-CANONICAL_REPOSITORY = "https://github.com/pnnl-int/nepa-mcp-server"
+CANONICAL_REPOSITORY = "https://github.com/pnnl/nepa-mcp"
 
 
 def test_public_package_metadata_matches_the_approved_release_identity() -> None:

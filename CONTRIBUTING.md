@@ -15,8 +15,8 @@ NEPA MCP requires Python 3.12 or newer. The development environment uses
 [`uv`](https://docs.astral.sh/uv/):
 
 ```bash
-git clone https://github.com/pnnl-int/nepa-mcp-server.git
-cd nepa-mcp-server
+git clone https://github.com/pnnl/nepa-mcp.git
+cd nepa-mcp
 uv sync --all-groups
 ```
 
