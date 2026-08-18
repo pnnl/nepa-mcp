@@ -943,7 +943,7 @@ wheels = [
 
 [[package]]
 name = "nepa-mcp"
-version = "0.1.0rc1"
+version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "beautifulsoup4" },

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "nepa-mcp"
-version = "0.1.0rc1"
+version = "0.1.0"
 description = "MCP servers for federal environmental data, regulatory research, and geospatial screening"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -46,8 +46,10 @@ nepa-mcp = "nepa_mcp.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/pnnl/nepa-mcp"
+Documentation = "https://pnnl.github.io/nepa-mcp/"
 Repository = "https://github.com/pnnl/nepa-mcp"
 Issues = "https://github.com/pnnl/nepa-mcp/issues"
+Releases = "https://github.com/pnnl/nepa-mcp/releases"
 
 [dependency-groups]
 dev = [

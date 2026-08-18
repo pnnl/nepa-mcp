@@ -20,6 +20,7 @@ authors:
   - family-names: Horawalavithana
     given-names: Sameera
     website: "https://www.pnnl.gov/people/sameera-horawalavithana"
-version: 0.1.0rc1
+version: 0.1.0
+date-released: 2026-08-18
 repository-code: "https://github.com/pnnl/nepa-mcp"
 license: BSD-3-Clause

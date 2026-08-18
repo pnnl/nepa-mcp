@@ -1,6 +1,6 @@
 <div align="center" style="text-align: center;">
 
-  <img src="docs/assets/permitai-nepa-mcp-toolkit-tm.svg" alt="PermitAI — NEPA MCP Toolkit™" width="740">
+  <img src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.0/docs/assets/permitai-nepa-mcp-toolkit-tm.svg" alt="PermitAI — NEPA MCP Toolkit™" width="740">
   <br>
 
   <p>
@@ -9,10 +9,10 @@
 
   <p>
   Works with<br>
-  <a href="#configure-an-mcp-client"><img alt="Codex MCP client" src="docs/assets/badges/codex-client-config.svg" height="20"></a>
-  <a href="#codex-plugin"><img alt="Codex plugin" src="docs/assets/badges/codex-plugin.svg" height="20"></a>
+  <a href="#configure-an-mcp-client"><img alt="Codex MCP client" src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.0/docs/assets/badges/codex-client-config.svg" height="20"></a>
+  <a href="#codex-plugin"><img alt="Codex plugin" src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.0/docs/assets/badges/codex-plugin.svg" height="20"></a>
   <a href="#configure-an-mcp-client"><img alt="Claude Code client configuration" src="https://img.shields.io/badge/Claude_Code-MCP_Client-D97757?style=flat-square&amp;logo=anthropic&amp;logoColor=white" height="20"></a>
-  <a href="#configure-an-mcp-client"><img alt="VS Code client configuration" src="docs/assets/badges/vscode-mcp-client.svg" height="20"></a>
+  <a href="#configure-an-mcp-client"><img alt="VS Code client configuration" src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.0/docs/assets/badges/vscode-mcp-client.svg" height="20"></a>
   </p>
 
   <p>
@@ -42,7 +42,8 @@ public GIS services from eight federal data publishers at request time. It can
 compose selected results into an interactive map or a provenance-rich GeoJSON
 export.
 
-> [!IMPORTANT]
+> **Important**
+>
 > NEPA MCP is a screening and research aid. It does not make legal or agency
 > determinations, replace consultation with agencies or Tribes, or guarantee
 > that an upstream dataset is complete or current. Confirm material findings
@@ -54,14 +55,11 @@ export.
 
 - Python 3.12 or newer
 - [`pipx`](https://pipx.pypa.io/) for an isolated installation
-- Git
 
-Clone the public repository and install the runtime:
+Install the stable package from PyPI:
 
 ```bash
-git clone https://github.com/pnnl/nepa-mcp.git
-cd nepa-mcp
-pipx install .
+pipx install nepa-mcp
 ```
 
 Verify the installation and list the available domains:
@@ -86,8 +84,24 @@ tool behind one connection:
 nepa-mcp server all
 ```
 
-If `nepa-mcp` is already installed from another checkout or an older local
-build, replace it with this checkout:
+Upgrade an existing PyPI installation:
+
+```bash
+pipx upgrade nepa-mcp
+```
+
+### Install from source
+
+For development or unreleased changes, clone the repository and install the
+current checkout:
+
+```bash
+git clone https://github.com/pnnl/nepa-mcp.git
+cd nepa-mcp
+pipx install .
+```
+
+If `nepa-mcp` is already installed, replace it with the current checkout:
 
 ```bash
 pipx install --force .
@@ -113,12 +127,19 @@ Unrelated MCP entries are preserved, and an existing file receives a one-time
 
 ## Codex Plugin
 
-The repository contains a local Codex marketplace and a `nepa-mcp` plugin. The
-plugin registers all 19 servers and includes the `nepa-screening` skill.
-After installing the Python runtime, run:
+The repository contains a Codex marketplace and a `nepa-mcp` plugin. The plugin
+registers all 19 servers and includes the `nepa-screening` skill. Install the
+Python runtime from PyPI first, then add the marketplace in Codex Desktop:
+
+1. Open **Plugins** and select **Add plugin marketplace**.
+2. Enter `pnnl/nepa-mcp` for **Source** and `v0.1.0` for **Git ref**.
+3. Leave **Sparse paths** blank, then select **Add marketplace**.
+4. Install **NEPA-MCP** from the **NEPA-MCP Local** marketplace.
+
+The equivalent Codex CLI commands are:
 
 ```bash
-codex plugin marketplace add "$(pwd)"
+codex plugin marketplace add pnnl/nepa-mcp --ref v0.1.0
 codex plugin add nepa-mcp@nepa-mcp-local
 ```
 
@@ -139,7 +160,7 @@ partial, and failed layer counts so source coverage remains visible.
 
 <p align="center">
   <a href="https://github.com/pnnl/nepa-mcp/blob/main/docs/map-composer.md">
-    <img src="docs/assets/map-composer-washington-dc-chesapeake.png" alt="Interactive Map Composer view of a 20-mile Chesapeake Bay watershed project area with 12 overlays visible" width="900">
+    <img src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.0/docs/assets/map-composer-washington-dc-chesapeake.png" alt="Interactive Map Composer view of a 20-mile Chesapeake Bay watershed project area with 12 overlays visible" width="900">
   </a>
 </p>
 
@@ -269,7 +290,8 @@ and contributing dataset publishers
 · [USDA Forest Service](https://www.fs.usda.gov/)
 · [U.S. Geological Survey](https://www.usgs.gov/)
 
-> [!NOTE]
+> **Note**
+>
 > Agency and publisher names identify upstream data provenance only. NEPA MCP
 > is an independent project and is not affiliated with, sponsored by, or
 > endorsed by these organizations.
@@ -321,7 +343,7 @@ or cite it as:
   year         = {2026},
   institution  = {Pacific Northwest National Laboratory},
   url          = {https://github.com/pnnl/nepa-mcp},
-  version      = {0.1.0rc1},
+  version      = {0.1.0},
   license      = {BSD-3-Clause}
 }
 ```
