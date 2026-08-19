@@ -64,26 +64,31 @@ var TRANSFORM_ROWS = [
 
 /**
  * Client configuration options. The CLI writes to these same paths; see
- * nepa_mcp/clients.py for the authoritative targets.
+ * nepa_mcp/clients.py for the authoritative targets. `path` is the literal file
+ * and stays monospaced; `where` is the prose that follows it, and says which
+ * directory decides the location.
  */
 var CLIENT_CONFIGS = [
     {
         id: 'claude',
         label: 'Claude Code',
         command: 'nepa-mcp configure claude',
-        path: '.mcp.json in the project directory'
+        path: '.mcp.json',
+        where: 'in the directory you run it from'
     },
     {
         id: 'vscode',
         label: 'VS Code',
         command: 'nepa-mcp configure vscode',
-        path: '.vscode/mcp.json in the project directory'
+        path: '.vscode/mcp.json',
+        where: 'in the workspace directory you run it from'
     },
     {
         id: 'codex',
         label: 'Codex',
         command: 'nepa-mcp configure codex',
         path: '~/.codex/config.toml',
+        where: '— one global file, so any directory works',
         note: 'Prefer the plugin below to register every server and the screening skill in one step.'
     }
 ];
@@ -483,6 +488,9 @@ function renderClientConfigs() {
         var cliLabel = el('p', 'text-xs text-slate-500 mb-2');
         cliLabel.appendChild(el('span', null, 'Writes to '));
         cliLabel.appendChild(el('code', 'text-teal-800', client.path));
+        if (client.where) {
+            cliLabel.appendChild(el('span', null, ' ' + client.where + '.'));
+        }
         panel.appendChild(cliLabel);
 
         var cliId = 'client-cli-' + client.id;
@@ -1422,6 +1430,61 @@ function initScrollAnimations() {
     });
 }
 
+/**
+ * Light the Quick Start rail as each step arrives. Install, verify, connect, ask
+ * is a real sequence, so the rail draws itself in that order instead of landing
+ * whole, and step 2's recorded output prints a line at a time. Skipped entirely
+ * under reduced motion, where the CSS never hides anything.
+ */
+function initQuickStartSequence() {
+    var container = document.getElementById('quick-start-steps');
+    if (!container || prefersReducedMotion() || !('IntersectionObserver' in window)) {
+        return;
+    }
+
+    var rows = container.querySelectorAll('.step-row');
+    if (!rows.length) {
+        return;
+    }
+
+    container.classList.add('steps-in-motion');
+
+    var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) {
+                return;
+            }
+            entry.target.classList.add('step-lit');
+            observer.unobserve(entry.target);
+            streamTranscript(entry.target.querySelector('.transcript'));
+        });
+    }, { threshold: 0.2, rootMargin: '0px 0px -6% 0px' });
+
+    Array.prototype.forEach.call(rows, function (row) {
+        observer.observe(row);
+    });
+}
+
+/**
+ * Print a recorded transcript one line at a time. The CSS owns the per-line
+ * delays; this only holds the class for as long as the last line needs.
+ * @param {Element|null} transcript
+ */
+function streamTranscript(transcript) {
+    if (!transcript) {
+        return;
+    }
+    var lines = transcript.querySelectorAll('.t-line');
+    if (!lines.length) {
+        return;
+    }
+
+    transcript.classList.add('is-streaming');
+    window.setTimeout(function () {
+        transcript.classList.remove('is-streaming');
+    }, 1200);
+}
+
 function initTransformRowsAnimation() {
     var rows = document.querySelectorAll('#transform-section .transform-row');
     var section = document.getElementById('transform-section');
@@ -1467,6 +1530,7 @@ function init() {
 
     initSmoothScroll();
     initScrollAnimations();
+    initQuickStartSequence();
     initUnifiedBadge();
     initJurisdictionFlow();
 }
