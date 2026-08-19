@@ -29,12 +29,13 @@ the first production upload.
    - `pyproject.toml`
    - `uv.lock`
    - `nepa_mcp/__init__.py`
+   - `plugins/nepa-mcp/.codex-plugin/plugin.json`
    - `tests/test_distribution.py`
    - `CITATION.cff`
-   - the README citation example
+   - the README citation example, tagged asset URLs, and plugin ref
 3. Set the `CITATION.cff` release date.
-4. Make `pipx install nepa-mcp` the primary README installation route.
-   Retain `pipx install .` under an install-from-source section.
+4. Keep `pipx install nepa-mcp` as the primary README installation route and
+   verify that the client and plugin instructions match the release.
 5. Pin README package-page assets to the stable tag instead of the mutable
    `main` branch.
 6. Regenerate the lockfile:
@@ -62,16 +63,16 @@ the first production upload.
 1. Create an annotated stable tag on the exact merge commit:
 
    ```bash
-   git tag -a v0.1.0 -m "NEPA MCP v0.1.0" <merge-commit>
-   git push origin v0.1.0
+   git tag -a v0.1.1 -m "NEPA MCP v0.1.1" <merge-commit>
+   git push origin v0.1.1
    ```
 
 2. Dispatch `Publish to PyPI` from that same tag. With the GitHub CLI:
 
    ```bash
    gh workflow run publish-pypi.yml \
-     --ref v0.1.0 \
-     -f tag=v0.1.0 \
+     --ref v0.1.1 \
+     -f tag=v0.1.1 \
      -f confirmation=publish
    ```
 
@@ -87,7 +88,7 @@ the first production upload.
 2. Clean-install the production package on Python 3.12 and 3.14:
 
    ```bash
-   pipx install nepa-mcp==0.1.0
+   pipx install nepa-mcp==0.1.1
    nepa-mcp --version
    nepa-mcp doctor
    nepa-mcp list-servers

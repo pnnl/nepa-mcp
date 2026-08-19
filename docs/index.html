@@ -52,7 +52,7 @@
     <!-- ?v= is a cache buster. GitHub Pages serves these assets with a long
          max-age, so a returning visitor keeps the old CSS and JS until the URL
          changes. Bump the value whenever site.css or site.js changes. -->
-    <link rel="stylesheet" href="assets/css/site.css?v=16">
+    <link rel="stylesheet" href="assets/css/site.css?v=17">
 </head>
 <body class="bg-slate-50 text-slate-900 antialiased">
 
@@ -270,12 +270,12 @@
     <section id="quick-start" class="py-20 lg:py-28 px-6 bg-gradient-to-b from-white via-slate-50/60 to-white">
         <div class="container mx-auto max-w-4xl">
             <div class="text-center mb-12">
-                <span class="inline-block bg-teal-100 text-teal-800 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wide mb-4">Four commands</span>
+                <span class="inline-block bg-teal-100 text-teal-800 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wide mb-4">Four steps</span>
                 <h2 class="text-4xl lg:text-5xl font-light text-ink mb-4">Quick Start</h2>
                 <p class="text-xl text-slate-600 font-light">Install once, then point your agent at any of the 19 servers</p>
             </div>
 
-            <div class="premium-card rounded-2xl p-8 lg:p-10 shadow-lg" style="transform: none;">
+            <div id="quick-start-steps" class="premium-card rounded-2xl p-8 lg:p-10 shadow-lg" style="transform: none;">
 
                 <!-- Step 1 -->
                 <div class="step-row">
@@ -289,8 +289,14 @@
                             <button type="button" onclick="copyCode(event, 'install-code')" class="copy-button bg-slate-700/90 hover:bg-slate-600 text-white px-3 py-1.5 rounded text-xs font-medium">
                                 <i class="fas fa-copy mr-1" aria-hidden="true"></i>Copy
                             </button>
-                            <pre id="install-code" class="p-5 text-slate-100 text-sm leading-relaxed overflow-x-auto"><code>pipx install nepa-mcp</code></pre>
+                            <pre id="install-code" class="p-5 text-slate-100 text-sm leading-relaxed overflow-x-auto"><code>pipx install nepa-mcp
+pipx ensurepath</code></pre>
                         </div>
+                        <p class="text-xs text-slate-500 mt-2.5 leading-relaxed">
+                            Reopen the terminal if <code class="text-teal-800">ensurepath</code> changes your
+                            PATH. Older default Python: add
+                            <code class="text-teal-800">--python 3.12</code>.
+                        </p>
                     </div>
                 </div>
 
@@ -300,22 +306,21 @@
                     <div class="step-body">
                         <h3 class="text-lg font-semibold text-ink mb-1 pt-1.5">Verify</h3>
                         <p class="text-sm text-slate-600 mb-3">
-                            <code class="text-teal-800">doctor</code> exits non-zero if a server file is
-                            missing, so this is the gate before wiring up a client.
+                            Confirm 19 servers before you wire up a client.
+                            <code class="text-teal-800">doctor</code> exits non-zero if one is missing.
                         </p>
                         <div class="transcript rounded-xl overflow-hidden">
-                            <pre class="p-5 text-xs leading-relaxed overflow-x-auto"><code><span class="t-prompt">$ nepa-mcp doctor</span>
-nepa-mcp version: <span data-release-version>0.1.0</span>
-Python: 3.12.12
-Credential file: ~/…/nepa-mcp/credentials.env (not found)
-<span class="t-proof">Installed servers: 19</span>
-census credentials: optional, missing CENSUS_API_KEY
-epa_aqs credentials: optional, missing EPA_AQS_EMAIL, EPA_AQS_API_KEY</code></pre>
+                            <pre class="p-5 text-xs leading-relaxed overflow-x-auto"><code><span class="t-line t-prompt">$ nepa-mcp doctor</span>
+<span class="t-line">nepa-mcp version: <span data-release-version>0.1.1</span></span>
+<span class="t-line">Python: 3.12.12</span>
+<span class="t-line">Credential file: ~/…/nepa-mcp/credentials.env (not found)</span>
+<span class="t-line t-proof">Installed servers: 19</span>
+<span class="t-line">census credentials: optional, missing CENSUS_API_KEY</span>
+<span class="t-line">epa_aqs credentials: optional, missing EPA_AQS_EMAIL, EPA_AQS_API_KEY</span></code></pre>
                         </div>
                         <p class="text-xs text-slate-500 mt-2.5">
-                            Actual output on a fresh install — the two credential lines are optional and
-                            only affect Census and EPA AQS. Run <code class="text-teal-800">nepa-mcp list-servers</code>
-                            for the full table.
+                            The credential lines are optional, and affect only Census and EPA AQS. Run
+                            <code class="text-teal-800">nepa-mcp list-servers</code> for the full table.
                         </p>
                     </div>
                 </div>
@@ -326,8 +331,7 @@ epa_aqs credentials: optional, missing EPA_AQS_EMAIL, EPA_AQS_API_KEY</code></pr
                     <div class="step-body">
                         <h3 class="text-lg font-semibold text-ink mb-1 pt-1.5">Connect your client</h3>
                         <p class="text-sm text-slate-600 mb-3">
-                            The CLI merges the entries in. Unrelated MCP servers are preserved, and the
-                            existing file gets a one-time backup.
+                            Go to the project directory you want configured, then run its command.
                         </p>
                         <div id="client-tabs" class="flex flex-wrap gap-2 mb-4" role="tablist" aria-label="MCP client"></div>
                         <div id="client-panels"></div>
@@ -340,20 +344,20 @@ epa_aqs credentials: optional, missing EPA_AQS_EMAIL, EPA_AQS_API_KEY</code></pr
                     <div class="step-body">
                         <h3 class="text-lg font-semibold text-ink mb-1 pt-1.5">Ask a question</h3>
                         <p class="text-sm text-slate-600 mb-3">
-                            Your client launches the servers itself — nothing left to start.
+                            Reload the client — in Codex, start a new task — then try one of these.
                         </p>
                         <ul class="grid sm:grid-cols-3 gap-3">
-                            <li class="bg-teal-50/70 border border-teal-200/60 rounded-xl px-4 py-3.5 text-sm text-slate-700 leading-relaxed">
+                            <li class="prompt-card bg-teal-50/70 border border-teal-200/60 rounded-xl px-4 py-3.5 text-sm text-slate-700 leading-relaxed">
                                 <i class="fas fa-quote-left text-teal-600/60 mr-1.5" aria-hidden="true"></i>
                                 What listed species and critical habitat are near 38.98, −76.49?
                             </li>
-                            <li class="bg-teal-50/70 border border-teal-200/60 rounded-xl px-4 py-3.5 text-sm text-slate-700 leading-relaxed">
+                            <li class="prompt-card bg-teal-50/70 border border-teal-200/60 rounded-xl px-4 py-3.5 text-sm text-slate-700 leading-relaxed">
                                 <i class="fas fa-quote-left text-teal-600/60 mr-1.5" aria-hidden="true"></i>
                                 Build a screening map for a 20-mile project area there.
                             </li>
-                            <li class="bg-teal-50/70 border border-teal-200/60 rounded-xl px-4 py-3.5 text-sm text-slate-700 leading-relaxed">
+                            <li class="prompt-card bg-teal-50/70 border border-teal-200/60 rounded-xl px-4 py-3.5 text-sm text-slate-700 leading-relaxed">
                                 <i class="fas fa-quote-left text-teal-600/60 mr-1.5" aria-hidden="true"></i>
-                                What does 40 CFR 1501.4 say, and when did it last change?
+                                What does 40 CFR 230.10 say, and when did it last change?
                             </li>
                         </ul>
                     </div>
@@ -409,7 +413,7 @@ epa_aqs credentials: optional, missing EPA_AQS_EMAIL, EPA_AQS_API_KEY</code></pr
                         <p class="text-xs text-slate-400 mb-3">In Codex Desktop, after <code class="text-teal-300">pipx install nepa-mcp</code>:</p>
                         <ol class="space-y-2.5 mb-5 text-sm text-slate-300">
                             <li><span class="font-semibold text-white">1.</span> Open <strong class="text-white">Plugins</strong> and select <strong class="text-white">Add plugin marketplace</strong>.</li>
-                            <li><span class="font-semibold text-white">2.</span> Enter <code class="text-teal-300">pnnl/nepa-mcp</code> for Source and <code class="text-teal-300">v0.1.0</code> for Git ref.</li>
+                            <li><span class="font-semibold text-white">2.</span> Enter <code class="text-teal-300">pnnl/nepa-mcp</code> for Source and <code class="text-teal-300">v0.1.1</code> for Git ref.</li>
                             <li><span class="font-semibold text-white">3.</span> Add the marketplace, then install <strong class="text-white">NEPA-MCP</strong>.</li>
                         </ol>
                         <p class="text-xs text-slate-400 mb-2">Codex CLI alternative:</p>
@@ -417,7 +421,7 @@ epa_aqs credentials: optional, missing EPA_AQS_EMAIL, EPA_AQS_API_KEY</code></pr
                             <button type="button" onclick="copyCode(event, 'plugin-code')" class="copy-button bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded text-xs font-medium">
                                 <i class="fas fa-copy mr-1" aria-hidden="true"></i>Copy
                             </button>
-                            <pre id="plugin-code" class="p-5 text-slate-100 text-xs leading-relaxed overflow-x-auto"><code>codex plugin marketplace add pnnl/nepa-mcp --ref v0.1.0
+                            <pre id="plugin-code" class="p-5 text-slate-100 text-xs leading-relaxed overflow-x-auto"><code>codex plugin marketplace add pnnl/nepa-mcp --ref v0.1.1
 codex plugin add nepa-mcp@nepa-mcp-local</code></pre>
                         </div>
                         <p class="text-xs text-slate-400 mt-3 leading-relaxed">
@@ -612,7 +616,7 @@ codex plugin add nepa-mcp@nepa-mcp-local</code></pre>
                     <h4 class="text-white font-semibold mb-4">Resources</h4>
                     <ul class="space-y-3 text-sm">
                         <li><a href="https://github.com/pnnl/nepa-mcp/tree/main" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fab fa-github mr-2" aria-hidden="true"></i>Repository</a></li>
-                        <li><a href="https://github.com/pnnl/nepa-mcp/releases/tag/v0.1.0" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-tag mr-2" aria-hidden="true"></i>Release notes</a></li>
+                        <li><a href="https://github.com/pnnl/nepa-mcp/releases/tag/v0.1.1" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-tag mr-2" aria-hidden="true"></i>Release notes</a></li>
                         <li><a href="https://github.com/pnnl/nepa-mcp/blob/main/SUPPORT.md" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-life-ring mr-2" aria-hidden="true"></i>Support</a></li>
                         <li><a href="https://github.com/pnnl/nepa-mcp/blob/main/SECURITY.md" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-shield-halved mr-2" aria-hidden="true"></i>Security</a></li>
                         <li class="inline-flex items-center text-slate-400"><i class="fas fa-scale-balanced mr-2" aria-hidden="true"></i><a href="https://github.com/pnnl/nepa-mcp/blob/main/LICENSE" class="hover:text-white transition-colors"><span data-license-name>BSD 3-Clause</span> License</a></li>
@@ -662,7 +666,7 @@ codex plugin add nepa-mcp@nepa-mcp-local</code></pre>
                         <summary class="inline-block cursor-pointer underline decoration-slate-600 hover:decoration-slate-300">Cite this work</summary>
                         <div class="mt-4 rounded-xl border border-teal-900/60 bg-slate-950/30 p-5 text-left shadow-inner">
                             <p class="mb-2 font-semibold uppercase tracking-wider text-slate-300">APA</p>
-                            <p id="apa-citation" class="text-slate-300 leading-relaxed">Chaturvedi, S., Chintalapati, R., Nally, D., Parker, M., Munikoti, S., &amp; Horawalavithana, S. (2026). <em>PermitAI NEPA MCP Toolkit: Federal environmental data, regulatory research, and geospatial screening</em> (Version <span data-release-version>0.1.0</span>) [Computer software]. Pacific Northwest National Laboratory. https://github.com/pnnl/nepa-mcp</p>
+                            <p id="apa-citation" class="text-slate-300 leading-relaxed">Chaturvedi, S., Chintalapati, R., Nally, D., Parker, M., Munikoti, S., &amp; Horawalavithana, S. (2026). <em>PermitAI NEPA MCP Toolkit: Federal environmental data, regulatory research, and geospatial screening</em> (Version <span data-release-version>0.1.1</span>) [Computer software]. Pacific Northwest National Laboratory. https://github.com/pnnl/nepa-mcp</p>
                             <div class="mt-4 flex flex-wrap items-center gap-3">
                                 <button type="button" onclick="copyCode(event, 'apa-citation')" class="bg-slate-700/90 hover:bg-slate-600 text-white px-3 py-2 rounded-lg text-xs font-medium transition-colors"><i class="fas fa-copy mr-2" aria-hidden="true"></i>Copy APA</button>
                                 <a href="https://github.com/pnnl/nepa-mcp/blob/main/CITATION.cff" class="inline-flex items-center px-3 py-2 rounded-lg border border-slate-700 text-slate-300 hover:border-slate-500 hover:text-white transition-colors"><i class="fas fa-file-lines mr-2" aria-hidden="true"></i>CITATION.cff</a>
@@ -682,7 +686,7 @@ codex plugin add nepa-mcp@nepa-mcp-local</code></pre>
         </div>
     </footer>
 
-    <script src="assets/js/site-data.js?v=13"></script>
-    <script src="assets/js/site.js?v=12"></script>
+    <script src="assets/js/site-data.js?v=14"></script>
+    <script src="assets/js/site.js?v=13"></script>
 </body>
 </html>

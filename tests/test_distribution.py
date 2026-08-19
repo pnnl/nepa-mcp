@@ -11,7 +11,7 @@ from pathlib import Path
 
 from fastmcp import Client
 
-from nepa_mcp import cli
+from nepa_mcp import cli, clients
 from nepa_mcp.aggregate import build_aggregate_server, child_server_config
 from nepa_mcp.clients import render_client_config
 from nepa_mcp.config import create_credential_template, load_credentials
@@ -58,7 +58,7 @@ def test_public_package_metadata_matches_the_approved_release_identity() -> None
     license_text = (ROOT / "LICENSE").read_text(encoding="utf-8")
     notice_text = (ROOT / "NOTICE").read_text(encoding="utf-8")
 
-    assert project["version"] == "0.1.0"
+    assert project["version"] == "0.1.1"
     assert project["description"] == (
         "MCP servers for federal environmental data, regulatory research, and geospatial screening"
     )
@@ -171,6 +171,32 @@ def test_client_config_generation_preserves_unrelated_entries() -> None:
         assert f'args = ["server", "{server_name}"]' in codex
 
 
+def test_configure_client_uses_resolved_installed_command(tmp_path, monkeypatch) -> None:
+    installed = "/Users/example/.local/bin/nepa-mcp"
+    monkeypatch.setattr(clients.shutil, "which", lambda command: installed if command == "nepa-mcp" else None)
+
+    target = tmp_path / ".mcp.json"
+    resolved, rendered = clients.configure_client("claude", path=target, dry_run=True)
+    servers = json.loads(rendered)["mcpServers"]
+
+    assert resolved == target
+    assert target.exists() is False
+    assert all(entry["command"] == installed for entry in servers.values())
+
+
+def test_configure_client_prefers_invoked_launcher(tmp_path, monkeypatch) -> None:
+    invoked = tmp_path / "venv" / "bin" / "nepa-mcp"
+    invoked.parent.mkdir(parents=True)
+    invoked.touch()
+    monkeypatch.setattr(clients.sys, "argv", [str(invoked)])
+    monkeypatch.setattr(clients.shutil, "which", lambda command: "/old/bin/nepa-mcp")
+
+    target = tmp_path / "config.toml"
+    _, rendered = clients.configure_client("codex", path=target, dry_run=True)
+
+    assert f'command = "{invoked}"' in rendered
+
+
 def test_plugin_and_marketplace_register_independent_servers() -> None:
     plugin_root = ROOT / "plugins" / "nepa-mcp"
     project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]
@@ -180,6 +206,8 @@ def test_plugin_and_marketplace_register_independent_servers() -> None:
 
     assert manifest["name"] == "nepa-mcp"
     assert manifest["version"] == project["version"]
+    assert manifest["homepage"] == project["urls"]["Documentation"]
+    assert manifest["interface"]["websiteURL"] == project["urls"]["Documentation"]
     assert manifest["mcpServers"] == "./.mcp.json"
     assert manifest["skills"] == "./skills/"
     assert set(mcp_config["mcpServers"]) == EXPECTED_SERVERS

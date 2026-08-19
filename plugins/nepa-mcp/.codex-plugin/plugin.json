@@ -1,10 +1,11 @@
 {
   "name": "nepa-mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Use local NEPA environmental screening, mapping, and research tools from Codex.",
   "author": {
     "name": "NEPA-MCP maintainers"
   },
+  "homepage": "https://pnnl.github.io/nepa-mcp/",
   "keywords": [
     "nepa",
     "environmental-review",
@@ -24,12 +25,16 @@
       "Environmental data",
       "Interactive maps"
     ],
+    "websiteURL": "https://pnnl.github.io/nepa-mcp/",
     "defaultPrompt": [
       "Screen a project area for NEPA resources.",
       "Identify environmental datasets for a project ROI.",
       "Create an interactive environmental map for a project area.",
       "Research current environmental regulatory context."
     ],
-    "brandColor": "#256D5A"
+    "brandColor": "#256D5A",
+    "composerIcon": "./assets/nepa-mcp-icon.svg",
+    "logo": "./assets/nepa-mcp-icon.svg",
+    "logoDark": "./assets/nepa-mcp-icon.svg"
   }
 }

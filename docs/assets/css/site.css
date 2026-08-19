@@ -395,9 +395,109 @@ section {
         font-size: 0.8125rem;
     }
 
-    .step-row:not(:last-child) .step-marker::after {
+    .step-row:not(:last-child) .step-marker::after,
+    .steps-in-motion .step-row:not(:last-child) .step-marker::before {
         top: 1.75rem;
     }
+}
+
+/* Motion on the rail. Gated on .steps-in-motion, which site.js adds only when
+   the visitor has not asked for reduced motion, so a reduced-motion or
+   script-less visit gets the finished rail with nothing hidden. */
+.steps-in-motion .step-body {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.55s ease-out, transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.steps-in-motion .step-row.step-lit .step-body {
+    opacity: 1;
+    transform: none;
+}
+
+.steps-in-motion .step-number {
+    opacity: 0;
+    transform: scale(0.88);
+    transition: opacity 0.3s ease-out, transform 0.45s cubic-bezier(0.34, 1.32, 0.64, 1);
+}
+
+.steps-in-motion .step-row.step-lit .step-number {
+    opacity: 1;
+    transform: none;
+    /* One soft ring as the number lands, then nothing. */
+    animation: stepRing 0.9s ease-out 0.12s 1;
+}
+
+@keyframes stepRing {
+    from { box-shadow: 0 0 0 0 rgba(var(--brand-primary-rgb), 0.32); }
+    to { box-shadow: 0 0 0 14px rgba(var(--brand-primary-rgb), 0); }
+}
+
+/* The steps are a real sequence, so the connector draws itself one segment at a
+   time: ::after dims to a track, and ::before is the segment that fills in. */
+.steps-in-motion .step-row:not(:last-child) .step-marker::after {
+    background: rgba(var(--brand-ink-rgb), 0.1);
+}
+
+.steps-in-motion .step-row:not(:last-child) .step-marker::before {
+    content: '';
+    position: absolute;
+    top: 2.25rem;
+    bottom: -0.25rem;
+    left: 50%;
+    width: 2px;
+    margin-left: -1px;
+    background: linear-gradient(to bottom, rgba(var(--brand-primary-rgb), 0.55), rgba(var(--brand-primary-rgb), 0.14));
+    transform: scaleY(0);
+    transform-origin: top center;
+    transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1) 0.12s;
+}
+
+.steps-in-motion .step-row.step-lit .step-marker::before {
+    transform: scaleY(1);
+}
+
+/* Recorded output arrives a line at a time, the way the command prints it. */
+.steps-in-motion .transcript.is-streaming .t-line {
+    opacity: 0;
+    animation: streamLine 0.26s ease-out forwards;
+}
+
+.steps-in-motion .transcript.is-streaming .t-line:nth-child(1) { animation-delay: 0.05s; }
+.steps-in-motion .transcript.is-streaming .t-line:nth-child(2) { animation-delay: 0.19s; }
+.steps-in-motion .transcript.is-streaming .t-line:nth-child(3) { animation-delay: 0.29s; }
+.steps-in-motion .transcript.is-streaming .t-line:nth-child(4) { animation-delay: 0.39s; }
+.steps-in-motion .transcript.is-streaming .t-line:nth-child(5) { animation-delay: 0.53s; }
+.steps-in-motion .transcript.is-streaming .t-line:nth-child(6) { animation-delay: 0.63s; }
+.steps-in-motion .transcript.is-streaming .t-line:nth-child(7) { animation-delay: 0.73s; }
+
+@keyframes streamLine {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* A caret only while the output is still arriving; site.js drops the class when
+   the last line lands, which takes the caret with it. */
+.steps-in-motion .transcript.is-streaming .t-prompt::after {
+    content: '▌';
+    margin-left: 0.15rem;
+    animation: caretBlink 0.5s steps(1, end) 3;
+}
+
+@keyframes caretBlink {
+    50% { opacity: 0; }
+}
+
+/* The example prompts are the one place a visitor is meant to reach for
+   something, so they lift on hover. */
+.prompt-card {
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.prompt-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(var(--brand-primary-rgb), 0.45);
+    box-shadow: 0 12px 26px -20px rgba(var(--brand-ink-rgb), 0.5);
 }
 
 /* ============================================
@@ -1184,11 +1284,29 @@ section {
         transform: none !important;
     }
 
+    /* site.js skips the rail sequence under reduced motion, but the setting can
+       change after load, so never leave a step hidden. */
+    .steps-in-motion .step-body,
+    .steps-in-motion .step-number,
+    .steps-in-motion .transcript.is-streaming .t-line {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    .steps-in-motion .step-row:not(:last-child) .step-marker::before {
+        transform: scaleY(1) !important;
+    }
+
+    .steps-in-motion .transcript.is-streaming .t-prompt::after {
+        content: none !important;
+    }
+
     .premium-card:hover,
     .profile-button:hover,
     .layer-card:hover,
     .btn-premium:hover,
     .mcp-client-item:hover,
+    .prompt-card:hover,
     .show-more:hover {
         transform: none !important;
     }

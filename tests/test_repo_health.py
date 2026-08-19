@@ -14,6 +14,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tomllib
 from pathlib import Path
 
 import pytest
@@ -104,6 +105,17 @@ class TestFilesystemChecks:
             if not target.startswith(("https://", "http://", "#", "mailto:")):
                 relative_links.append(target)
         assert relative_links == [], f"README contains relative document links: {relative_links}"
+
+    def test_public_release_versions_are_synchronized(self):
+        project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]
+        version = project["version"]
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        citation = (ROOT / "CITATION.cff").read_text(encoding="utf-8")
+
+        readme_tag_versions = set(re.findall(r"\bv(\d+\.\d+\.\d+)\b", readme))
+        assert readme_tag_versions == {version}
+        assert f"version      = {{{version}}}" in readme
+        assert re.search(rf"(?m)^version:\s*{re.escape(version)}\s*$", citation)
 
 
 # ---------------------------------------------------------------------------
