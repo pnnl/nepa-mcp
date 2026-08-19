@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: Stable annotated tag to publish, for example v0.1.0
+        description: Stable annotated tag to publish, for example v1.2.3
         required: true
         type: string
       confirmation:
