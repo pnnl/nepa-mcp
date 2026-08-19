@@ -58,7 +58,7 @@ def test_public_package_metadata_matches_the_approved_release_identity() -> None
     license_text = (ROOT / "LICENSE").read_text(encoding="utf-8")
     notice_text = (ROOT / "NOTICE").read_text(encoding="utf-8")
 
-    assert project["version"] == "0.1.0rc1"
+    assert project["version"] == "0.1.0"
     assert project["description"] == (
         "MCP servers for federal environmental data, regulatory research, and geospatial screening"
     )
@@ -173,11 +173,13 @@ def test_client_config_generation_preserves_unrelated_entries() -> None:
 
 def test_plugin_and_marketplace_register_independent_servers() -> None:
     plugin_root = ROOT / "plugins" / "nepa-mcp"
+    project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]
     manifest = json.loads((plugin_root / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))
     mcp_config = json.loads((plugin_root / ".mcp.json").read_text(encoding="utf-8"))
     marketplace = json.loads((ROOT / ".agents" / "plugins" / "marketplace.json").read_text(encoding="utf-8"))
 
     assert manifest["name"] == "nepa-mcp"
+    assert manifest["version"] == project["version"]
     assert manifest["mcpServers"] == "./.mcp.json"
     assert manifest["skills"] == "./skills/"
     assert set(mcp_config["mcpServers"]) == EXPECTED_SERVERS

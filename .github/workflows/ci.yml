@@ -1,0 +1,113 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+          - "3.12"
+          - "3.14"
+    env:
+      NEPA_MCP_CONFIG_FILE: /tmp/nepa-mcp-ci-credentials.env
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up uv and Python
+        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+        with:
+          version: "0.9.26"
+          python-version: ${{ matrix.python-version }}
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Install locked dependencies
+        run: uv sync --frozen
+
+      - name: Check formatting
+        run: uv run --frozen ruff format --check .
+
+      - name: Lint
+        run: uv run --frozen ruff check .
+
+      - name: Run tests
+        run: uv run --frozen pytest -q
+
+      - name: Audit dependencies
+        run: uv run --frozen pip-audit --progress-spinner off
+
+  package:
+    name: Package
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NEPA_MCP_CONFIG_FILE: /tmp/nepa-mcp-ci-credentials.env
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up uv and Python
+        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+        with:
+          version: "0.9.26"
+          python-version: "3.12"
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Build wheel and source distribution
+        run: uv build --no-sources
+
+      - name: Check distribution metadata
+        run: uvx --from "twine==7.0.0" twine check dist/*
+
+      - name: Install the built wheel
+        run: |
+          uv venv --python 3.12 "${RUNNER_TEMP}/nepa-mcp-release-venv"
+          uv pip install \
+            --python "${RUNNER_TEMP}/nepa-mcp-release-venv/bin/python" \
+            dist/*.whl
+
+      - name: Check the installed CLI
+        run: |
+          "${RUNNER_TEMP}/nepa-mcp-release-venv/bin/nepa-mcp" --version
+          "${RUNNER_TEMP}/nepa-mcp-release-venv/bin/nepa-mcp" doctor
+          "${RUNNER_TEMP}/nepa-mcp-release-venv/bin/nepa-mcp" list-servers
+
+      - name: Check installed MCP servers over stdio
+        run: |
+          "${RUNNER_TEMP}/nepa-mcp-release-venv/bin/python" \
+            scripts/smoke_test_distribution.py
+
+      - name: Record artifact hashes
+        run: sha256sum dist/*
+
+      - name: Upload validated distributions
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: python-package-${{ github.sha }}
+          path: |
+            dist/*.whl
+            dist/*.tar.gz
+          if-no-files-found: error
+          retention-days: 7
