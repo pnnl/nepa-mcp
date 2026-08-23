@@ -2285,6 +2285,118 @@ section {
     transform: none;
 }
 
+/* Vision is the one header item that leaves the page for something the visitor
+   has not seen, and set as plain text among six other plain-text links it read
+   as the least of them. A pill lifts it out of the row without moving it. */
+.nav-vision {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.4rem 0.85rem;
+    border-radius: 9999px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--brand-primary-darkest);
+    background: linear-gradient(135deg, rgba(var(--brand-primary-rgb), 0.12) 0%, rgba(var(--brand-primary-rgb), 0.05) 100%);
+    border: 1px solid rgba(var(--brand-primary-rgb), 0.32);
+    cursor: pointer;
+    transition:
+        background 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-vision i:first-child {
+    font-size: 0.6875rem;
+    color: var(--brand-primary);
+}
+
+.nav-vision:hover,
+.nav-menu:focus-within .nav-vision {
+    background: linear-gradient(135deg, rgba(var(--brand-primary-rgb), 0.2) 0%, rgba(var(--brand-primary-rgb), 0.1) 100%);
+    border-color: rgba(var(--brand-primary-rgb), 0.55);
+    box-shadow: 0 8px 18px -12px rgba(var(--brand-primary-rgb), 0.9);
+    transform: translateY(-1px);
+}
+
+.nav-vision-chev {
+    font-size: 0.5625rem;
+    opacity: 0.65;
+    transition: transform 0.25s ease;
+}
+
+.nav-menu:hover .nav-vision-chev,
+.nav-menu:focus-within .nav-vision-chev {
+    transform: rotate(180deg);
+}
+
+/* On the two vision pages the pill fills in, so it reads as where you are
+   rather than only where you could go. */
+.nav-vision.is-current {
+    color: #fff;
+    background: linear-gradient(135deg, var(--brand-primary-darkest) 0%, var(--brand-primary) 100%);
+    border-color: transparent;
+    box-shadow: 0 6px 16px -10px rgba(var(--brand-primary-rgb), 1);
+}
+
+.nav-vision.is-current i:first-child {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.nav-vision.is-current:hover,
+.nav-menu:focus-within .nav-vision.is-current {
+    background: linear-gradient(135deg, var(--brand-primary-darker) 0%, var(--brand-primary) 100%);
+    border-color: transparent;
+}
+
+/* One ring, twice, a beat after load: enough to catch the eye on a first visit
+   and over before it can nag. A pseudo-element, so it never fights the pill's
+   own hover shadow, and invisible at rest whether or not it ever ran. */
+.nav-vision::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 9999px;
+    border: 1px solid rgba(var(--brand-primary-rgb), 0.5);
+    opacity: 0;
+    pointer-events: none;
+    animation: visionPing 2.1s ease-out 1.1s 2;
+}
+
+@keyframes visionPing {
+    0% { transform: scale(1); opacity: 0.75; }
+    70% { opacity: 0; }
+    100% { transform: scale(1.4); opacity: 0; }
+}
+
+/* Nothing to point at on a page the visitor is already reading. */
+.nav-vision.is-current::after {
+    animation: none;
+}
+
+/* The narrow-viewport link row has no dropdown, so the two sheets appear
+   directly. Chips, for the same reason the pill exists. */
+.nav-vision-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--brand-primary-darkest);
+    background: rgba(var(--brand-primary-rgb), 0.1);
+    border: 1px solid rgba(var(--brand-primary-rgb), 0.3);
+}
+
+.nav-vision-chip i {
+    font-size: 0.625rem;
+    color: var(--brand-primary);
+}
+
 .nav-pop a {
     display: block;
     padding: 0.5rem 0.7rem;
@@ -2305,28 +2417,97 @@ section {
    thing on the page and the sheets sit inside it.
    ============================================ */
 
+/* Sits in a card that is itself teal-tinted, so it cannot pop by being tinted
+   too: it takes a white surface, a solid teal edge, a filled icon tile, and a
+   named action, which is what makes it read as the thing to click rather than a
+   third line of copy. */
 .vision-disclose {
-    border: 1px solid rgba(153, 246, 228, 0.9);
-    border-radius: 0.75rem;
-    background: rgba(255, 255, 255, 0.7);
-    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid rgba(var(--brand-primary-rgb), 0.38);
+    border-radius: 0.9rem;
+    background: #fff;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),
+        0 10px 24px -18px rgba(var(--brand-primary-rgb), 0.75);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.vision-disclose:hover,
+.vision-disclose:hover {
+    border-color: rgba(var(--brand-primary-rgb), 0.62);
+    box-shadow: 0 16px 30px -20px rgba(var(--brand-primary-rgb), 0.85);
+    transform: translateY(-2px);
+}
+
 .vision-disclose[open] {
-    border-color: rgba(var(--brand-primary-rgb), 0.4);
-    background: #fff;
-    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
+    border-color: rgba(var(--brand-primary-rgb), 0.62);
+    transform: none;
 }
 
 .vision-disclose > summary {
     display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.8rem 0.9rem;
     cursor: pointer;
     /* Both are needed to drop the native triangle across browsers. */
     list-style: none;
+}
+
+.vision-icon {
+    flex-shrink: 0;
+    width: 2.1rem;
+    height: 2.1rem;
+    display: grid;
+    place-items: center;
+    border-radius: 0.6rem;
+    font-size: 0.8125rem;
+    color: #fff;
+    background: linear-gradient(135deg, var(--brand-primary-darkest) 0%, var(--brand-primary) 100%);
+    box-shadow: 0 6px 14px -8px rgba(var(--brand-primary-rgb), 1);
+}
+
+.vision-kicker {
+    display: block;
+    font-size: 0.5625rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--brand-primary);
+}
+
+.vision-title {
+    display: block;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--brand-ink);
+}
+
+.vision-sub {
+    display: block;
+    margin-top: 0.1rem;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: #6b7684;
+}
+
+/* Names the action, so the row is not just a heading with a chevron on it. */
+.vision-cue {
+    margin-left: auto;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--brand-primary-dark);
+}
+
+.vision-cue-label::after {
+    content: 'Two views';
+}
+
+.vision-disclose[open] .vision-cue-label::after {
+    content: 'Hide';
 }
 
 .vision-disclose > summary::-webkit-details-marker {
@@ -2340,10 +2521,7 @@ section {
 }
 
 .vision-chev {
-    margin-left: auto;
-    margin-top: 0.3rem;
-    font-size: 0.6875rem;
-    color: var(--brand-primary);
+    font-size: 0.625rem;
     transition: transform 0.25s ease;
 }
 
@@ -2359,6 +2537,13 @@ section {
     padding: 0.6rem 0.7rem;
     border-radius: 0.55rem;
     transition: background 0.15s ease;
+}
+
+.vision-sheet:first-of-type {
+    margin-top: 0.15rem;
+    border-top: 1px solid rgba(var(--brand-primary-rgb), 0.14);
+    padding-top: 0.75rem;
+    border-radius: 0 0 0.55rem 0.55rem;
 }
 
 .vision-sheet:hover {
@@ -2453,6 +2638,8 @@ section {
     .mcp-client-item:hover,
     .prompt-card:hover,
     .cred-link:hover,
+    .nav-vision:hover,
+    .vision-disclose:hover,
     .show-more:hover {
         transform: none !important;
     }

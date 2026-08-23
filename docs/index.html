@@ -52,7 +52,7 @@
     <!-- ?v= is a cache buster. GitHub Pages serves these assets with a long
          max-age, so a returning visitor keeps the old CSS and JS until the URL
          changes. Bump the value whenever site.css or site.js changes. -->
-    <link rel="stylesheet" href="assets/css/site.css?v=23">
+    <link rel="stylesheet" href="assets/css/site.css?v=25">
 </head>
 <body class="bg-slate-50 text-slate-900 antialiased">
 
@@ -94,8 +94,8 @@
                     <!-- Cross-page links, so they sit apart from the in-page anchors. -->
                     <div class="border-l border-slate-200 pl-5 lg:pl-7">
                         <div class="nav-menu">
-                        <button type="button" aria-haspopup="true" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap inline-flex items-center gap-1.5">
-                            <i class="fas fa-cube text-xs" aria-hidden="true"></i>Vision <i class="fas fa-chevron-down text-[9px] opacity-60" aria-hidden="true"></i>
+                        <button type="button" aria-haspopup="true" class="nav-vision">
+                            <i class="fas fa-cube" aria-hidden="true"></i>Vision<i class="fas fa-chevron-down nav-vision-chev" aria-hidden="true"></i>
                         </button>
                         <div class="nav-pop">
                             <a href="vision.html">
@@ -133,8 +133,8 @@
                 <a href="#layers" class="hover:text-teal-700 transition-colors">Layers</a>
                 <a href="#documentation" class="hover:text-teal-700 transition-colors">Docs</a>
                 <span class="text-slate-400 uppercase text-xs tracking-widest pl-1">Vision</span>
-                <a href="vision.html" class="text-teal-700 font-semibold">Coverage</a>
-                <a href="gis.html" class="text-teal-700 font-semibold">GIS</a>
+                <a href="vision.html" class="nav-vision-chip"><i class="fas fa-cube" aria-hidden="true"></i>Coverage</a>
+                <a href="gis.html" class="nav-vision-chip"><i class="fas fa-layer-group" aria-hidden="true"></i>GIS</a>
             </div>
         </div>
     </nav>
@@ -757,14 +757,18 @@
                              do not explain themselves on a page that has not introduced
                              them; "Vision" does, and opens to both. A native disclosure,
                              so it works without script and takes the keyboard for free. -->
-                        <details class="vision-disclose mt-4">
+                        <details class="vision-disclose mt-5">
                             <summary>
-                                <i class="fas fa-cube text-teal-600 mt-0.5" aria-hidden="true"></i>
+                                <span class="vision-icon" aria-hidden="true"><i class="fas fa-cube"></i></span>
                                 <span>
-                                    <span class="block text-sm font-semibold text-ink">Vision</span>
-                                    <span class="block text-xs text-slate-500 mt-0.5">Where the toolkit goes next.</span>
+                                    <span class="vision-kicker">Look ahead</span>
+                                    <span class="vision-title">Vision</span>
+                                    <span class="vision-sub">Where the toolkit goes next.</span>
                                 </span>
-                                <i class="fas fa-chevron-down vision-chev" aria-hidden="true"></i>
+                                <span class="vision-cue">
+                                    <span class="vision-cue-label"></span>
+                                    <i class="fas fa-chevron-down vision-chev" aria-hidden="true"></i>
+                                </span>
                             </summary>
                             <a href="vision.html" class="vision-sheet group">
                                 <i class="fas fa-cube text-teal-600 text-xs mt-1" aria-hidden="true"></i>
@@ -887,6 +891,6 @@
     </footer>
 
     <script src="assets/js/site-data.js?v=14"></script>
-    <script src="assets/js/site.js?v=18"></script>
+    <script src="assets/js/site.js?v=19"></script>
 </body>
 </html>
