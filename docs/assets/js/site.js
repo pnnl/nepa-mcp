@@ -765,15 +765,88 @@ function buildServerCard(server) {
     return card;
 }
 
+// Server cards shown before the "show more" control. Eight fills whole rows at
+// the four- and two-column grids; the three-column grid between them ends one
+// short, where the fade reads as a cut list rather than a gap. No count below
+// twelve divides evenly into 2, 3, and 4, and twelve of nineteen is no preview.
+var SERVER_PREVIEW = 8;
+
+// Cards in the clipped teaser row below the preview. Four fills the widest grid;
+// narrower grids wrap the surplus below the clip, which costs nothing on a row
+// that exists only to be glimpsed.
+var SERVER_PEEK = 4;
+
+var serversExpanded = false;
+
 function renderServerCards() {
     var grid = document.getElementById('mcp-servers-grid');
+    var peek = document.getElementById('mcp-servers-peek');
+    var moreContainer = document.getElementById('server-show-more');
     if (!grid || !DATA) {
         return;
     }
+
     grid.textContent = '';
-    DATA.servers.forEach(function (server) {
+    if (peek) {
+        peek.textContent = '';
+        peek.hidden = true;
+    }
+    if (moreContainer) {
+        moreContainer.textContent = '';
+    }
+
+    var visible = serversExpanded
+        ? DATA.servers
+        : DATA.servers.slice(0, SERVER_PREVIEW);
+    var hidden = DATA.servers.length - visible.length;
+
+    visible.forEach(function (server) {
         grid.appendChild(buildServerCard(server));
     });
+
+    if (peek && hidden) {
+        DATA.servers.slice(SERVER_PREVIEW, SERVER_PREVIEW + SERVER_PEEK).forEach(function (server) {
+            // cloneNode drops the flip handler: a card the visitor cannot read is
+            // not one they should be able to turn over. It is decorative, so it
+            // leaves the tab order and the accessibility tree too — the control
+            // below is the real affordance, and it names the full count.
+            var card = buildServerCard(server).cloneNode(true);
+            card.removeAttribute('role');
+            card.removeAttribute('aria-label');
+            card.setAttribute('aria-hidden', 'true');
+            card.tabIndex = -1;
+            peek.appendChild(card);
+        });
+        peek.hidden = false;
+        peek.classList.add('collapsed-fade');
+    }
+
+    // The count stays on screen in the button label, so collapsing the grid
+    // still states the inventory size rather than hiding it.
+    if (moreContainer && (hidden || serversExpanded)) {
+        moreContainer.appendChild(buildShowMore({
+            expanded: serversExpanded,
+            moreLabel: 'Show ' + hidden + ' more ' + (hidden === 1 ? 'server' : 'servers'),
+            lessLabel: 'Show fewer servers',
+            controls: 'mcp-servers-grid',
+            onToggle: toggleServers
+        }));
+    }
+}
+
+function toggleServers() {
+    serversExpanded = !serversExpanded;
+    renderServerCards();
+}
+
+function initServerCards() {
+    // The peek container outlives every render, so its handler is wired once
+    // here; binding it inside renderServerCards would stack one per toggle.
+    var peek = document.getElementById('mcp-servers-peek');
+    if (peek) {
+        peek.addEventListener('click', toggleServers);
+    }
+    renderServerCards();
 }
 
 /* ============================================
@@ -935,14 +1008,16 @@ function initJurisdictionFlow() {
    Tool explorer
    ============================================ */
 
-// Server groups shown before the "show more" control, and the approximate
-// number of layers to show before collapsing. Layer categories vary from 1 to 7
-// members, so budget by layer count and stop at a category boundary.
+// Approximate number of tool rows and layers to show before collapsing. A group
+// count was the wrong unit for tools: registry order puts cfr (7 tools) third,
+// so a three-group preview let one regulatory-text server fill most of it.
+// Budget by row instead and stop at a server boundary — a server always shows
+// its whole list, so a count in the header never disagrees with the rows below.
 //
 // Both previews are deliberately short: enough to show what an entry looks like,
-// with the rest one click away. Three server groups reach cfr, the richest tool
-// list; a budget of 10 stops after the third layer category.
-var TOOL_GROUP_PREVIEW = 3;
+// with the rest one click away. A budget of 10 stops after the second server and
+// the third layer category.
+var TOOL_ROW_BUDGET = 10;
 var LAYER_PREVIEW_BUDGET = 10;
 
 // Presentation order for the layer section. site-data.js lists categories in
@@ -1157,15 +1232,31 @@ function renderToolResults() {
         grouped[indexByServer[tool.server]].tools.push(tool);
     });
 
-    // Show a useful starting set, then reveal the rest on request. Cutting at a
-    // group boundary keeps every server's tools together.
-    var visibleGroups = toolState.expanded ? grouped.length : Math.min(TOOL_GROUP_PREVIEW, grouped.length);
-    var hiddenTools = 0;
-    grouped.slice(visibleGroups).forEach(function (group) {
-        hiddenTools += group.tools.length;
-    });
+    // Show a useful starting set, then reveal the rest on request: fill a row
+    // budget and stop before a server that would overrun it. Cutting only at a
+    // server boundary keeps every listed server's tools together. A result set
+    // that already fits the budget is shown whole, so a filter never truncates
+    // the handful of rows it matched.
+    var visible = grouped;
+    if (!toolState.expanded && tools.length > TOOL_ROW_BUDGET) {
+        var budget = TOOL_ROW_BUDGET;
+        visible = [];
+        grouped.some(function (group) {
+            if (group.tools.length > budget) {
+                return true;
+            }
+            budget -= group.tools.length;
+            visible.push(group);
+            return budget === 0;
+        });
+    }
 
-    grouped.slice(0, visibleGroups).forEach(function (group) {
+    var shownTools = visible.reduce(function (total, group) {
+        return total + group.tools.length;
+    }, 0);
+    var hiddenTools = tools.length - shownTools;
+
+    visible.forEach(function (group) {
         var server = serverByName(group.server);
         var section = el('div', 'tool-group');
 
@@ -1193,7 +1284,7 @@ function renderToolResults() {
     });
 
     // Only offer the control when it would actually change what is shown.
-    if (moreContainer && (hiddenTools || (toolState.expanded && grouped.length > TOOL_GROUP_PREVIEW))) {
+    if (moreContainer && (hiddenTools || (toolState.expanded && tools.length > TOOL_ROW_BUDGET))) {
         moreContainer.appendChild(buildShowMore({
             expanded: toolState.expanded,
             moreLabel: 'Show ' + hiddenTools + ' more ' + (hiddenTools === 1 ? 'tool' : 'tools'),
@@ -2079,7 +2170,7 @@ function init() {
     renderClientConfigs();
     renderTransformRows();
     renderDocCards();
-    renderServerCards();
+    initServerCards();
     initToolExplorer();
     initLayerExplorer();
 

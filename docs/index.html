@@ -657,6 +657,15 @@
                 </noscript>
             </div>
 
+            <!-- A clipped row of the next cards. Purely a tease that the list
+                 continues, so it is filled and emptied by the same render that
+                 draws the grid, and it carries no content of its own. -->
+            <div id="mcp-servers-peek"
+                 class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 server-peek"
+                 hidden></div>
+
+            <div id="server-show-more" class="text-center mt-6"></div>
+
             <p class="text-xs text-slate-500 mt-8 text-center">
                 Agency names identify upstream data provenance only.
             </p>

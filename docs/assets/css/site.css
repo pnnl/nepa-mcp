@@ -292,6 +292,21 @@ body {
     transform: rotate(180deg);
 }
 
+/* A clipped row of the following cards, so a collapsed grid reads as a cut list
+   rather than a complete one. The height clears each card's icon and name and
+   stops before its description — enough to show something is there, not enough
+   to read as content. Clicking anywhere in the row expands the section. */
+.server-peek {
+    max-height: 140px;
+    margin-top: 1.5rem;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.server-peek[hidden] {
+    display: none;
+}
+
 /* Fade the truncated edge so it reads as "more below". */
 .collapsed-fade {
     position: relative;
@@ -308,7 +323,8 @@ body {
     background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.97));
 }
 
-/* On the tinted layer section, fade to that background instead of white. */
+/* On the tinted server and layer sections, fade to that background, not white. */
+#servers .collapsed-fade::after,
 #layers .collapsed-fade::after {
     background: linear-gradient(to bottom, rgba(248, 250, 252, 0), rgba(248, 250, 252, 0.97));
 }
