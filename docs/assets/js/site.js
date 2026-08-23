@@ -64,32 +64,35 @@ var TRANSFORM_ROWS = [
 
 /**
  * Client configuration options. The CLI writes to these same paths; see
- * nepa_mcp/clients.py for the authoritative targets. `path` is the literal file
- * and stays monospaced; `where` is the prose that follows it, and says which
- * directory decides the location.
+ * nepa_mcp/clients.py for the authoritative targets. `path` is the literal file,
+ * shown in the terminal's title bar; `scope` is the sentence below the block,
+ * and says which directory decides the location.
  */
 var CLIENT_CONFIGS = [
     {
         id: 'claude',
         label: 'Claude Code',
+        icon: 'fa-terminal',
         command: 'nepa-mcp configure claude',
         path: '.mcp.json',
-        where: 'in the directory you run it from'
+        scope: 'Created in the directory you run it from.'
     },
     {
         id: 'vscode',
         label: 'VS Code',
+        icon: 'fa-code',
         command: 'nepa-mcp configure vscode',
         path: '.vscode/mcp.json',
-        where: 'in the workspace directory you run it from'
+        scope: 'Created in the workspace directory you run it from.'
     },
     {
         id: 'codex',
         label: 'Codex',
+        icon: 'fa-laptop-code',
         command: 'nepa-mcp configure codex',
         path: '~/.codex/config.toml',
-        where: '— one global file, so any directory works',
-        note: 'Prefer the plugin below to register every server and the screening skill in one step.'
+        scope: 'One global file, so any directory works.',
+        note: 'The Codex plugin below registers the same 19 servers and adds the screening skill. Use one or the other — do not run this command as well.'
     }
 ];
 
@@ -347,7 +350,42 @@ function prefersReducedMotion() {
 }
 
 /**
- * Copy a code block's text to the clipboard with visual feedback.
+ * Write text to the clipboard, falling back to a hidden textarea where the
+ * async API is unavailable or blocked.
+ * @param {string} text
+ * @param {Function} done Called with true on success, false on failure.
+ */
+function writeClipboard(text, done) {
+    function fallback() {
+        var textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-9999px';
+        document.body.appendChild(textArea);
+        textArea.select();
+        var ok = false;
+        try {
+            ok = document.execCommand('copy');
+        } catch (err) {
+            ok = false;
+        }
+        document.body.removeChild(textArea);
+        done(ok);
+    }
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () {
+            done(true);
+        }, fallback);
+    } else {
+        fallback();
+    }
+}
+
+/**
+ * Copy a code block's text to the clipboard with visual feedback. Buttons built
+ * as an icon plus a label span are updated in place; anything else has its
+ * markup swapped, which keeps the older footer button working.
  * @param {Event} e
  * @param {string} elementId
  */
@@ -358,44 +396,53 @@ function copyCode(e, elementId) {
         return;
     }
 
-    var code = codeElement.textContent;
+    // A block that a set piece is still typing keeps its finished text in
+    // data-full-text, so what lands on the clipboard is always the whole command.
+    var code = codeElement.dataset.fullText || codeElement.textContent;
+    var icon = button.querySelector('i');
+    var label = button.querySelector('span');
+    var inPlace = Boolean(icon && label);
+    var originalIcon = inPlace ? icon.className : '';
+    var originalLabel = inPlace ? label.textContent : '';
     var originalHTML = button.innerHTML;
+    var usesSlate = button.classList.contains('bg-slate-700/90');
 
-    function succeed() {
-        button.innerHTML = '<i class="fas fa-check mr-2"></i>Copied';
-        button.classList.remove('bg-slate-700/90', 'hover:bg-slate-600');
-        button.classList.add('bg-emerald-600');
-        window.setTimeout(function () {
+    function paint(iconClass, text) {
+        if (inPlace) {
+            icon.className = iconClass;
+            label.textContent = text;
+        } else {
+            button.innerHTML = '<i class="' + iconClass + ' mr-2" aria-hidden="true"></i>' + text;
+        }
+    }
+
+    function restore() {
+        if (inPlace) {
+            icon.className = originalIcon;
+            label.textContent = originalLabel;
+        } else {
             button.innerHTML = originalHTML;
+        }
+        delete button.dataset.copied;
+        if (usesSlate) {
             button.classList.remove('bg-emerald-600');
             button.classList.add('bg-slate-700/90', 'hover:bg-slate-600');
-        }, 2500);
-    }
-
-    function fallback() {
-        var textArea = document.createElement('textarea');
-        textArea.value = code;
-        textArea.style.position = 'fixed';
-        textArea.style.left = '-9999px';
-        document.body.appendChild(textArea);
-        textArea.select();
-        try {
-            document.execCommand('copy');
-            succeed();
-        } catch (err) {
-            button.innerHTML = '<i class="fas fa-triangle-exclamation mr-2"></i>Copy failed';
-            window.setTimeout(function () {
-                button.innerHTML = originalHTML;
-            }, 2500);
         }
-        document.body.removeChild(textArea);
     }
 
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(code).then(succeed, fallback);
-    } else {
-        fallback();
-    }
+    writeClipboard(code, function (ok) {
+        if (ok) {
+            paint('fas fa-check', 'Copied');
+            button.dataset.copied = 'true';
+            if (usesSlate) {
+                button.classList.remove('bg-slate-700/90', 'hover:bg-slate-600');
+                button.classList.add('bg-emerald-600');
+            }
+        } else {
+            paint('fas fa-triangle-exclamation', 'Copy failed');
+        }
+        window.setTimeout(restore, 2400);
+    });
 }
 
 /* ============================================
@@ -434,7 +481,8 @@ function renderFeatureCards() {
 }
 
 /**
- * Render the client configuration tabs and their panels.
+ * Render the client segmented control and its panels. One sliding indicator
+ * carries the selection, so no tab has to restate its own state.
  */
 function renderClientConfigs() {
     var tabs = document.getElementById('client-tabs');
@@ -443,28 +491,55 @@ function renderClientConfigs() {
         return;
     }
 
-    function select(id) {
-        Array.prototype.forEach.call(tabs.querySelectorAll('.filter-chip'), function (tab) {
-            tab.setAttribute('aria-selected', tab.dataset.client === id ? 'true' : 'false');
-            tab.setAttribute('aria-pressed', tab.dataset.client === id ? 'true' : 'false');
-            tab.tabIndex = tab.dataset.client === id ? 0 : -1;
+    // Inside the tab box, so its offsets are measured against the tabs and the
+    // Codex Desktop link beside them never shifts it.
+    var thumb = el('span', 'seg-thumb');
+    thumb.setAttribute('aria-hidden', 'true');
+    tabs.appendChild(thumb);
+
+    function positionThumb() {
+        var active = tabs.querySelector('.seg-item[aria-selected="true"]');
+        if (!active || !active.offsetWidth) {
+            return;
+        }
+        thumb.style.width = active.offsetWidth + 'px';
+        thumb.style.height = active.offsetHeight + 'px';
+        thumb.style.top = active.offsetTop + 'px';
+        thumb.style.transform = 'translateX(' + active.offsetLeft + 'px)';
+        thumb.classList.add('is-ready');
+    }
+
+    function select(id, animate) {
+        Array.prototype.forEach.call(tabs.querySelectorAll('.seg-item'), function (tab) {
+            var selected = tab.dataset.client === id;
+            tab.setAttribute('aria-selected', selected ? 'true' : 'false');
+            tab.tabIndex = selected ? 0 : -1;
         });
         Array.prototype.forEach.call(panels.children, function (panel) {
-            panel.hidden = panel.dataset.client !== id;
+            var selected = panel.dataset.client === id;
+            panel.hidden = !selected;
+            panel.classList.remove('seg-panel-in');
+            if (selected && animate && !prefersReducedMotion()) {
+                // Reading offsetWidth restarts the animation on a repeat select.
+                void panel.offsetWidth;
+                panel.classList.add('seg-panel-in');
+            }
         });
+        positionThumb();
     }
 
     CLIENT_CONFIGS.forEach(function (client, index) {
-        var tab = el('button', 'filter-chip', client.label);
+        var tab = el('button', 'seg-item');
         tab.type = 'button';
         tab.dataset.client = client.id;
         tab.setAttribute('role', 'tab');
         tab.setAttribute('aria-selected', index === 0 ? 'true' : 'false');
-        tab.setAttribute('aria-pressed', index === 0 ? 'true' : 'false');
         tab.setAttribute('aria-controls', 'client-panel-' + client.id);
         tab.tabIndex = index === 0 ? 0 : -1;
+        tab.innerHTML = '<i class="fas ' + client.icon + '" aria-hidden="true"></i>';
+        tab.appendChild(el('span', null, client.label));
         tab.addEventListener('click', function () {
-            select(client.id);
+            select(client.id, true);
         });
         // Arrow keys move between tabs, as expected of a tablist.
         tab.addEventListener('keydown', function (event) {
@@ -474,30 +549,28 @@ function renderClientConfigs() {
             }
             event.preventDefault();
             var next = CLIENT_CONFIGS[(index + step + CLIENT_CONFIGS.length) % CLIENT_CONFIGS.length];
-            select(next.id);
+            select(next.id, true);
             tabs.querySelector('[data-client="' + next.id + '"]').focus();
         });
         tabs.appendChild(tab);
 
-        var panel = el('div');
+        var panel = el('div', 'seg-panel');
         panel.id = 'client-panel-' + client.id;
         panel.dataset.client = client.id;
         panel.setAttribute('role', 'tabpanel');
         panel.hidden = index !== 0;
 
-        var cliLabel = el('p', 'text-xs text-slate-500 mb-2');
-        cliLabel.appendChild(el('span', null, 'Writes to '));
-        cliLabel.appendChild(el('code', 'text-teal-800', client.path));
-        if (client.where) {
-            cliLabel.appendChild(el('span', null, ' ' + client.where + '.'));
-        }
-        panel.appendChild(cliLabel);
-
-        var cliId = 'client-cli-' + client.id;
-        panel.appendChild(buildCodeBlock(cliId, client.command, 'text-xs', 'p-4'));
-
+        panel.appendChild(buildTerminal(
+            'client-cli-' + client.id,
+            client.command,
+            'writes ' + client.path
+        ));
+        panel.appendChild(el('p', 'seg-meta', client.scope));
         if (client.note) {
-            panel.appendChild(el('p', 'text-xs text-slate-500 mt-3 leading-relaxed', client.note));
+            var note = el('p', 'seg-note');
+            note.innerHTML = '<i class="fas fa-circle-info" aria-hidden="true"></i>';
+            note.appendChild(el('span', null, client.note));
+            panel.appendChild(note);
         }
 
         panels.appendChild(panel);
@@ -505,36 +578,62 @@ function renderClientConfigs() {
 
     Array.prototype.forEach.call(document.querySelectorAll('[data-client-target]'), function (link) {
         link.addEventListener('click', function () {
-            select(link.dataset.clientTarget);
+            select(link.dataset.clientTarget, true);
         });
     });
+
+    // The indicator is measured, so it has to be re-measured whenever the row
+    // rewraps or the webfont changes the label widths.
+    positionThumb();
+    window.addEventListener('resize', debounce(positionThumb, 120));
+    window.addEventListener('load', positionThumb);
+    if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(positionThumb);
+    }
 }
 
 /**
- * Build a copyable code block matching the markup used elsewhere on the page.
- * @param {string} id
- * @param {string} code
- * @param {string} textClass
- * @param {string} padClass
+ * Build a terminal block matching the chrome used across the page.
+ * @param {string} id Applied to the <pre>, for copyCode.
+ * @param {string} command One or more newline-separated commands.
+ * @param {string} title Shown in the title bar.
  * @returns {HTMLElement}
  */
-function buildCodeBlock(id, code, textClass, padClass) {
-    var wrapper = el('div', 'code-block rounded-xl overflow-hidden shadow-inner');
+function buildTerminal(id, command, title) {
+    var figure = el('figure', 'term term-cmd');
 
-    var button = el('button', 'copy-button bg-slate-700/90 hover:bg-slate-600 text-white px-3 py-1.5 rounded text-xs font-medium');
+    var bar = el('figcaption', 'term-bar');
+    var dots = el('span', 'term-dots');
+    dots.setAttribute('aria-hidden', 'true');
+    dots.innerHTML = '<span></span><span></span><span></span>';
+    bar.appendChild(dots);
+    bar.appendChild(el('span', 'term-title', title));
+
+    var tools = el('span', 'term-tools');
+    var button = el('button', 'term-copy');
     button.type = 'button';
-    button.innerHTML = '<i class="fas fa-copy mr-1" aria-hidden="true"></i>Copy';
+    button.innerHTML = '<i class="fas fa-clone" aria-hidden="true"></i>';
+    button.appendChild(el('span', null, 'Copy'));
     button.addEventListener('click', function (event) {
         copyCode(event, id);
     });
-    wrapper.appendChild(button);
+    tools.appendChild(button);
+    bar.appendChild(tools);
+    figure.appendChild(bar);
 
-    var pre = el('pre', padClass + ' text-slate-100 ' + textClass + ' leading-relaxed overflow-x-auto');
+    var pre = el('pre', 'term-body');
     pre.id = id;
-    pre.appendChild(el('code', null, code));
-    wrapper.appendChild(pre);
+    var code = el('code');
+    command.split('\n').forEach(function (line, index) {
+        if (index) {
+            code.appendChild(document.createTextNode('\n'));
+        }
+        code.appendChild(el('span', 'c-line', line));
+    });
+    pre.appendChild(code);
+    figure.appendChild(pre);
 
-    return wrapper;
+    return figure;
 }
 
 function renderTransformRows() {
@@ -1372,6 +1471,29 @@ function initLayerExplorer() {
    Scroll behavior
    ============================================ */
 
+/**
+ * Footnote marks: a line that ships visible, then collapses behind its mark once
+ * the toggle exists. A script-less visit keeps the line rather than losing it to
+ * a control that cannot run.
+ */
+function initInfoNotes() {
+    Array.prototype.forEach.call(document.querySelectorAll('[data-info-toggle]'), function (button) {
+        var target = document.getElementById(button.getAttribute('aria-controls'));
+        if (!target) {
+            return;
+        }
+
+        target.hidden = true;
+        button.setAttribute('aria-expanded', 'false');
+
+        button.addEventListener('click', function () {
+            var opening = target.hidden;
+            target.hidden = !opening;
+            button.setAttribute('aria-expanded', opening ? 'true' : 'false');
+        });
+    });
+}
+
 function initSmoothScroll() {
     document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
         anchor.addEventListener('click', function (event) {
@@ -1430,15 +1552,31 @@ function initScrollAnimations() {
     });
 }
 
-/**
- * Light the Quick Start rail as each step arrives. Install, verify, connect, ask
- * is a real sequence, so the rail draws itself in that order instead of landing
- * whole, and step 2's recorded output prints a line at a time. Skipped entirely
- * under reduced motion, where the CSS never hides anything.
- */
-function initQuickStartSequence() {
+/* ============================================
+   Quick Start
+   ============================================ */
+
+/* Install, verify, connect, ask is a real sequence, so the section plays as one:
+   the rail draws itself a segment at a time, and each step runs the one set piece
+   that belongs to it. Every hidden state is class-gated, so a reduced-motion or
+   script-less visit gets the finished section with nothing withheld. */
+
+var termRunSeq = 0;
+
+function initQuickStart() {
     var container = document.getElementById('quick-start-steps');
-    if (!container || prefersReducedMotion() || !('IntersectionObserver' in window)) {
+    if (!container) {
+        return;
+    }
+
+    // Copying an example prompt and opening the credentials panel are content,
+    // not motion, so they are wired up first and independently of everything
+    // below.
+    initAskPrompts(container);
+    initCredentialsDisclosure(container);
+    initStepProgress(container);
+
+    if (prefersReducedMotion() || !('IntersectionObserver' in window)) {
         return;
     }
 
@@ -1448,6 +1586,8 @@ function initQuickStartSequence() {
     }
 
     container.classList.add('steps-in-motion');
+    prepareTerminals(container);
+    initTranscriptReplay(container);
 
     var observer = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
@@ -1456,9 +1596,9 @@ function initQuickStartSequence() {
             }
             entry.target.classList.add('step-lit');
             observer.unobserve(entry.target);
-            streamTranscript(entry.target.querySelector('.transcript'));
+            runStepSetPiece(entry.target);
         });
-    }, { threshold: 0.2, rootMargin: '0px 0px -6% 0px' });
+    }, { threshold: 0.16, rootMargin: '0px 0px -8% 0px' });
 
     Array.prototype.forEach.call(rows, function (row) {
         observer.observe(row);
@@ -1466,23 +1606,438 @@ function initQuickStartSequence() {
 }
 
 /**
- * Print a recorded transcript one line at a time. The CSS owns the per-line
- * delays; this only holds the class for as long as the last line needs.
- * @param {Element|null} transcript
+ * Trade a step's numeral for a check once the reader has gone past it. The step
+ * crossing the middle of the viewport is the current one, so this follows
+ * scrolling in both directions.
+ * @param {Element} container
  */
-function streamTranscript(transcript) {
-    if (!transcript) {
+function initStepProgress(container) {
+    var steps = container.querySelectorAll('.step-row[data-step]');
+    if (!steps.length || !('IntersectionObserver' in window)) {
         return;
     }
-    var lines = transcript.querySelectorAll('.t-line');
+
+    function setCurrent(current) {
+        Array.prototype.forEach.call(steps, function (step) {
+            step.classList.toggle('step-done', parseInt(step.dataset.step, 10) < current);
+        });
+    }
+
+    var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+                setCurrent(parseInt(entry.target.dataset.step, 10));
+            }
+        });
+    }, { rootMargin: '-45% 0px -45% 0px' });
+
+    Array.prototype.forEach.call(steps, function (step) {
+        observer.observe(step);
+    });
+}
+
+/**
+ * The credentials panel stays closed, because nothing in it blocks a first
+ * setup. Anything that points at it — the note under `doctor`, or a shared
+ * #qs-credentials link — opens it, so the link lands on the content and not on
+ * a closed row.
+ * @param {Element} container
+ */
+function initCredentialsDisclosure(container) {
+    var panel = container.querySelector('[data-cred]');
+    var row = document.getElementById('qs-credentials');
+    if (!panel || !row) {
+        return;
+    }
+
+    function open() {
+        panel.open = true;
+    }
+
+    Array.prototype.forEach.call(document.querySelectorAll('a[href="#qs-credentials"]'), function (link) {
+        link.addEventListener('click', open);
+    });
+
+    if (window.location.hash === '#qs-credentials') {
+        open();
+    }
+    window.addEventListener('hashchange', function () {
+        if (window.location.hash === '#qs-credentials') {
+            open();
+        }
+    });
+}
+
+/**
+ * Record what each animated block has to end up saying, before anything blanks
+ * it. Copy and replay both read from what is stored here.
+ * @param {Element} container
+ */
+function prepareTerminals(container) {
+    Array.prototype.forEach.call(container.querySelectorAll('pre[data-type]'), function (pre) {
+        pre.dataset.fullText = pre.textContent;
+    });
+    Array.prototype.forEach.call(container.querySelectorAll('.c-line, .t-line'), function (line) {
+        if (!('text' in line.dataset)) {
+            line.dataset.text = line.textContent;
+        }
+    });
+}
+
+/**
+ * Run the one set piece that belongs to a step, once it has landed.
+ * @param {Element} row
+ */
+function runStepSetPiece(row) {
+    var typed = row.querySelector('pre[data-type]');
+    if (typed) {
+        typeCommandBlock(typed);
+    }
+
+    var transcript = row.querySelector('[data-transcript]');
+    if (transcript) {
+        runTranscript(transcript);
+    }
+
+    if (row.querySelector('[data-ask]')) {
+        askStart();
+    }
+}
+
+/**
+ * Claim a terminal for a new run. Any run still in flight sees a stale token and
+ * stops, so a replay never interleaves with the run it replaced.
+ * @param {Element} term
+ * @returns {string}
+ */
+function beginTermRun(term) {
+    termRunSeq += 1;
+    term.dataset.run = String(termRunSeq);
+    term.classList.add('is-typing');
+    return term.dataset.run;
+}
+
+function termRunIsCurrent(term, token) {
+    return term.dataset.run === token && document.contains(term);
+}
+
+function endTermRun(term, token) {
+    if (termRunIsCurrent(term, token)) {
+        term.classList.remove('is-typing');
+    }
+}
+
+/**
+ * Type text into a node one character at a time, with a caret while it runs.
+ * @param {Element} node
+ * @param {string} text
+ * @param {number} speed Milliseconds per character.
+ * @param {Element} term
+ * @param {string} token
+ * @param {Function} [done]
+ */
+function typeText(node, text, speed, term, token, done) {
+    node.classList.add('tw-typing');
+    var index = 0;
+
+    function tick() {
+        if (!termRunIsCurrent(term, token)) {
+            return;
+        }
+        node.textContent = text.slice(0, index);
+        if (index >= text.length) {
+            node.classList.remove('tw-typing');
+            if (done) {
+                window.setTimeout(done, 110);
+            }
+            return;
+        }
+        index += 1;
+        window.setTimeout(tick, speed);
+    }
+
+    tick();
+}
+
+/**
+ * Type a command block line by line, the way it would be entered.
+ * @param {HTMLPreElement} pre
+ */
+function typeCommandBlock(pre) {
+    var term = pre.closest('.term');
+    var lines = pre.querySelectorAll('.c-line');
+    if (!term || !lines.length) {
+        return;
+    }
+
+    var speed = parseInt(pre.dataset.type, 10) || 16;
+    var token = beginTermRun(term);
+    Array.prototype.forEach.call(lines, function (line) {
+        line.classList.remove('is-in');
+        line.textContent = '';
+    });
+
+    var index = 0;
+    function nextLine() {
+        if (!termRunIsCurrent(term, token)) {
+            return;
+        }
+        if (index >= lines.length) {
+            endTermRun(term, token);
+            return;
+        }
+        var line = lines[index];
+        index += 1;
+        line.classList.add('is-in');
+        typeText(line, line.dataset.text, speed, term, token, nextLine);
+    }
+
+    window.setTimeout(nextLine, 340);
+}
+
+/**
+ * Replay a recorded session: the command is typed, then the output flushes a
+ * line at a time, with a beat before the line that carries the proof.
+ * @param {Element} term
+ */
+function runTranscript(term) {
+    var lines = term.querySelectorAll('.t-line');
     if (!lines.length) {
         return;
     }
 
-    transcript.classList.add('is-streaming');
+    var token = beginTermRun(term);
+    Array.prototype.forEach.call(lines, function (line) {
+        line.classList.remove('is-in');
+    });
+
+    var prompt = lines[0];
+    prompt.textContent = '';
+
     window.setTimeout(function () {
-        transcript.classList.remove('is-streaming');
-    }, 1200);
+        if (!termRunIsCurrent(term, token)) {
+            return;
+        }
+        prompt.classList.add('is-in');
+        typeText(prompt, prompt.dataset.text, 34, term, token, function () {
+            printTranscriptLine(term, lines, 1, token);
+        });
+    }, 340);
+}
+
+function printTranscriptLine(term, lines, index, token) {
+    if (!termRunIsCurrent(term, token)) {
+        return;
+    }
+    if (index >= lines.length) {
+        endTermRun(term, token);
+        return;
+    }
+
+    var line = lines[index];
+    var delay = line.classList.contains('t-proof') ? 300 : 110;
+
+    window.setTimeout(function () {
+        if (!termRunIsCurrent(term, token)) {
+            return;
+        }
+        line.classList.add('is-in');
+        printTranscriptLine(term, lines, index + 1, token);
+    }, delay);
+}
+
+/**
+ * A recording is worth watching twice, so let the visitor run it again.
+ * @param {Element} container
+ */
+function initTranscriptReplay(container) {
+    Array.prototype.forEach.call(container.querySelectorAll('[data-replay]'), function (button) {
+        var term = button.closest('.term');
+        if (!term) {
+            return;
+        }
+        button.addEventListener('click', function () {
+            button.classList.remove('is-spinning');
+            void button.offsetWidth;
+            button.classList.add('is-spinning');
+            runTranscript(term);
+        });
+    });
+}
+
+/* --- Step 4: the composer ------------------------------------------------ */
+
+/* The composer types each example prompt in turn and marks the card it is
+   typing, which is what ties the two together without a caption saying so. The
+   cards hold the real text: they are what a visitor copies, and what a
+   script-less visit shows. */
+
+var askComposer = null;
+
+function initAskPrompts(container) {
+    var root = container.querySelector('[data-ask]');
+    if (!root) {
+        return;
+    }
+
+    var bar = root.querySelector('.ask-text');
+    var cards = Array.prototype.slice.call(root.querySelectorAll('[data-prompt]'));
+    if (!bar || !cards.length) {
+        return;
+    }
+
+    askComposer = {
+        root: root,
+        bar: bar,
+        send: root.querySelector('.ask-send'),
+        cards: cards,
+        texts: cards.map(function (card) {
+            var text = card.querySelector('.prompt-text');
+            return text ? text.textContent.trim() : '';
+        }),
+        run: 0,
+        cycles: 0,
+        visible: true,
+        started: false
+    };
+
+    cards.forEach(function (card, index) {
+        card.addEventListener('click', function () {
+            copyPrompt(card, askComposer.texts[index]);
+            if (prefersReducedMotion()) {
+                askMarkCard(index);
+                askComposer.bar.textContent = askComposer.texts[index];
+                return;
+            }
+            // A click takes over the rotation and settles on what was clicked.
+            askComposer.cycles = 0;
+            askComposer.run += 1;
+            askType(index, askComposer.run, true);
+        });
+    });
+
+    if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function (entries) {
+            askComposer.visible = entries[0].isIntersecting;
+        }, { threshold: 0.2 }).observe(root);
+    }
+}
+
+function askStart() {
+    if (!askComposer || askComposer.started) {
+        return;
+    }
+    askComposer.started = true;
+    askComposer.run += 1;
+    askType(0, askComposer.run, false);
+}
+
+function askMarkCard(index) {
+    askComposer.cards.forEach(function (card, position) {
+        card.classList.toggle('is-active', position === index);
+    });
+}
+
+/**
+ * Type one example into the composer, then either settle on it or move to the
+ * next. Paused whenever the composer is off screen, so nothing runs unwatched.
+ * @param {number} index
+ * @param {number} token
+ * @param {boolean} settle Stop here instead of rotating on.
+ */
+function askType(index, token, settle) {
+    if (!askComposer || token !== askComposer.run) {
+        return;
+    }
+
+    var full = askComposer.texts[index];
+    var bar = askComposer.bar;
+    askMarkCard(index);
+    bar.classList.add('is-typing');
+
+    var typed = 0;
+    function forward() {
+        if (!askComposer || token !== askComposer.run) {
+            return;
+        }
+        if (!askComposer.visible) {
+            window.setTimeout(forward, 400);
+            return;
+        }
+        bar.textContent = full.slice(0, typed);
+        if (typed >= full.length) {
+            if (askComposer.send) {
+                askComposer.send.classList.remove('is-sending');
+                void askComposer.send.offsetWidth;
+                askComposer.send.classList.add('is-sending');
+            }
+            if (settle) {
+                window.setTimeout(function () {
+                    if (askComposer && token === askComposer.run) {
+                        bar.classList.remove('is-typing');
+                    }
+                }, 1400);
+                return;
+            }
+            window.setTimeout(back, 2400);
+            return;
+        }
+        typed += 1;
+        window.setTimeout(forward, 26);
+    }
+
+    var left = full.length;
+    function back() {
+        if (!askComposer || token !== askComposer.run) {
+            return;
+        }
+        if (!askComposer.visible) {
+            window.setTimeout(back, 400);
+            return;
+        }
+        bar.textContent = full.slice(0, left);
+        if (left <= 0) {
+            var next = (index + 1) % askComposer.texts.length;
+            if (next === 0) {
+                askComposer.cycles += 1;
+            }
+            // Two passes is enough to show what the servers answer; after that
+            // it settles rather than looping at the visitor forever.
+            window.setTimeout(function () {
+                askType(next, token, askComposer.cycles >= 2);
+            }, 240);
+            return;
+        }
+        left -= 1;
+        window.setTimeout(back, 12);
+    }
+
+    forward();
+}
+
+/**
+ * Copy an example prompt, with feedback on the card itself.
+ * @param {Element} card
+ * @param {string} text
+ */
+function copyPrompt(card, text) {
+    var action = card.querySelector('.prompt-action span');
+    var icon = card.querySelector('.prompt-action i');
+    var label = action ? action.textContent : '';
+
+    writeClipboard(text, function (ok) {
+        if (!action || !icon) {
+            return;
+        }
+        action.textContent = ok ? 'Copied' : 'Copy failed';
+        icon.className = ok ? 'fas fa-check' : 'fas fa-triangle-exclamation';
+        card.classList.add('is-copied');
+        window.setTimeout(function () {
+            action.textContent = label;
+            icon.className = 'fas fa-clone';
+            card.classList.remove('is-copied');
+        }, 2400);
+    });
 }
 
 function initTransformRowsAnimation() {
@@ -1528,9 +2083,10 @@ function init() {
     initToolExplorer();
     initLayerExplorer();
 
+    initInfoNotes();
     initSmoothScroll();
     initScrollAnimations();
-    initQuickStartSequence();
+    initQuickStart();
     initUnifiedBadge();
     initJurisdictionFlow();
 }
