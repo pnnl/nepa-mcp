@@ -326,16 +326,69 @@ section {
 }
 
 /* ============================================
-   Quick Start rail
+   Quick Start
    ============================================ */
 
-/* One container with numbered steps on a connected rail, rather than four
-   free-floating cards. The rail carries the sequence, so each step repeats no
-   card chrome and steps are free to differ in weight. */
+/* The section reads as one console the visitor works down, not four stacked
+   documentation cards: a sticky chapter strip tracks progress, a hairline rail
+   carries the sequence, and every command sits in the same terminal chrome. */
+.qs-section {
+    position: relative;
+    background:
+        radial-gradient(1100px 420px at 50% -40px, rgba(var(--brand-primary-rgb), 0.08), transparent 68%),
+        linear-gradient(to bottom, #fff 0%, #f6f8fa 42%, #fff 100%);
+}
+
+/* A faint dot field for the card to sit on. Masked so it never reaches the
+   section edges, where it would read as noise rather than texture. */
+.qs-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(var(--brand-ink-rgb), 0.13) 1px, transparent 1px);
+    background-size: 22px 22px;
+    -webkit-mask-image: radial-gradient(760px 340px at 50% 8%, #000, transparent 70%);
+    mask-image: radial-gradient(760px 340px at 50% 8%, #000, transparent 70%);
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.qs-card {
+    position: relative;
+    border-radius: 1.5rem;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 255, 255, 0.9) 100%);
+    backdrop-filter: blur(18px);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),
+        0 2px 6px -3px rgba(var(--brand-ink-rgb), 0.1),
+        0 34px 70px -40px rgba(var(--brand-ink-rgb), 0.4);
+}
+
+/* A hairline accent on the top edge gives the card a reading direction. */
+.qs-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 14%;
+    right: 14%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(var(--brand-primary-rgb), 0.6), transparent);
+}
+
+/* --- Step rail ----------------------------------------------------------- */
+
+.qs-steps {
+    padding: 2.25rem 1.35rem 2rem;
+}
+
 .step-row {
     display: grid;
-    grid-template-columns: 2.25rem 1fr;
-    column-gap: 1.25rem;
+    grid-template-columns: 2.5rem 1fr;
+    column-gap: 1.35rem;
+    /* Clears the sticky header when a link jumps straight to a step. The header
+       is 126px tall while it carries its second link row, 81px after that. */
+    scroll-margin-top: 145px;
 }
 
 .step-marker {
@@ -344,70 +397,898 @@ section {
     justify-content: center;
 }
 
-.step-number {
+/* An outlined node with a stroke that draws itself, rather than a solid disc:
+   quieter at rest, and the draw is what marks arrival. */
+.step-node {
     position: relative;
     z-index: 1;
-    width: 2.25rem;
-    height: 2.25rem;
+    width: 2.5rem;
+    height: 2.5rem;
     flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.875rem;
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
-    color: #fff;
+    /* One named cell, so the numeral and the check stack in the same spot and
+       can cross-fade between them. */
+    display: grid;
+    grid-template-areas: 'glyph';
+    place-items: center;
     border-radius: 9999px;
-    background: linear-gradient(135deg, var(--brand-primary-darkest) 0%, var(--brand-primary) 100%);
+    background: #fff;
+    box-shadow:
+        0 0 0 1px rgba(var(--brand-ink-rgb), 0.07),
+        0 1px 3px rgba(var(--brand-ink-rgb), 0.07);
+    transition: background 0.4s ease;
 }
 
-/* The connector runs from just below one number to the next. The last row has
-   no connector, so the rail terminates on the final step. */
-.step-row:not(:last-child) .step-marker::after {
-    content: '';
+.step-ring {
     position: absolute;
-    top: 2.25rem;
-    bottom: -0.25rem;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.step-ring circle {
+    fill: none;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+}
+
+.step-ring .ring-track {
+    stroke: rgba(var(--brand-ink-rgb), 0.1);
+}
+
+.step-ring .ring-draw {
+    stroke: var(--brand-primary);
+    /* 2 * pi * r, r = 16 in the 40x40 viewBox. */
+    stroke-dasharray: 100.53;
+    stroke-dashoffset: 0;
+}
+
+.step-number,
+.step-check {
+    grid-area: glyph;
+    position: relative;
+    z-index: 1;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--brand-primary-darker);
+    transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.34, 1.32, 0.64, 1);
+}
+
+/* Once a step is behind the reader, its numeral gives way to a check: the same
+   progress the chapter strip shows, on the rail itself. */
+.step-check {
+    font-size: 0.75rem;
+    color: var(--brand-primary);
+    opacity: 0;
+    transform: scale(0.6);
+}
+
+.step-row.step-done .step-number {
+    opacity: 0;
+    transform: scale(0.6);
+}
+
+.step-row.step-done .step-check {
+    opacity: 1;
+    transform: none;
+}
+
+.step-row.step-done .step-node {
+    background: #f2fbf8;
+}
+
+.step-node-key {
+    background: #fffdf6;
+    box-shadow:
+        0 0 0 1px rgba(249, 184, 0, 0.45),
+        0 1px 3px rgba(var(--brand-ink-rgb), 0.06);
+}
+
+.step-node-key i {
+    font-size: 0.8125rem;
+    color: #a97b00;
+}
+
+/* The connector runs from one node to the next. The last row has none, so the
+   rail terminates on the final step. */
+.step-line {
+    position: absolute;
+    top: 2.5rem;
+    bottom: -0.5rem;
     left: 50%;
-    width: 2px;
-    margin-left: -1px;
-    background: linear-gradient(to bottom, rgba(var(--brand-primary-rgb), 0.35), rgba(var(--brand-primary-rgb), 0.12));
+    width: 1px;
+    margin-left: -0.5px;
+    background: rgba(var(--brand-ink-rgb), 0.11);
+}
+
+.step-line-dashed {
+    background: repeating-linear-gradient(
+        to bottom,
+        rgba(var(--brand-ink-rgb), 0.16) 0 4px,
+        transparent 4px 9px
+    );
+}
+
+.step-line-fill {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(var(--brand-primary-rgb), 0.6), rgba(var(--brand-primary-rgb), 0.12));
+}
+
+.step-line-dashed .step-line-fill {
+    background: repeating-linear-gradient(
+        to bottom,
+        rgba(249, 184, 0, 0.5) 0 4px,
+        transparent 4px 9px
+    );
+}
+
+.step-spark {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 5px;
+    height: 5px;
+    margin-left: -2.5px;
+    border-radius: 9999px;
+    background: var(--brand-primary);
+    box-shadow: 0 0 10px 2px rgba(var(--brand-primary-rgb), 0.55);
+    opacity: 0;
 }
 
 .step-body {
     min-width: 0;
-    padding-bottom: 2.5rem;
+    padding-bottom: 2.75rem;
 }
 
 .step-row:last-child .step-body {
     padding-bottom: 0;
 }
 
-@media (max-width: 640px) {
-    .step-row {
-        grid-template-columns: 1.75rem 1fr;
-        column-gap: 0.875rem;
-    }
+.step-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding-top: 0.4rem;
+    margin-bottom: 0.4rem;
+}
 
-    .step-number {
-        width: 1.75rem;
-        height: 1.75rem;
-        font-size: 0.8125rem;
-    }
+.step-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--brand-ink);
+}
 
-    .step-row:not(:last-child) .step-marker::after,
-    .steps-in-motion .step-row:not(:last-child) .step-marker::before {
-        top: 1.75rem;
+/* Scope, not decoration: says how often the visitor does this one. */
+.step-meta {
+    margin-left: auto;
+    flex-shrink: 0;
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: rgba(var(--brand-ink-rgb), 0.4);
+}
+
+.step-lede {
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: #52606d;
+    margin-bottom: 0.9rem;
+}
+
+.step-note {
+    margin-top: 0.7rem;
+    font-size: 0.78125rem;
+    line-height: 1.6;
+    color: #64748b;
+}
+
+.step-lede code,
+.step-note code,
+.cred-lede code,
+.cred-fine code {
+    font-size: 0.9em;
+    color: var(--brand-primary-darker);
+    background: rgba(var(--brand-primary-rgb), 0.07);
+    padding: 0.05em 0.35em;
+    border-radius: 0.3rem;
+}
+
+.step-note-link {
+    color: var(--brand-primary-dark);
+    text-decoration: underline;
+    text-decoration-color: rgba(var(--brand-primary-rgb), 0.35);
+    text-underline-offset: 2px;
+    transition: text-decoration-color 0.2s ease;
+}
+
+.step-note-link:hover {
+    text-decoration-color: var(--brand-primary);
+}
+
+/* --- Optional credentials panel ------------------------------------------ */
+
+/* Two of the nineteen servers, and nothing here blocks a first setup — so it
+   stays a closed disclosure the visitor opens on purpose, rather than a fifth
+   step in the middle of four. It still carries the brand's amber, which is the
+   same amber marking the two credential lines in the `doctor` output above, so
+   it is impossible to miss while being easy to skip. */
+.cred-card {
+    position: relative;
+    margin-top: 0.4rem;
+    border-radius: 1.15rem;
+    border: 1px solid rgba(249, 184, 0, 0.32);
+    background:
+        linear-gradient(180deg, rgba(249, 184, 0, 0.07) 0%, rgba(249, 184, 0, 0.02) 100%),
+        #fff;
+    box-shadow: 0 18px 40px -34px rgba(120, 88, 0, 0.6);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cred-card:hover {
+    border-color: rgba(249, 184, 0, 0.55);
+}
+
+.cred-summary {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1.05rem 1.2rem;
+    border-radius: 1.15rem;
+    border-bottom: 1px solid transparent;
+    cursor: pointer;
+    /* Both are needed to drop the native disclosure triangle. */
+    list-style: none;
+}
+
+.cred-summary::-webkit-details-marker {
+    display: none;
+}
+
+.cred-card[open] .cred-summary {
+    border-bottom-color: rgba(249, 184, 0, 0.22);
+    border-radius: 1.15rem 1.15rem 0 0;
+}
+
+.cred-summary:focus-visible {
+    outline: 2px solid var(--brand-primary);
+    outline-offset: 2px;
+}
+
+.cred-tag {
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: #8a6100;
+    background: rgba(249, 184, 0, 0.16);
+    border: 1px solid rgba(249, 184, 0, 0.35);
+    padding: 0.15rem 0.5rem;
+    border-radius: 9999px;
+}
+
+.cred-summary-text {
+    min-width: 0;
+}
+
+.cred-title {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--brand-ink);
+}
+
+.cred-hint {
+    display: block;
+    margin-top: 0.2rem;
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    color: #6b7684;
+}
+
+.cred-hint code {
+    font-size: 0.9em;
+    color: #7a5600;
+    background: rgba(249, 184, 0, 0.14);
+    padding: 0.05em 0.3em;
+    border-radius: 0.3rem;
+}
+
+/* Says what opening it does, so the row reads as a control and not a notice. */
+.cred-toggle {
+    margin-left: auto;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding-top: 0.15rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--brand-primary-dark);
+}
+
+.cred-toggle-label::after {
+    content: 'Set up';
+}
+
+.cred-card[open] .cred-toggle-label::after {
+    content: 'Hide';
+}
+
+.cred-toggle i {
+    font-size: 0.625rem;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cred-card[open] .cred-toggle i {
+    transform: rotate(180deg);
+}
+
+.cred-body {
+    padding: 0 1.2rem 1.25rem;
+    animation: credOpen 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes credOpen {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: none; }
+}
+
+.cred-lede {
+    margin: 1rem 0 0;
+    font-size: 0.875rem;
+    line-height: 1.65;
+    color: #52606d;
+}
+
+.cred-vars {
+    display: grid;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+.cred-var {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    padding: 0.6rem 0.8rem;
+    border-radius: 0.7rem;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(var(--brand-ink-rgb), 0.07);
+}
+
+.cred-var dt {
+    flex-shrink: 0;
+}
+
+.cred-var dt code {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--brand-ink);
+}
+
+.cred-var dd {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    margin: 0;
+    min-width: 0;
+}
+
+.cred-var dd code {
+    font-size: 0.6875rem;
+    letter-spacing: 0.02em;
+    color: #7a5600;
+    background: rgba(249, 184, 0, 0.12);
+    border: 1px solid rgba(249, 184, 0, 0.22);
+    padding: 0.12rem 0.4rem;
+    border-radius: 0.35rem;
+    white-space: nowrap;
+}
+
+.cred-var dd a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-left: auto;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--brand-primary-dark);
+    white-space: nowrap;
+    transition: color 0.2s ease, gap 0.2s ease;
+}
+
+.cred-var dd a i {
+    font-size: 0.5625rem;
+    opacity: 0.7;
+}
+
+.cred-var dd a:hover {
+    color: var(--brand-primary-darkest);
+    gap: 0.45rem;
+}
+
+.cred-foot {
+    margin-top: 1.05rem;
+}
+
+.cred-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.55rem 0.95rem;
+    border-radius: 0.7rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(135deg, var(--brand-primary-darkest) 0%, var(--brand-primary) 100%);
+    box-shadow: 0 8px 22px -14px rgba(var(--brand-primary-rgb), 0.9);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+}
+
+.cred-link:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 26px -14px rgba(var(--brand-primary-rgb), 1);
+}
+
+.cred-link-arrow {
+    font-size: 0.6875rem;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cred-link:hover .cred-link-arrow {
+    transform: translateX(3px);
+}
+
+.cred-fine {
+    margin-top: 0.8rem;
+    font-size: 0.75rem;
+    line-height: 1.6;
+    color: #6b7684;
+}
+
+/* --- Client segmented control ------------------------------------------- */
+
+/* A segmented control with one sliding indicator, rather than three pills that
+   each restate their own selected state. site.js sizes the thumb. */
+.seg {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.15rem;
+    padding: 0.25rem;
+    margin-bottom: 1rem;
+    max-width: 100%;
+    flex-wrap: wrap;
+    border-radius: 0.85rem;
+    background: rgba(var(--brand-ink-rgb), 0.045);
+    border: 1px solid rgba(var(--brand-ink-rgb), 0.07);
+}
+
+/* The tabs are their own box, so the thumb measures against them alone and the
+   tablist holds nothing but tabs. */
+.seg-tabs {
+    position: relative;
+    display: inline-flex;
+    gap: 0.15rem;
+    flex-wrap: wrap;
+}
+
+/* Set apart from the tabs: it leaves the step rather than switching it. */
+.seg-link {
+    margin-left: 0.35rem;
+    padding-left: 0.85rem;
+    border-left: 1px solid rgba(var(--brand-ink-rgb), 0.11);
+    color: var(--brand-primary-dark);
+    text-decoration: none;
+}
+
+.seg-link i:first-child {
+    opacity: 0.85;
+    color: var(--brand-primary);
+}
+
+.seg-link-arrow {
+    font-size: 0.5625rem;
+    opacity: 0.6;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.seg-link:hover {
+    color: var(--brand-primary-darkest);
+}
+
+.seg-link:hover .seg-link-arrow {
+    transform: translateY(2px);
+    opacity: 1;
+}
+
+.seg-thumb {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 2rem;
+    width: 0;
+    border-radius: 0.62rem;
+    background: #fff;
+    box-shadow:
+        0 1px 2px rgba(var(--brand-ink-rgb), 0.12),
+        0 0 0 1px rgba(var(--brand-primary-rgb), 0.18);
+    opacity: 0;
+    transition:
+        transform 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+        width 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+        height 0.2s ease,
+        top 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 0.25s ease;
+    pointer-events: none;
+}
+
+.seg-thumb.is-ready {
+    opacity: 1;
+}
+
+.seg-item {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.4rem 0.8rem;
+    border: 0;
+    background: transparent;
+    border-radius: 0.62rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: rgba(var(--brand-ink-rgb), 0.6);
+    cursor: pointer;
+    transition: color 0.25s ease;
+}
+
+.seg-item i {
+    font-size: 0.75rem;
+    opacity: 0.7;
+    transition: opacity 0.25s ease, color 0.25s ease;
+}
+
+.seg-item:hover {
+    color: var(--brand-primary-dark);
+}
+
+.seg-item[aria-selected='true'] {
+    color: var(--brand-primary-darkest);
+    font-weight: 600;
+}
+
+.seg-item[aria-selected='true'] i {
+    opacity: 1;
+    color: var(--brand-primary);
+}
+
+/* The incoming panel animates once; the outgoing one is removed from the
+   accessibility tree with `hidden`, which display:none would fight a
+   transition over. */
+.seg-panel-in {
+    animation: segPanelIn 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes segPanelIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: none; }
+}
+
+.seg-meta {
+    margin-top: 0.7rem;
+    font-size: 0.78125rem;
+    line-height: 1.6;
+    color: #64748b;
+}
+
+.seg-meta code {
+    font-size: 0.9em;
+    color: var(--brand-primary-darker);
+    background: rgba(var(--brand-primary-rgb), 0.07);
+    padding: 0.05em 0.35em;
+    border-radius: 0.3rem;
+}
+
+/* A rule rather than a footnote: the README is explicit that the plugin and this
+   command are not to be combined, so it gets a tinted box instead of the muted
+   line the scope note uses. Teal, not the credentials amber, which is reserved
+   for the one thing on the page a visitor has to opt into. */
+.seg-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-top: 0.7rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: 0.6rem;
+    background: rgba(var(--brand-primary-rgb), 0.05);
+    border: 1px solid rgba(var(--brand-primary-rgb), 0.16);
+    font-size: 0.78125rem;
+    line-height: 1.6;
+    color: #4b5763;
+}
+
+.seg-note i {
+    flex-shrink: 0;
+    margin-top: 0.22rem;
+    font-size: 0.6875rem;
+    color: var(--brand-primary);
+}
+
+/* A footnote mark, not a control with a row of its own: it rides on the end of
+   the sentence it qualifies and takes no height from the panel. */
+.info-sup {
+    display: inline-block;
+    margin-left: 0.15rem;
+    padding: 0 0.15rem;
+    vertical-align: super;
+    font-size: 0.5625rem;
+    line-height: 1;
+    color: #5eead4;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.info-sup:hover,
+.info-sup[aria-expanded='true'] {
+    opacity: 1;
+}
+
+.info-sup:hover {
+    transform: translateY(-1px);
+}
+
+.info-line {
+    margin-top: 0.5rem;
+    padding-left: 0.65rem;
+    border-left: 1px solid rgba(94, 234, 212, 0.3);
+    font-size: 0.75rem;
+    line-height: 1.6;
+    color: #cbd5e1;
+    animation: credOpen 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.info-line code {
+    font-size: 0.95em;
+    color: #5eead4;
+}
+
+/* --- Ask bar and example prompts ---------------------------------------- */
+
+/* Step 4 is the payoff, so it gets the one composed object in the section: a
+   composer that types each example, with the three prompts under it as the real
+   (and copyable) content. */
+.ask-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.9rem 0.95rem 0.9rem 1.1rem;
+    border-radius: 1rem;
+    background: #fff;
+    border: 1px solid rgba(var(--brand-ink-rgb), 0.1);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),
+        0 14px 34px -28px rgba(var(--brand-ink-rgb), 0.7);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ask-bar:hover {
+    border-color: rgba(var(--brand-primary-rgb), 0.28);
+}
+
+.ask-glyph {
+    flex-shrink: 0;
+    width: 1.6rem;
+    height: 1.6rem;
+    display: grid;
+    place-items: center;
+    border-radius: 0.5rem;
+    font-size: 0.6875rem;
+    color: var(--brand-primary-dark);
+    background: rgba(var(--brand-primary-rgb), 0.09);
+}
+
+.ask-text {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 1.0625rem;
+    line-height: 1.45;
+    color: var(--brand-ink);
+}
+
+/* The caret is a styled box rather than a character, so it never lands in a
+   copied selection. */
+.ask-text.is-typing::after {
+    content: '';
+    display: inline-block;
+    width: 2px;
+    height: 1.05em;
+    margin-left: 0.12em;
+    vertical-align: -0.15em;
+    background: var(--brand-primary);
+    animation: caretBlink 1s steps(1, end) infinite;
+}
+
+.ask-send {
+    flex-shrink: 0;
+    width: 2rem;
+    height: 2rem;
+    display: grid;
+    place-items: center;
+    border-radius: 9999px;
+    font-size: 0.6875rem;
+    color: #fff;
+    background: linear-gradient(135deg, var(--brand-primary-darkest) 0%, var(--brand-primary) 100%);
+    box-shadow: 0 6px 16px -10px rgba(var(--brand-primary-rgb), 1);
+}
+
+.ask-send.is-sending {
+    animation: askSend 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes askSend {
+    0% { transform: scale(1); }
+    35% { transform: scale(1.14); box-shadow: 0 0 0 6px rgba(var(--brand-primary-rgb), 0.16); }
+    100% { transform: scale(1); box-shadow: 0 6px 16px -10px rgba(var(--brand-primary-rgb), 1); }
+}
+
+.ask-list {
+    display: grid;
+    gap: 0.7rem;
+    margin: 0.85rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+@media (min-width: 640px) {
+    .ask-list {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }
 
-/* Motion on the rail. Gated on .steps-in-motion, which site.js adds only when
-   the visitor has not asked for reduced motion, so a reduced-motion or
-   script-less visit gets the finished rail with nothing hidden. */
+.prompt-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    width: 100%;
+    height: 100%;
+    padding: 0.95rem 1rem 0.85rem;
+    text-align: left;
+    border-radius: 0.9rem;
+    background: #fff;
+    border: 1px solid rgba(var(--brand-ink-rgb), 0.09);
+    cursor: pointer;
+    transition:
+        transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.prompt-quote {
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 1.5rem;
+    line-height: 0.6;
+    color: rgba(var(--brand-primary-rgb), 0.4);
+}
+
+.prompt-text {
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 1rem;
+    line-height: 1.45;
+    color: #3f4a58;
+}
+
+.prompt-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-top: auto;
+    padding-top: 0.35rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: rgba(var(--brand-ink-rgb), 0.32);
+    transition: color 0.25s ease;
+}
+
+.prompt-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(var(--brand-primary-rgb), 0.4);
+    box-shadow: 0 18px 34px -26px rgba(var(--brand-ink-rgb), 0.75);
+}
+
+.prompt-card:hover .prompt-action {
+    color: var(--brand-primary-dark);
+}
+
+/* Marks the prompt the composer is typing, which is what ties the two
+   together without a caption saying so. */
+.prompt-card.is-active {
+    border-color: rgba(var(--brand-primary-rgb), 0.5);
+    box-shadow:
+        0 0 0 3px rgba(var(--brand-primary-rgb), 0.1),
+        0 18px 34px -30px rgba(var(--brand-ink-rgb), 0.7);
+}
+
+.prompt-card.is-copied .prompt-action {
+    color: var(--brand-primary);
+}
+
+@media (max-width: 640px) {
+    .qs-steps {
+        padding: 1.85rem 1.05rem 1.75rem;
+    }
+
+    .step-row {
+        grid-template-columns: 2rem 1fr;
+        column-gap: 0.9rem;
+    }
+
+    .step-node {
+        width: 2rem;
+        height: 2rem;
+    }
+
+    .step-line {
+        top: 2rem;
+    }
+
+    .step-number,
+    .step-node-key i {
+        font-size: 0.75rem;
+    }
+
+    .step-head {
+        gap: 0.5rem;
+    }
+
+    .step-meta {
+        font-size: 0.5625rem;
+    }
+
+    .ask-text {
+        font-size: 1rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .step-row {
+        scroll-margin-top: 110px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .qs-steps {
+        padding: 2.6rem 2.25rem 2.35rem;
+    }
+}
+
+/* --- Motion ------------------------------------------------------------- */
+
+/* Gated on .steps-in-motion, which site.js adds only when the visitor has not
+   asked for reduced motion, so a reduced-motion or script-less visit gets the
+   finished rail with nothing hidden. */
 .steps-in-motion .step-body {
     opacity: 0;
-    transform: translateY(10px);
-    transition: opacity 0.55s ease-out, transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateY(12px);
+    transition: opacity 0.6s ease-out, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .steps-in-motion .step-row.step-lit .step-body {
@@ -415,89 +1296,130 @@ section {
     transform: none;
 }
 
-.steps-in-motion .step-number {
+.steps-in-motion .step-node {
     opacity: 0;
-    transform: scale(0.88);
-    transition: opacity 0.3s ease-out, transform 0.45s cubic-bezier(0.34, 1.32, 0.64, 1);
+    transform: scale(0.85);
+    transition: opacity 0.35s ease-out, transform 0.5s cubic-bezier(0.34, 1.32, 0.64, 1);
 }
 
-.steps-in-motion .step-row.step-lit .step-number {
+.steps-in-motion .step-row.step-lit .step-node {
     opacity: 1;
     transform: none;
-    /* One soft ring as the number lands, then nothing. */
-    animation: stepRing 0.9s ease-out 0.12s 1;
 }
 
-@keyframes stepRing {
-    from { box-shadow: 0 0 0 0 rgba(var(--brand-primary-rgb), 0.32); }
-    to { box-shadow: 0 0 0 14px rgba(var(--brand-primary-rgb), 0); }
+/* The stroke draws as the step arrives; one soft halo lands with it. */
+.steps-in-motion .step-ring .ring-draw {
+    stroke-dashoffset: 100.53;
+    transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1) 0.12s;
 }
 
-/* The steps are a real sequence, so the connector draws itself one segment at a
-   time: ::after dims to a track, and ::before is the segment that fills in. */
-.steps-in-motion .step-row:not(:last-child) .step-marker::after {
-    background: rgba(var(--brand-ink-rgb), 0.1);
+.steps-in-motion .step-row.step-lit .step-ring .ring-draw {
+    stroke-dashoffset: 0;
 }
 
-.steps-in-motion .step-row:not(:last-child) .step-marker::before {
-    content: '';
-    position: absolute;
-    top: 2.25rem;
-    bottom: -0.25rem;
-    left: 50%;
-    width: 2px;
-    margin-left: -1px;
-    background: linear-gradient(to bottom, rgba(var(--brand-primary-rgb), 0.55), rgba(var(--brand-primary-rgb), 0.14));
+.steps-in-motion .step-row.step-lit .step-node {
+    animation: nodeHalo 1.1s ease-out 0.15s 1;
+}
+
+@keyframes nodeHalo {
+    from {
+        box-shadow:
+            0 0 0 1px rgba(var(--brand-primary-rgb), 0.3),
+            0 0 0 0 rgba(var(--brand-primary-rgb), 0.28);
+    }
+    to {
+        box-shadow:
+            0 0 0 1px rgba(var(--brand-ink-rgb), 0.07),
+            0 0 0 18px rgba(var(--brand-primary-rgb), 0);
+    }
+}
+
+.steps-in-motion .step-row.step-lit .step-node-key {
+    animation: keyHalo 1.1s ease-out 0.15s 1;
+}
+
+.steps-in-motion .step-node-key i {
+    transform: rotate(-16deg);
+    transition: transform 0.6s cubic-bezier(0.34, 1.32, 0.64, 1) 0.15s;
+}
+
+.steps-in-motion .step-row.step-lit .step-node-key i {
+    transform: none;
+}
+
+@keyframes keyHalo {
+    from { box-shadow: 0 0 0 1px rgba(249, 184, 0, 0.6), 0 0 0 0 rgba(249, 184, 0, 0.35); }
+    to { box-shadow: 0 0 0 1px rgba(249, 184, 0, 0.45), 0 0 0 18px rgba(249, 184, 0, 0); }
+}
+
+/* The rail fills one segment at a time, with a single spark running the length
+   of the segment it just drew. */
+.steps-in-motion .step-line-fill {
     transform: scaleY(0);
     transform-origin: top center;
-    transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1) 0.12s;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.12s;
 }
 
-.steps-in-motion .step-row.step-lit .step-marker::before {
+.steps-in-motion .step-row.step-lit .step-line-fill {
     transform: scaleY(1);
 }
 
-/* Recorded output arrives a line at a time, the way the command prints it. */
-.steps-in-motion .transcript.is-streaming .t-line {
+.steps-in-motion .step-row.step-lit .step-spark {
+    animation: railSpark 0.85s cubic-bezier(0.4, 0, 0.2, 1) 0.14s 1;
+}
+
+@keyframes railSpark {
+    0% { top: 0; opacity: 0; }
+    12% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { top: 100%; opacity: 0; }
+}
+
+/* Terminals arrive with the step, then run their own set piece. */
+.steps-in-motion .step-row .term {
     opacity: 0;
-    animation: streamLine 0.26s ease-out forwards;
+    transform: translateY(8px) scale(0.995);
+    transition: opacity 0.55s ease-out 0.1s, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s;
 }
 
-.steps-in-motion .transcript.is-streaming .t-line:nth-child(1) { animation-delay: 0.05s; }
-.steps-in-motion .transcript.is-streaming .t-line:nth-child(2) { animation-delay: 0.19s; }
-.steps-in-motion .transcript.is-streaming .t-line:nth-child(3) { animation-delay: 0.29s; }
-.steps-in-motion .transcript.is-streaming .t-line:nth-child(4) { animation-delay: 0.39s; }
-.steps-in-motion .transcript.is-streaming .t-line:nth-child(5) { animation-delay: 0.53s; }
-.steps-in-motion .transcript.is-streaming .t-line:nth-child(6) { animation-delay: 0.63s; }
-.steps-in-motion .transcript.is-streaming .t-line:nth-child(7) { animation-delay: 0.73s; }
-
-@keyframes streamLine {
-    from { opacity: 0; }
-    to { opacity: 1; }
+.steps-in-motion .step-row.step-lit .term {
+    opacity: 1;
+    transform: none;
 }
 
-/* A caret only while the output is still arriving; site.js drops the class when
-   the last line lands, which takes the caret with it. */
-.steps-in-motion .transcript.is-streaming .t-prompt::after {
-    content: '▌';
-    margin-left: 0.15rem;
-    animation: caretBlink 0.5s steps(1, end) 3;
+/* One light sweep across the terminal as it lands. */
+.steps-in-motion .step-row.step-lit .term::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.07) 48%, transparent 66%);
+    background-size: 260% 100%;
+    animation: termSweep 1.15s ease-out 0.25s 1;
 }
+
+@keyframes termSweep {
+    from { background-position: 160% 0; }
+    to { background-position: -80% 0; }
+}
+
+.steps-in-motion .prompt-card {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.5s ease-out, transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.steps-in-motion .step-row.step-lit .prompt-card {
+    opacity: 1;
+    transform: none;
+}
+
+.steps-in-motion .step-row.step-lit .ask-list li:nth-child(1) .prompt-card { transition-delay: 0.24s; }
+.steps-in-motion .step-row.step-lit .ask-list li:nth-child(2) .prompt-card { transition-delay: 0.34s; }
+.steps-in-motion .step-row.step-lit .ask-list li:nth-child(3) .prompt-card { transition-delay: 0.44s; }
 
 @keyframes caretBlink {
     50% { opacity: 0; }
-}
-
-/* The example prompts are the one place a visitor is meant to reach for
-   something, so they lift on hover. */
-.prompt-card {
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.prompt-card:hover {
-    transform: translateY(-2px);
-    border-color: rgba(var(--brand-primary-rgb), 0.45);
-    box-shadow: 0 12px 26px -20px rgba(var(--brand-ink-rgb), 0.5);
 }
 
 /* ============================================
@@ -520,30 +1442,250 @@ section {
     box-shadow: 0 4px 20px rgba(var(--brand-primary-rgb), 0.3);
 }
 
-.code-block {
+/* ============================================
+   Terminal chrome
+   ============================================ */
+
+/* Every command and every recorded session on the page sits in the same
+   window: a title bar that carries the context, and a body that carries only
+   the text. The bar also holds the copy control, so nothing ever covers code
+   the way an overlaid button does. */
+.term {
     position: relative;
-    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-}
-
-/* A recorded terminal session, not something to copy. Dimmer than a command
-   block so the two never read as interchangeable, and the prompt and the
-   proof line carry the only emphasis. */
-.transcript {
-    background: #0f172a;
+    margin: 0;
+    border-radius: 0.9rem;
+    overflow: hidden;
+    background: linear-gradient(180deg, #141d30 0%, #0d1524 100%);
     border: 1px solid rgba(148, 163, 184, 0.16);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        0 22px 44px -34px rgba(2, 6, 23, 0.9);
 }
 
-.transcript pre {
-    color: #94a3b8;
+/* Recessed inside the plugin panel, which is already dark, rather than a slab
+   floating on it. */
+.term-on-dark {
+    background: rgba(0, 0, 0, 0.32);
+    border-color: rgba(148, 163, 184, 0.14);
+    box-shadow: none;
 }
 
-.transcript .t-prompt {
+.term-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 0.6rem 0.5rem 0.85rem;
+    background: rgba(255, 255, 255, 0.025);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.13);
+}
+
+.term-dots {
+    display: inline-flex;
+    gap: 0.28rem;
+    flex-shrink: 0;
+}
+
+.term-dots span {
+    width: 0.42rem;
+    height: 0.42rem;
+    border-radius: 9999px;
+    background: rgba(226, 232, 240, 0.13);
+}
+
+.term-dots span:first-child {
+    background: rgba(94, 234, 212, 0.4);
+}
+
+.term-title {
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.6875rem;
+    letter-spacing: 0.02em;
+    color: rgba(226, 232, 240, 0.48);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.term-tools {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-shrink: 0;
+}
+
+.term-body {
+    margin: 0;
+    padding: 1.05rem 1.1rem 1.15rem;
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.8125rem;
+    line-height: 1.8;
+    color: #cbd5e1;
+    overflow-x: auto;
+}
+
+.term-compact .term-body {
+    padding: 0.85rem 1.1rem 0.9rem;
+    font-size: 0.78125rem;
+}
+
+/* A command block is brighter than recorded output, so the two never read as
+   interchangeable, and each line carries the prompt glyph the visitor would
+   type it after. The glyph is CSS, so it stays out of anything copied. */
+.term-cmd .term-body {
+    color: #e8eef7;
+}
+
+.c-line {
+    display: inline;
+}
+
+.c-line::before {
+    content: '$ ';
+    color: rgba(94, 234, 212, 0.55);
+}
+
+.t-line {
+    display: inline;
+}
+
+.t-prompt::before {
+    content: '$ ';
+    color: rgba(94, 234, 212, 0.55);
+}
+
+.term-out .t-prompt {
     color: #5eead4;
 }
 
-.transcript .t-proof {
-    color: #f1f5f9;
+.term-out .t-proof {
+    color: #f8fafc;
     font-weight: 600;
+}
+
+/* The two optional-credential lines carry the brand's amber here and on the
+   panel below, which is the whole thread between them. */
+.term-out .t-key {
+    color: #dcae4a;
+}
+
+.term-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.5625rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #5eead4;
+    background: rgba(94, 234, 212, 0.1);
+    border: 1px solid rgba(94, 234, 212, 0.22);
+    padding: 0.1rem 0.45rem;
+    border-radius: 9999px;
+    transition: opacity 0.4s ease;
+}
+
+.term-status-dot {
+    width: 0.3rem;
+    height: 0.3rem;
+    border-radius: 9999px;
+    background: #5eead4;
+}
+
+.term-copy {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.55rem;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    color: rgba(226, 232, 240, 0.7);
+    background: rgba(255, 255, 255, 0.055);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.45rem;
+    cursor: pointer;
+    transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.term-copy i {
+    font-size: 0.6875rem;
+}
+
+.term-copy:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.11);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.term-copy[data-copied='true'] {
+    color: #5eead4;
+    background: rgba(94, 234, 212, 0.12);
+    border-color: rgba(94, 234, 212, 0.32);
+}
+
+/* Only ever shown when it works: site.js adds .steps-in-motion, and there is
+   nothing to replay without it. */
+.term-replay {
+    display: none;
+    padding: 0.25rem 0.4rem;
+}
+
+.steps-in-motion .term-replay {
+    display: inline-flex;
+}
+
+.term-replay.is-spinning i {
+    animation: replaySpin 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes replaySpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* While a set piece runs, unarrived lines hold their space rather than
+   collapsing the block, and the exit status waits for the last line. Both
+   states are class-gated, so any script failure leaves the block complete. */
+.term.is-typing .c-line:not(.is-in),
+.term.is-typing .t-line:not(.is-in) {
+    visibility: hidden;
+}
+
+.term.is-typing .term-status {
+    opacity: 0;
+}
+
+.tw-typing::after {
+    content: '';
+    display: inline-block;
+    width: 0.45em;
+    height: 1.05em;
+    margin-left: 0.1em;
+    vertical-align: -0.18em;
+    background: rgba(94, 234, 212, 0.85);
+    animation: caretBlink 0.9s steps(1, end) infinite;
+}
+
+.t-line.is-in,
+.c-line.is-in {
+    animation: lineIn 0.24s ease-out;
+}
+
+@keyframes lineIn {
+    from { opacity: 0; transform: translateY(2px); }
+    to { opacity: 1; transform: none; }
+}
+
+/* The line that carries the proof gets one wash of teal as it lands. It is the
+   number the whole step exists to show. */
+.term-out .t-proof.is-in {
+    animation: lineIn 0.24s ease-out, proofLand 1.4s ease-out 0.08s;
+}
+
+@keyframes proofLand {
+    0% { background: rgba(94, 234, 212, 0); box-shadow: 0 0 0 rgba(94, 234, 212, 0); }
+    18% { background: rgba(94, 234, 212, 0.16); box-shadow: 0 0 0 3px rgba(94, 234, 212, 0.16); }
+    100% { background: rgba(94, 234, 212, 0); box-shadow: 0 0 0 3px rgba(94, 234, 212, 0); }
 }
 
 /* ============================================
@@ -551,42 +1693,10 @@ section {
    ============================================ */
 
 /* The plugin is an alternative to step 3, not a fifth step. A dark surface
-   separates it from the white step cards without inventing a new treatment —
-   it reuses the code-block gradient already used across the page. */
+   separates it from the white step card without inventing a new treatment. */
 .plugin-panel {
     background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
     border: 1px solid rgba(148, 163, 184, 0.18);
-}
-
-/* Recessed rather than a slab floating on the panel. */
-.plugin-panel .plugin-code {
-    position: relative;
-    background: rgba(0, 0, 0, 0.35);
-    border: 1px solid rgba(148, 163, 184, 0.14);
-}
-
-.copy-button {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    /* Visible at rest, not hidden until hover: copying a command is the main
-       thing to do in Quick Start, and a control nobody can see is a control
-       nobody uses. Held back far enough to stay quieter than the code. */
-    opacity: 0.55;
-    transition: all 0.3s ease;
-}
-
-.code-block:hover .copy-button,
-.copy-button:hover,
-.copy-button:focus-visible {
-    opacity: 1;
-}
-
-/* Touch devices never hover, so keep copy affordances permanently visible. */
-@media (hover: none) {
-    .copy-button {
-        opacity: 1;
-    }
 }
 
 /* ============================================
@@ -1175,6 +2285,118 @@ section {
     transform: none;
 }
 
+/* Vision is the one header item that leaves the page for something the visitor
+   has not seen, and set as plain text among six other plain-text links it read
+   as the least of them. A pill lifts it out of the row without moving it. */
+.nav-vision {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.4rem 0.85rem;
+    border-radius: 9999px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--brand-primary-darkest);
+    background: linear-gradient(135deg, rgba(var(--brand-primary-rgb), 0.12) 0%, rgba(var(--brand-primary-rgb), 0.05) 100%);
+    border: 1px solid rgba(var(--brand-primary-rgb), 0.32);
+    cursor: pointer;
+    transition:
+        background 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-vision i:first-child {
+    font-size: 0.6875rem;
+    color: var(--brand-primary);
+}
+
+.nav-vision:hover,
+.nav-menu:focus-within .nav-vision {
+    background: linear-gradient(135deg, rgba(var(--brand-primary-rgb), 0.2) 0%, rgba(var(--brand-primary-rgb), 0.1) 100%);
+    border-color: rgba(var(--brand-primary-rgb), 0.55);
+    box-shadow: 0 8px 18px -12px rgba(var(--brand-primary-rgb), 0.9);
+    transform: translateY(-1px);
+}
+
+.nav-vision-chev {
+    font-size: 0.5625rem;
+    opacity: 0.65;
+    transition: transform 0.25s ease;
+}
+
+.nav-menu:hover .nav-vision-chev,
+.nav-menu:focus-within .nav-vision-chev {
+    transform: rotate(180deg);
+}
+
+/* On the two vision pages the pill fills in, so it reads as where you are
+   rather than only where you could go. */
+.nav-vision.is-current {
+    color: #fff;
+    background: linear-gradient(135deg, var(--brand-primary-darkest) 0%, var(--brand-primary) 100%);
+    border-color: transparent;
+    box-shadow: 0 6px 16px -10px rgba(var(--brand-primary-rgb), 1);
+}
+
+.nav-vision.is-current i:first-child {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.nav-vision.is-current:hover,
+.nav-menu:focus-within .nav-vision.is-current {
+    background: linear-gradient(135deg, var(--brand-primary-darker) 0%, var(--brand-primary) 100%);
+    border-color: transparent;
+}
+
+/* One ring, twice, a beat after load: enough to catch the eye on a first visit
+   and over before it can nag. A pseudo-element, so it never fights the pill's
+   own hover shadow, and invisible at rest whether or not it ever ran. */
+.nav-vision::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 9999px;
+    border: 1px solid rgba(var(--brand-primary-rgb), 0.5);
+    opacity: 0;
+    pointer-events: none;
+    animation: visionPing 2.1s ease-out 1.1s 2;
+}
+
+@keyframes visionPing {
+    0% { transform: scale(1); opacity: 0.75; }
+    70% { opacity: 0; }
+    100% { transform: scale(1.4); opacity: 0; }
+}
+
+/* Nothing to point at on a page the visitor is already reading. */
+.nav-vision.is-current::after {
+    animation: none;
+}
+
+/* The narrow-viewport link row has no dropdown, so the two sheets appear
+   directly. Chips, for the same reason the pill exists. */
+.nav-vision-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--brand-primary-darkest);
+    background: rgba(var(--brand-primary-rgb), 0.1);
+    border: 1px solid rgba(var(--brand-primary-rgb), 0.3);
+}
+
+.nav-vision-chip i {
+    font-size: 0.625rem;
+    color: var(--brand-primary);
+}
+
 .nav-pop a {
     display: block;
     padding: 0.5rem 0.7rem;
@@ -1195,28 +2417,97 @@ section {
    thing on the page and the sheets sit inside it.
    ============================================ */
 
+/* Sits in a card that is itself teal-tinted, so it cannot pop by being tinted
+   too: it takes a white surface, a solid teal edge, a filled icon tile, and a
+   named action, which is what makes it read as the thing to click rather than a
+   third line of copy. */
 .vision-disclose {
-    border: 1px solid rgba(153, 246, 228, 0.9);
-    border-radius: 0.75rem;
-    background: rgba(255, 255, 255, 0.7);
-    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid rgba(var(--brand-primary-rgb), 0.38);
+    border-radius: 0.9rem;
+    background: #fff;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),
+        0 10px 24px -18px rgba(var(--brand-primary-rgb), 0.75);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.vision-disclose:hover,
+.vision-disclose:hover {
+    border-color: rgba(var(--brand-primary-rgb), 0.62);
+    box-shadow: 0 16px 30px -20px rgba(var(--brand-primary-rgb), 0.85);
+    transform: translateY(-2px);
+}
+
 .vision-disclose[open] {
-    border-color: rgba(var(--brand-primary-rgb), 0.4);
-    background: #fff;
-    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
+    border-color: rgba(var(--brand-primary-rgb), 0.62);
+    transform: none;
 }
 
 .vision-disclose > summary {
     display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.8rem 0.9rem;
     cursor: pointer;
     /* Both are needed to drop the native triangle across browsers. */
     list-style: none;
+}
+
+.vision-icon {
+    flex-shrink: 0;
+    width: 2.1rem;
+    height: 2.1rem;
+    display: grid;
+    place-items: center;
+    border-radius: 0.6rem;
+    font-size: 0.8125rem;
+    color: #fff;
+    background: linear-gradient(135deg, var(--brand-primary-darkest) 0%, var(--brand-primary) 100%);
+    box-shadow: 0 6px 14px -8px rgba(var(--brand-primary-rgb), 1);
+}
+
+.vision-kicker {
+    display: block;
+    font-size: 0.5625rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--brand-primary);
+}
+
+.vision-title {
+    display: block;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--brand-ink);
+}
+
+.vision-sub {
+    display: block;
+    margin-top: 0.1rem;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: #6b7684;
+}
+
+/* Names the action, so the row is not just a heading with a chevron on it. */
+.vision-cue {
+    margin-left: auto;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--brand-primary-dark);
+}
+
+.vision-cue-label::after {
+    content: 'Two views';
+}
+
+.vision-disclose[open] .vision-cue-label::after {
+    content: 'Hide';
 }
 
 .vision-disclose > summary::-webkit-details-marker {
@@ -1230,10 +2521,7 @@ section {
 }
 
 .vision-chev {
-    margin-left: auto;
-    margin-top: 0.3rem;
-    font-size: 0.6875rem;
-    color: var(--brand-primary);
+    font-size: 0.625rem;
     transition: transform 0.25s ease;
 }
 
@@ -1249,6 +2537,13 @@ section {
     padding: 0.6rem 0.7rem;
     border-radius: 0.55rem;
     transition: background 0.15s ease;
+}
+
+.vision-sheet:first-of-type {
+    margin-top: 0.15rem;
+    border-top: 1px solid rgba(var(--brand-primary-rgb), 0.14);
+    padding-top: 0.75rem;
+    border-radius: 0 0 0.55rem 0.55rem;
 }
 
 .vision-sheet:hover {
@@ -1285,20 +2580,55 @@ section {
     }
 
     /* site.js skips the rail sequence under reduced motion, but the setting can
-       change after load, so never leave a step hidden. */
+       change after load, so never leave a step, a rail segment, or a terminal
+       line hidden. */
     .steps-in-motion .step-body,
-    .steps-in-motion .step-number,
-    .steps-in-motion .transcript.is-streaming .t-line {
+    .steps-in-motion .step-node,
+    .steps-in-motion .step-row .term,
+    .steps-in-motion .prompt-card {
         opacity: 1 !important;
         transform: none !important;
     }
 
-    .steps-in-motion .step-row:not(:last-child) .step-marker::before {
+    .steps-in-motion .step-line-fill {
         transform: scaleY(1) !important;
     }
 
-    .steps-in-motion .transcript.is-streaming .t-prompt::after {
+    .steps-in-motion .step-ring .ring-draw {
+        stroke-dashoffset: 0 !important;
+    }
+
+    .steps-in-motion .step-node-key i {
+        transform: none !important;
+    }
+
+    .steps-in-motion .step-row.step-lit .term::after,
+    .step-spark {
+        display: none !important;
+    }
+
+    .term.is-typing .c-line:not(.is-in),
+    .term.is-typing .t-line:not(.is-in) {
+        visibility: visible !important;
+    }
+
+    .term.is-typing .term-status {
+        opacity: 1 !important;
+    }
+
+    .tw-typing::after,
+    .ask-text.is-typing::after {
         content: none !important;
+    }
+
+    /* Replaying a recording means retyping it, which is the motion the visitor
+       asked not to see. */
+    .term-replay {
+        display: none !important;
+    }
+
+    .seg-thumb {
+        opacity: 1 !important;
     }
 
     .premium-card:hover,
@@ -1307,6 +2637,9 @@ section {
     .btn-premium:hover,
     .mcp-client-item:hover,
     .prompt-card:hover,
+    .cred-link:hover,
+    .nav-vision:hover,
+    .vision-disclose:hover,
     .show-more:hover {
         transform: none !important;
     }
@@ -1330,7 +2663,8 @@ section {
     .skip-to-content,
     #site-banner,
     #site-nav,
-    .copy-button,
+    .term-copy,
+    .ask-bar,
     .demo-frame {
         display: none !important;
     }

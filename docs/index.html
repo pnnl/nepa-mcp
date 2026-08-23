@@ -52,7 +52,7 @@
     <!-- ?v= is a cache buster. GitHub Pages serves these assets with a long
          max-age, so a returning visitor keeps the old CSS and JS until the URL
          changes. Bump the value whenever site.css or site.js changes. -->
-    <link rel="stylesheet" href="assets/css/site.css?v=17">
+    <link rel="stylesheet" href="assets/css/site.css?v=25">
 </head>
 <body class="bg-slate-50 text-slate-900 antialiased">
 
@@ -94,8 +94,8 @@
                     <!-- Cross-page links, so they sit apart from the in-page anchors. -->
                     <div class="border-l border-slate-200 pl-5 lg:pl-7">
                         <div class="nav-menu">
-                        <button type="button" aria-haspopup="true" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap inline-flex items-center gap-1.5">
-                            <i class="fas fa-cube text-xs" aria-hidden="true"></i>Vision <i class="fas fa-chevron-down text-[9px] opacity-60" aria-hidden="true"></i>
+                        <button type="button" aria-haspopup="true" class="nav-vision">
+                            <i class="fas fa-cube" aria-hidden="true"></i>Vision<i class="fas fa-chevron-down nav-vision-chev" aria-hidden="true"></i>
                         </button>
                         <div class="nav-pop">
                             <a href="vision.html">
@@ -133,8 +133,8 @@
                 <a href="#layers" class="hover:text-teal-700 transition-colors">Layers</a>
                 <a href="#documentation" class="hover:text-teal-700 transition-colors">Docs</a>
                 <span class="text-slate-400 uppercase text-xs tracking-widest pl-1">Vision</span>
-                <a href="vision.html" class="text-teal-700 font-semibold">Coverage</a>
-                <a href="gis.html" class="text-teal-700 font-semibold">GIS</a>
+                <a href="vision.html" class="nav-vision-chip"><i class="fas fa-cube" aria-hidden="true"></i>Coverage</a>
+                <a href="gis.html" class="nav-vision-chip"><i class="fas fa-layer-group" aria-hidden="true"></i>GIS</a>
             </div>
         </div>
     </nav>
@@ -267,102 +267,290 @@
     <div class="section-divider mx-auto max-w-3xl"></div>
 
     <!-- Quick start -->
-    <section id="quick-start" class="py-20 lg:py-28 px-6 bg-gradient-to-b from-white via-slate-50/60 to-white">
-        <div class="container mx-auto max-w-4xl">
-            <div class="text-center mb-12">
-                <span class="inline-block bg-teal-100 text-teal-800 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wide mb-4">Four steps</span>
+    <section id="quick-start" class="qs-section py-20 lg:py-28 px-6">
+        <div class="container mx-auto max-w-4xl relative">
+            <div class="text-center mb-11">
+                <span class="inline-block bg-teal-100 text-teal-800 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wide mb-4">Four steps · one-time setup</span>
                 <h2 class="text-4xl lg:text-5xl font-light text-ink mb-4">Quick Start</h2>
                 <p class="text-xl text-slate-600 font-light">Install once, then point your agent at any of the 19 servers</p>
             </div>
 
-            <div id="quick-start-steps" class="premium-card rounded-2xl p-8 lg:p-10 shadow-lg" style="transform: none;">
+            <div id="quick-start-steps" class="qs-card">
 
-                <!-- Step 1 -->
-                <div class="step-row">
-                    <div class="step-marker"><span class="step-number">1</span></div>
-                    <div class="step-body">
-                        <h3 class="text-lg font-semibold text-ink mb-1 pt-1.5">Install</h3>
-                        <p class="text-sm text-slate-600 mb-3">
-                            Python 3.12+ and pipx. One package installs all 19 servers.
-                        </p>
-                        <div class="code-block rounded-xl overflow-hidden shadow-inner">
-                            <button type="button" onclick="copyCode(event, 'install-code')" class="copy-button bg-slate-700/90 hover:bg-slate-600 text-white px-3 py-1.5 rounded text-xs font-medium">
-                                <i class="fas fa-copy mr-1" aria-hidden="true"></i>Copy
-                            </button>
-                            <pre id="install-code" class="p-5 text-slate-100 text-sm leading-relaxed overflow-x-auto"><code>pipx install nepa-mcp
-pipx ensurepath</code></pre>
+                <div class="qs-steps">
+
+                    <!-- Step 1 -->
+                    <div class="step-row" id="qs-step-1" data-step="1">
+                        <div class="step-marker">
+                            <span class="step-node">
+                                <svg class="step-ring" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+                                    <circle class="ring-track" cx="20" cy="20" r="16"></circle>
+                                    <circle class="ring-draw" cx="20" cy="20" r="16"></circle>
+                                </svg>
+                                <span class="step-number">1</span>
+                                <i class="fas fa-check step-check" aria-hidden="true"></i>
+                            </span>
+                            <span class="step-line" aria-hidden="true"><span class="step-line-fill"></span><span class="step-spark"></span></span>
                         </div>
-                        <p class="text-xs text-slate-500 mt-2.5 leading-relaxed">
-                            Reopen the terminal if <code class="text-teal-800">ensurepath</code> changes your
-                            PATH. Older default Python: add
-                            <code class="text-teal-800">--python 3.12</code>.
-                        </p>
-                    </div>
-                </div>
+                        <div class="step-body">
+                            <div class="step-head">
+                                <h3 class="step-title">Install</h3>
+                                <span class="step-meta">one-time</span>
+                            </div>
+                            <p class="step-lede">Python 3.12+ and pipx. One package installs all 19 servers.</p>
 
-                <!-- Step 2 -->
-                <div class="step-row">
-                    <div class="step-marker"><span class="step-number">2</span></div>
-                    <div class="step-body">
-                        <h3 class="text-lg font-semibold text-ink mb-1 pt-1.5">Verify</h3>
-                        <p class="text-sm text-slate-600 mb-3">
-                            Confirm 19 servers before you wire up a client.
-                            <code class="text-teal-800">doctor</code> exits non-zero if one is missing.
-                        </p>
-                        <div class="transcript rounded-xl overflow-hidden">
-                            <pre class="p-5 text-xs leading-relaxed overflow-x-auto"><code><span class="t-line t-prompt">$ nepa-mcp doctor</span>
+                            <figure class="term term-cmd">
+                                <figcaption class="term-bar">
+                                    <span class="term-dots" aria-hidden="true"><span></span><span></span><span></span></span>
+                                    <span class="term-title">terminal</span>
+                                    <span class="term-tools">
+                                        <button type="button" class="term-copy" onclick="copyCode(event, 'install-code')">
+                                            <i class="fas fa-clone" aria-hidden="true"></i><span>Copy</span>
+                                        </button>
+                                    </span>
+                                </figcaption>
+                                <pre id="install-code" class="term-body" data-type="14"><code><span class="c-line">pipx install nepa-mcp</span>
+<span class="c-line">pipx ensurepath</span></code></pre>
+                            </figure>
+
+                            <p class="step-note">
+                                Reopen the terminal if <code>ensurepath</code> changes your PATH.
+                                If pipx picks an older Python, add the <code>--python 3.12</code> flag.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="step-row" id="qs-step-2" data-step="2">
+                        <div class="step-marker">
+                            <span class="step-node">
+                                <svg class="step-ring" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+                                    <circle class="ring-track" cx="20" cy="20" r="16"></circle>
+                                    <circle class="ring-draw" cx="20" cy="20" r="16"></circle>
+                                </svg>
+                                <span class="step-number">2</span>
+                                <i class="fas fa-check step-check" aria-hidden="true"></i>
+                            </span>
+                            <span class="step-line" aria-hidden="true"><span class="step-line-fill"></span><span class="step-spark"></span></span>
+                        </div>
+                        <div class="step-body">
+                            <div class="step-head">
+                                <h3 class="step-title">Verify</h3>
+                                <span class="step-meta">before you connect</span>
+                            </div>
+                            <p class="step-lede">
+                                Confirm 19 servers before you wire up a client.
+                                <code>doctor</code> exits non-zero if one is missing.
+                            </p>
+
+                            <figure class="term term-out" data-transcript>
+                                <figcaption class="term-bar">
+                                    <span class="term-dots" aria-hidden="true"><span></span><span></span><span></span></span>
+                                    <span class="term-title">nepa-mcp doctor</span>
+                                    <span class="term-tools">
+                                        <span class="term-status"><span class="term-status-dot" aria-hidden="true"></span>exit 0</span>
+                                        <button type="button" class="term-copy term-replay" data-replay aria-label="Replay the doctor output">
+                                            <i class="fas fa-rotate-right" aria-hidden="true"></i>
+                                        </button>
+                                    </span>
+                                </figcaption>
+                                <pre class="term-body"><code><span class="t-line t-prompt">nepa-mcp doctor</span>
 <span class="t-line">nepa-mcp version: <span data-release-version>0.1.1</span></span>
 <span class="t-line">Python: 3.12.12</span>
 <span class="t-line">Credential file: ~/…/nepa-mcp/credentials.env (not found)</span>
 <span class="t-line t-proof">Installed servers: 19</span>
-<span class="t-line">census credentials: optional, missing CENSUS_API_KEY</span>
-<span class="t-line">epa_aqs credentials: optional, missing EPA_AQS_EMAIL, EPA_AQS_API_KEY</span></code></pre>
+<span class="t-line t-key">census credentials: optional, missing CENSUS_API_KEY</span>
+<span class="t-line t-key">epa_aqs credentials: optional, missing EPA_AQS_EMAIL, EPA_AQS_API_KEY</span></code></pre>
+                            </figure>
+
+                            <p class="step-note">
+                                Run <code>nepa-mcp list-servers</code> for the full table. The two amber
+                                lines are optional keys —
+                                <a href="#qs-credentials" class="step-note-link">add them below</a>, or skip them.
+                            </p>
                         </div>
-                        <p class="text-xs text-slate-500 mt-2.5">
-                            The credential lines are optional, and affect only Census and EPA AQS. Run
-                            <code class="text-teal-800">nepa-mcp list-servers</code> for the full table.
-                        </p>
                     </div>
-                </div>
 
-                <!-- Step 3 -->
-                <div class="step-row">
-                    <div class="step-marker"><span class="step-number">3</span></div>
-                    <div class="step-body">
-                        <h3 class="text-lg font-semibold text-ink mb-1 pt-1.5">Connect your client</h3>
-                        <p class="text-sm text-slate-600 mb-3">
-                            Go to the project directory you want configured, then run its command.
-                        </p>
-                        <div id="client-tabs" class="flex flex-wrap gap-2 mb-4" role="tablist" aria-label="MCP client"></div>
-                        <div id="client-panels"></div>
+                    <!-- Optional, and not a fifth step: two of the nineteen servers read
+                         keyed APIs. Collapsed, because nothing here blocks a first setup —
+                         but it sits right after `doctor`, which is where a visitor first
+                         sees the missing-credential lines. -->
+                    <div class="step-row step-row-aside" id="qs-credentials">
+                        <div class="step-marker">
+                            <span class="step-node step-node-key">
+                                <i class="fas fa-key" aria-hidden="true"></i>
+                            </span>
+                            <span class="step-line step-line-dashed" aria-hidden="true"><span class="step-line-fill"></span></span>
+                        </div>
+                        <div class="step-body">
+                            <details class="cred-card" data-cred>
+                                <summary class="cred-summary">
+                                    <span class="cred-tag">Optional</span>
+                                    <span class="cred-summary-text">
+                                        <span class="cred-title">API keys for two of the 19 servers</span>
+                                        <span class="cred-hint"><code>census</code> and <code>epa_aqs</code> only — the other 17 servers need nothing.</span>
+                                    </span>
+                                    <span class="cred-toggle" aria-hidden="true">
+                                        <span class="cred-toggle-label"></span>
+                                        <i class="fas fa-chevron-down"></i>
+                                    </span>
+                                </summary>
+
+                                <div class="cred-body">
+                                    <p class="cred-lede">
+                                        Both read keyed federal APIs, so those two lines in
+                                        <code>doctor</code> stay <em>missing</em> until you add a free key.
+                                        Each key is free and issued immediately.
+                                    </p>
+
+                                    <dl class="cred-vars">
+                                        <div class="cred-var">
+                                            <dt><code>census</code></dt>
+                                            <dd>
+                                                <code>CENSUS_API_KEY</code>
+                                                <a href="https://api.census.gov/data/key_signup.html" target="_blank" rel="noopener noreferrer">Request a key<i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
+                                            </dd>
+                                        </div>
+                                        <div class="cred-var">
+                                            <dt><code>epa_aqs</code></dt>
+                                            <dd>
+                                                <code>EPA_AQS_EMAIL</code><code>EPA_AQS_API_KEY</code>
+                                                <a href="https://aqs.epa.gov/data/api/signup" target="_blank" rel="noopener noreferrer">Register<i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
+                                            </dd>
+                                        </div>
+                                    </dl>
+
+                                    <figure class="term term-cmd term-compact">
+                                        <figcaption class="term-bar">
+                                            <span class="term-dots" aria-hidden="true"><span></span><span></span><span></span></span>
+                                            <span class="term-title">writes credentials.env</span>
+                                            <span class="term-tools">
+                                                <button type="button" class="term-copy" onclick="copyCode(event, 'credentials-code')">
+                                                    <i class="fas fa-clone" aria-hidden="true"></i><span>Copy</span>
+                                                </button>
+                                            </span>
+                                        </figcaption>
+                                        <pre id="credentials-code" class="term-body"><code><span class="c-line">nepa-mcp configure credentials</span>
+<span class="c-line">nepa-mcp doctor</span></code></pre>
+                                    </figure>
+
+                                    <div class="cred-foot">
+                                        <a class="cred-link" href="https://github.com/pnnl/nepa-mcp#credentials" target="_blank" rel="noopener noreferrer">
+                                            <i class="fas fa-book-open" aria-hidden="true"></i>
+                                            <span>Credentials setup in the README</span>
+                                            <i class="fas fa-arrow-right cred-link-arrow" aria-hidden="true"></i>
+                                        </a>
+                                        <p class="cred-fine">
+                                            Keys live in your per-user <code>credentials.env</code>, or in the shell
+                                            environment. They are never copied into client or plugin config, and
+                                            <code>doctor</code> reports only whether each value is present.
+                                        </p>
+                                    </div>
+                                </div>
+                            </details>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Step 4 -->
-                <div class="step-row">
-                    <div class="step-marker"><span class="step-number">4</span></div>
-                    <div class="step-body">
-                        <h3 class="text-lg font-semibold text-ink mb-1 pt-1.5">Ask a question</h3>
-                        <p class="text-sm text-slate-600 mb-3">
-                            Reload the client — in Codex, start a new task — then try one of these.
-                        </p>
-                        <ul class="grid sm:grid-cols-3 gap-3">
-                            <li class="prompt-card bg-teal-50/70 border border-teal-200/60 rounded-xl px-4 py-3.5 text-sm text-slate-700 leading-relaxed">
-                                <i class="fas fa-quote-left text-teal-600/60 mr-1.5" aria-hidden="true"></i>
-                                What listed species and critical habitat are near 38.98, −76.49?
-                            </li>
-                            <li class="prompt-card bg-teal-50/70 border border-teal-200/60 rounded-xl px-4 py-3.5 text-sm text-slate-700 leading-relaxed">
-                                <i class="fas fa-quote-left text-teal-600/60 mr-1.5" aria-hidden="true"></i>
-                                Build a screening map for a 20-mile project area there.
-                            </li>
-                            <li class="prompt-card bg-teal-50/70 border border-teal-200/60 rounded-xl px-4 py-3.5 text-sm text-slate-700 leading-relaxed">
-                                <i class="fas fa-quote-left text-teal-600/60 mr-1.5" aria-hidden="true"></i>
-                                What does 40 CFR 230.10 say, and when did it last change?
-                            </li>
-                        </ul>
+                    <!-- Step 3 -->
+                    <div class="step-row" id="qs-step-3" data-step="3">
+                        <div class="step-marker">
+                            <span class="step-node">
+                                <svg class="step-ring" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+                                    <circle class="ring-track" cx="20" cy="20" r="16"></circle>
+                                    <circle class="ring-draw" cx="20" cy="20" r="16"></circle>
+                                </svg>
+                                <span class="step-number">3</span>
+                                <i class="fas fa-check step-check" aria-hidden="true"></i>
+                            </span>
+                            <span class="step-line" aria-hidden="true"><span class="step-line-fill"></span><span class="step-spark"></span></span>
+                        </div>
+                        <div class="step-body">
+                            <div class="step-head">
+                                <h3 class="step-title">Connect your client</h3>
+                                <span class="step-meta">per project</span>
+                            </div>
+                            <p class="step-lede">
+                                Go to the project directory you want configured, then run its command.
+                            </p>
+                            <!-- Codex Desktop belongs in the chooser, because a visitor who
+                                 does not see it here picks Codex the CLI instead — and the
+                                 plugin must not be combined with `configure codex`. It is a
+                                 link rather than a fourth tab: it has no panel of its own,
+                                 and a tab that moved the page would break the tablist. -->
+                            <div class="seg">
+                                <div id="client-tabs" class="seg-tabs" role="tablist" aria-label="MCP client"></div>
+                                <a class="seg-item seg-link" href="#codex-plugin">
+                                    <i class="fas fa-puzzle-piece" aria-hidden="true"></i>
+                                    <span>Codex Desktop</span>
+                                    <i class="fas fa-arrow-down seg-link-arrow" aria-hidden="true"></i>
+                                </a>
+                            </div>
+                            <div id="client-panels"></div>
+                            <noscript>
+                                <p class="step-note">
+                                    Claude Code: <code>nepa-mcp configure claude</code> ·
+                                    VS Code: <code>nepa-mcp configure vscode</code> ·
+                                    Codex: <code>nepa-mcp configure codex</code>
+                                </p>
+                            </noscript>
+                        </div>
                     </div>
-                </div>
 
+                    <!-- Step 4 -->
+                    <div class="step-row" id="qs-step-4" data-step="4">
+                        <div class="step-marker">
+                            <span class="step-node">
+                                <svg class="step-ring" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+                                    <circle class="ring-track" cx="20" cy="20" r="16"></circle>
+                                    <circle class="ring-draw" cx="20" cy="20" r="16"></circle>
+                                </svg>
+                                <span class="step-number">4</span>
+                                <i class="fas fa-check step-check" aria-hidden="true"></i>
+                            </span>
+                        </div>
+                        <div class="step-body">
+                            <div class="step-head">
+                                <h3 class="step-title">Ask a question</h3>
+                                <span class="step-meta">first prompt</span>
+                            </div>
+                            <p class="step-lede">
+                                Reload the client — in Codex, start a new task — then try one of these.
+                            </p>
+
+                            <div class="ask" data-ask>
+                                <div class="ask-bar">
+                                    <span class="ask-glyph" aria-hidden="true"><i class="fas fa-terminal"></i></span>
+                                    <p class="ask-text" aria-hidden="true">What listed species and critical habitat are near 38.98, −76.49?</p>
+                                    <span class="ask-send" aria-hidden="true"><i class="fas fa-arrow-up"></i></span>
+                                </div>
+                                <ul class="ask-list">
+                                    <li>
+                                        <button type="button" class="prompt-card" data-prompt>
+                                            <span class="prompt-quote" aria-hidden="true">&ldquo;</span>
+                                            <span class="prompt-text">What listed species and critical habitat are near 38.98, −76.49?</span>
+                                            <span class="prompt-action"><i class="fas fa-clone" aria-hidden="true"></i><span>Copy</span></span>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button type="button" class="prompt-card" data-prompt>
+                                            <span class="prompt-quote" aria-hidden="true">&ldquo;</span>
+                                            <span class="prompt-text">Build a screening map for a 20-mile project area there.</span>
+                                            <span class="prompt-action"><i class="fas fa-clone" aria-hidden="true"></i><span>Copy</span></span>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button type="button" class="prompt-card" data-prompt>
+                                            <span class="prompt-quote" aria-hidden="true">&ldquo;</span>
+                                            <span class="prompt-text">What does 40 CFR 230.10 say, and when did it last change?</span>
+                                            <span class="prompt-action"><i class="fas fa-clone" aria-hidden="true"></i><span>Copy</span></span>
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
     </section>
@@ -417,17 +605,29 @@ pipx ensurepath</code></pre>
                             <li><span class="font-semibold text-white">3.</span> Add the marketplace, then install <strong class="text-white">NEPA-MCP</strong>.</li>
                         </ol>
                         <p class="text-xs text-slate-400 mb-2">Codex CLI alternative:</p>
-                        <div class="plugin-code rounded-xl overflow-hidden">
-                            <button type="button" onclick="copyCode(event, 'plugin-code')" class="copy-button bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded text-xs font-medium">
-                                <i class="fas fa-copy mr-1" aria-hidden="true"></i>Copy
-                            </button>
-                            <pre id="plugin-code" class="p-5 text-slate-100 text-xs leading-relaxed overflow-x-auto"><code>codex plugin marketplace add pnnl/nepa-mcp --ref v0.1.1
-codex plugin add nepa-mcp@nepa-mcp-local</code></pre>
-                        </div>
+                        <figure class="term term-cmd term-on-dark">
+                            <figcaption class="term-bar">
+                                <span class="term-dots" aria-hidden="true"><span></span><span></span><span></span></span>
+                                <span class="term-title">terminal</span>
+                                <span class="term-tools">
+                                    <button type="button" class="term-copy" onclick="copyCode(event, 'plugin-code')">
+                                        <i class="fas fa-clone" aria-hidden="true"></i><span>Copy</span>
+                                    </button>
+                                </span>
+                            </figcaption>
+                            <pre id="plugin-code" class="term-body"><code><span class="c-line">codex plugin marketplace add pnnl/nepa-mcp --ref v0.1.1</span>
+<span class="c-line">codex plugin add nepa-mcp@nepa-mcp-local</span></code></pre>
+                        </figure>
+                        <!-- The one rule a visitor can break here, and the reason this is an
+                             alternative to step 3 rather than an addition to it. Step 3 states it
+                             where the mistake would be made, so here it hangs off a footnote mark
+                             and costs the panel no height until asked for. The line ships visible
+                             and site.js hides it, so a script-less visit still reads it. -->
                         <p class="text-xs text-slate-400 mt-3 leading-relaxed">
                             Start a new Codex task after installing or updating the plugin so the tools
-                            and skill are loaded.
+                            and skill are loaded.<button type="button" class="info-sup" data-info-toggle aria-controls="plugin-rule" aria-expanded="true"><i class="fas fa-circle-info" aria-hidden="true"></i><span class="sr-only">One rule about combining the plugin with the CLI</span></button>
                         </p>
+                        <p id="plugin-rule" class="info-line">If you install the plugin, do not also run <code>nepa-mcp configure codex</code>.</p>
                     </div>
                 </div>
             </div>
@@ -557,14 +757,18 @@ codex plugin add nepa-mcp@nepa-mcp-local</code></pre>
                              do not explain themselves on a page that has not introduced
                              them; "Vision" does, and opens to both. A native disclosure,
                              so it works without script and takes the keyboard for free. -->
-                        <details class="vision-disclose mt-4">
+                        <details class="vision-disclose mt-5">
                             <summary>
-                                <i class="fas fa-cube text-teal-600 mt-0.5" aria-hidden="true"></i>
+                                <span class="vision-icon" aria-hidden="true"><i class="fas fa-cube"></i></span>
                                 <span>
-                                    <span class="block text-sm font-semibold text-ink">Vision</span>
-                                    <span class="block text-xs text-slate-500 mt-0.5">Where the toolkit goes next.</span>
+                                    <span class="vision-kicker">Look ahead</span>
+                                    <span class="vision-title">Vision</span>
+                                    <span class="vision-sub">Where the toolkit goes next.</span>
                                 </span>
-                                <i class="fas fa-chevron-down vision-chev" aria-hidden="true"></i>
+                                <span class="vision-cue">
+                                    <span class="vision-cue-label"></span>
+                                    <i class="fas fa-chevron-down vision-chev" aria-hidden="true"></i>
+                                </span>
                             </summary>
                             <a href="vision.html" class="vision-sheet group">
                                 <i class="fas fa-cube text-teal-600 text-xs mt-1" aria-hidden="true"></i>
@@ -687,6 +891,6 @@ codex plugin add nepa-mcp@nepa-mcp-local</code></pre>
     </footer>
 
     <script src="assets/js/site-data.js?v=14"></script>
-    <script src="assets/js/site.js?v=13"></script>
+    <script src="assets/js/site.js?v=19"></script>
 </body>
 </html>
