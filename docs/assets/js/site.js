@@ -43,25 +43,6 @@ var FEATURE_CARDS = [
     }
 ];
 
-var TRANSFORM_ROWS = [
-    {
-        before: 'Data siloed across a dozen federal agencies',
-        after: 'One protocol, 19 focused servers'
-    },
-    {
-        before: 'Weeks of manual data collection',
-        after: 'Project-area screening in one request'
-    },
-    {
-        before: 'Inconsistent formats, no provenance',
-        after: 'Structured results with cited sources'
-    },
-    {
-        before: 'Easy to miss a jurisdiction',
-        after: 'Every layer reported, nothing silent'
-    }
-];
-
 /**
  * Client configuration options. The CLI writes to these same paths; see
  * nepa_mcp/clients.py for the authoritative targets. `path` is the literal file,
@@ -634,27 +615,6 @@ function buildTerminal(id, command, title) {
     figure.appendChild(pre);
 
     return figure;
-}
-
-function renderTransformRows() {
-    var container = document.getElementById('transform-rows');
-    if (!container) {
-        return;
-    }
-    TRANSFORM_ROWS.forEach(function (row) {
-        var wrapper = el('div', 'transform-row group flex items-center py-3 px-4 rounded-xl bg-white/5 hover:bg-white/10 transition-all duration-300 border border-white/10 hover:border-teal-500/30');
-        wrapper.appendChild(el('span', 'flex-1 text-right text-slate-400 text-sm pr-4 group-hover:text-slate-300 transition-colors', row.before));
-
-        var chevronWrap = el('div', 'w-6 h-6 rounded-full bg-teal-500/20 flex items-center justify-center flex-shrink-0');
-        var chevron = el('i', 'fas fa-chevron-right text-teal-300 text-xs');
-        chevron.setAttribute('aria-hidden', 'true');
-        chevronWrap.appendChild(chevron);
-        wrapper.appendChild(chevronWrap);
-
-        wrapper.appendChild(el('span', 'flex-1 text-white text-sm font-medium pl-4', row.after));
-        container.appendChild(wrapper);
-    });
-    initTransformRowsAnimation();
 }
 
 function renderDocCards() {
@@ -2131,31 +2091,6 @@ function copyPrompt(card, text) {
     });
 }
 
-function initTransformRowsAnimation() {
-    var rows = document.querySelectorAll('#transform-section .transform-row');
-    var section = document.getElementById('transform-section');
-    if (!rows.length || !section || prefersReducedMotion()) {
-        return;
-    }
-
-    Array.prototype.forEach.call(rows, function (row, index) {
-        row.style.opacity = '0';
-        row.style.transform = 'translateX(-20px)';
-        row.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1) ' + index * 0.12 + 's';
-    });
-
-    var observer = new IntersectionObserver(function (entries) {
-        if (entries[0].isIntersecting) {
-            Array.prototype.forEach.call(rows, function (row) {
-                row.style.opacity = '1';
-                row.style.transform = 'translateX(0)';
-            });
-            observer.disconnect();
-        }
-    }, { threshold: 0.3 });
-    observer.observe(section);
-}
-
 /* ============================================
    Init
    ============================================ */
@@ -2168,7 +2103,6 @@ function init() {
     renderReleaseMetadata();
     renderFeatureCards();
     renderClientConfigs();
-    renderTransformRows();
     renderDocCards();
     initServerCards();
     initToolExplorer();
