@@ -595,6 +595,14 @@ section {
     margin-bottom: 0.9rem;
 }
 
+/* Where a command is run decides where its config lands, so the directory gets
+   the brand's weight rather than plain bold in body grey. */
+.step-lede strong {
+    font-weight: 600;
+    color: var(--brand-primary-darker);
+    box-shadow: inset 0 -0.42em 0 rgba(var(--brand-primary-rgb), 0.12);
+}
+
 .step-note {
     margin-top: 0.7rem;
     font-size: 0.78125rem;
@@ -1082,6 +1090,18 @@ section {
     color: #5eead4;
 }
 
+.info-line-link {
+    color: #5eead4;
+    text-decoration: underline;
+    text-decoration-color: rgba(94, 234, 212, 0.4);
+    text-underline-offset: 2px;
+    transition: text-decoration-color 0.2s ease;
+}
+
+.info-line-link:hover {
+    text-decoration-color: #5eead4;
+}
+
 /* --- Ask bar and example prompts ---------------------------------------- */
 
 /* Step 4 is the payoff, so it gets the one composed object in the section: a
@@ -1434,6 +1454,20 @@ section {
 .steps-in-motion .step-row.step-lit .ask-list li:nth-child(2) .prompt-card { transition-delay: 0.34s; }
 .steps-in-motion .step-row.step-lit .ask-list li:nth-child(3) .prompt-card { transition-delay: 0.44s; }
 
+/* Two slow pulses as step 1 lands. The badge sits in a title bar, which is the
+   last place a visitor looks for something clickable, so it asks once and then
+   stops rather than nagging. */
+.steps-in-motion .step-row.step-lit .term-badge {
+    animation: badgePulse 2.2s cubic-bezier(0.16, 1, 0.3, 1) 0.8s 2;
+}
+
+@keyframes badgePulse {
+    0% { box-shadow: 0 0 0 0 rgba(108, 176, 232, 0); }
+    10% { box-shadow: 0 0 0 3px rgba(108, 176, 232, 0.26); }
+    38% { box-shadow: 0 0 0 10px rgba(108, 176, 232, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(108, 176, 232, 0); }
+}
+
 @keyframes caretBlink {
     50% { opacity: 0; }
 }
@@ -1522,6 +1556,80 @@ section {
     text-overflow: ellipsis;
 }
 
+/* The package's own page, in the bar where every other block names its file or
+   command. A badge rather than a title, because a title does not get clicked:
+   PyPI's blue is the only blue on the page, and the arrow says it leaves. */
+.term-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-shrink: 0;
+    padding: 0.16rem 0.45rem 0.16rem 0.4rem;
+    border-radius: 0.4rem;
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    color: #cfe6f8;
+    background: rgba(75, 139, 190, 0.16);
+    border: 1px solid rgba(108, 176, 232, 0.34);
+    transition:
+        color 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.term-badge:hover {
+    color: #fff;
+    background: rgba(75, 139, 190, 0.3);
+    border-color: rgba(108, 176, 232, 0.62);
+    transform: translateY(-1px);
+}
+
+.term-badge-mark {
+    flex-shrink: 0;
+    font-size: 0.8125rem;
+    color: #6cb0e8;
+    transition: color 0.2s ease;
+}
+
+.term-badge:hover .term-badge-mark {
+    color: #8ec6f2;
+}
+
+.term-badge-label {
+    text-transform: uppercase;
+}
+
+.term-badge-ver {
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+    font-weight: 500;
+    letter-spacing: 0;
+    color: rgba(207, 230, 248, 0.72);
+}
+
+/* The badge and the copy button both refuse to shrink, and a two-digit release
+   would be ~20px wider than v0.1.1. On the narrowest phones the registry is
+   what has to survive, not the number, which the footer carries anyway. */
+@media (max-width: 399px) {
+    .term-badge-ver {
+        display: none;
+    }
+}
+
+.term-badge-out {
+    flex-shrink: 0;
+    font-size: 0.5rem;
+    opacity: 0.55;
+    transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.term-badge:hover .term-badge-out {
+    opacity: 1;
+    transform: translate(1px, -1px);
+}
+
 .term-tools {
     margin-left: auto;
     display: inline-flex;
@@ -1559,6 +1667,20 @@ section {
 .c-line::before {
     content: '$ ';
     color: rgba(94, 234, 212, 0.55);
+}
+
+/* Where a command is run can decide where its config lands, so the prompt
+   carries the directory instead of a sentence above the block describing it.
+   Generated from the attribute, so it never reaches the clipboard and cannot be
+   wiped by a set piece retyping the line. */
+.c-line[data-cwd]::before {
+    content: attr(data-cwd) ' $';
+    margin-right: 0.55ch;
+    padding: 0 0.45ch;
+    border-radius: 0.25rem;
+    color: #5eead4;
+    background: rgba(94, 234, 212, 0.13);
+    box-shadow: inset 0 0 0 1px rgba(94, 234, 212, 0.16);
 }
 
 .t-line {
@@ -1713,6 +1835,373 @@ section {
 .plugin-panel {
     background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
     border: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+/* --- The three install steps -------------------------------------------- */
+
+/* Quick Start's steps are commands, so their set piece is a terminal. These are
+   form-filling in a desktop app, so the set piece is the form: two labeled
+   fields that type themselves, and the plugin row the install leaves behind.
+   Drawn in the site's own language rather than as an imitation of the dialog's
+   chrome, because it is a diagram of what goes where, not a screenshot. */
+
+.pin-head {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.85rem;
+}
+
+.pin-label {
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: #94a3b8;
+}
+
+.pin-label code {
+    color: #5eead4;
+}
+
+.pin-replay {
+    margin-left: auto;
+}
+
+/* .term-replay ships hidden and is switched on by the section that can run it,
+   so a script failure never offers a replay of nothing. */
+.plugin-in-motion .pin-replay {
+    display: inline-flex;
+}
+
+.pin-steps {
+    margin: 0 0 1.35rem;
+    padding: 0;
+    list-style: none;
+}
+
+.pin-step {
+    display: grid;
+    grid-template-columns: 1.5rem 1fr;
+    column-gap: 0.85rem;
+}
+
+.pin-marker {
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+/* One named cell, so the numeral and the check stack in the same spot and can
+   cross-fade — the same node the white rail uses, sized down and inverted. */
+.pin-node {
+    position: relative;
+    z-index: 1;
+    width: 1.5rem;
+    height: 1.5rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+    display: grid;
+    grid-template-areas: 'glyph';
+    place-items: center;
+    border-radius: 9999px;
+    background: rgba(148, 163, 184, 0.12);
+    box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.3);
+    transition: background 0.35s ease, box-shadow 0.35s ease;
+}
+
+.pin-num,
+.pin-check {
+    grid-area: glyph;
+    font-size: 0.625rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: rgba(226, 232, 240, 0.72);
+    transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.34, 1.32, 0.64, 1);
+}
+
+.pin-check {
+    color: #5eead4;
+    opacity: 0;
+    transform: scale(0.5);
+}
+
+/* A step whose action has run trades its numeral for a check. */
+.pin-step.pin-done .pin-num {
+    opacity: 0;
+    transform: scale(0.5);
+}
+
+.pin-step.pin-done .pin-check {
+    opacity: 1;
+    transform: none;
+}
+
+.pin-step.pin-done .pin-node {
+    background: rgba(94, 234, 212, 0.14);
+    box-shadow: inset 0 0 0 1px rgba(94, 234, 212, 0.42);
+}
+
+/* The connector runs to the next node. The last step has none, so the sequence
+   terminates on the install. */
+.pin-line {
+    position: absolute;
+    top: 1.6rem;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+    margin-left: -0.5px;
+    background: rgba(148, 163, 184, 0.22);
+}
+
+.pin-line-fill {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(94, 234, 212, 0.55), rgba(94, 234, 212, 0.12));
+}
+
+.pin-body {
+    min-width: 0;
+    padding-bottom: 0.9rem;
+}
+
+.pin-step:last-child .pin-body {
+    padding-bottom: 0;
+}
+
+.pin-text {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: #cbd5e1;
+}
+
+.pin-text strong {
+    font-weight: 600;
+    color: #fff;
+}
+
+.pin-text code {
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.9em;
+    color: #5eead4;
+}
+
+/* The two fields, at the width they read at: the source is longer than the ref,
+   and the pair sits one above the other before there is room for both. */
+.pin-form {
+    display: grid;
+    gap: 0.55rem;
+    margin-top: 0.75rem;
+}
+
+@media (min-width: 480px) {
+    .pin-form {
+        grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+        gap: 0.65rem;
+    }
+}
+
+.pin-field {
+    min-width: 0;
+}
+
+.pin-field-label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-size: 0.5625rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(148, 163, 184, 0.85);
+}
+
+.pin-field-box {
+    display: flex;
+    align-items: center;
+    min-height: 2.15rem;
+    padding: 0.35rem 0.6rem;
+    border-radius: 0.55rem;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* The field taking input, the way a focused field reads. */
+.pin-field.is-focus .pin-field-box {
+    border-color: rgba(94, 234, 212, 0.55);
+    box-shadow: 0 0 0 3px rgba(94, 234, 212, 0.1);
+}
+
+.pin-field-value {
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.78125rem;
+    line-height: 1.4;
+    color: #e8eef7;
+    white-space: nowrap;
+}
+
+/* A text field takes a thin caret, not the terminal's block. */
+.pin-field-value.tw-typing::after {
+    width: 2px;
+    height: 1em;
+    background: #5eead4;
+}
+
+/* The payoff: the row the one install leaves behind. Same recipe as the exit
+   status on the `doctor` recording, so the two read as the same kind of proof. */
+.pin-installed {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin-top: 0.75rem;
+    padding: 0.6rem 0.7rem;
+    border-radius: 0.7rem;
+    background: rgba(94, 234, 212, 0.05);
+    border: 1px solid rgba(94, 234, 212, 0.2);
+}
+
+/* The artwork carries its own rounded square (rx 112 of 512, so 21.9%) and its
+   own dark green, so the tile needs no plate under it — just a hairline to keep
+   its edge off the panel, which is a close value to the icon's ground. */
+.pin-tile {
+    flex-shrink: 0;
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 0.46rem;
+    box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.22);
+}
+
+.pin-installed-text {
+    min-width: 0;
+}
+
+.pin-installed-name {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+.pin-installed-meta {
+    display: block;
+    font-size: 0.6875rem;
+    line-height: 1.5;
+    color: rgba(148, 163, 184, 0.95);
+}
+
+.pin-installed-state {
+    margin-left: auto;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.1rem 0.45rem;
+    font-size: 0.5625rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #5eead4;
+    background: rgba(94, 234, 212, 0.1);
+    border: 1px solid rgba(94, 234, 212, 0.24);
+    border-radius: 9999px;
+}
+
+/* Below the width where all three fit one row, the pill takes its own line
+   under the name rather than squeezing what the install registered into three.
+   Grid, so the pill lands in the text column and not under the tile. */
+@media (max-width: 639px) {
+    .pin-installed {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        row-gap: 0.5rem;
+    }
+
+    .pin-installed-state {
+        grid-column: 2;
+        margin-left: 0;
+        justify-self: start;
+    }
+}
+
+/* --- Motion ------------------------------------------------------------- */
+
+/* Gated on .plugin-in-motion, which site.js adds only when the visitor has not
+   asked for reduced motion. Without it the block ships finished: numerals, both
+   fields filled, and the installed row. */
+.plugin-in-motion .pin-body {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.5s ease-out, transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.plugin-in-motion .pin-step.pin-lit .pin-body {
+    opacity: 1;
+    transform: none;
+}
+
+.plugin-in-motion .pin-node {
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.35s ease-out, transform 0.45s cubic-bezier(0.34, 1.32, 0.64, 1);
+}
+
+.plugin-in-motion .pin-step.pin-lit .pin-node {
+    opacity: 1;
+    transform: none;
+}
+
+/* A separate ring, so the halo never fights the box-shadow that marks a step
+   done. */
+.plugin-in-motion .pin-step.pin-lit .pin-node::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    pointer-events: none;
+    animation: pinHalo 1s ease-out 0.08s 1;
+}
+
+@keyframes pinHalo {
+    from { box-shadow: 0 0 0 0 rgba(94, 234, 212, 0.32); }
+    to { box-shadow: 0 0 0 12px rgba(94, 234, 212, 0); }
+}
+
+.plugin-in-motion .pin-line-fill {
+    transform: scaleY(0);
+    transform-origin: top center;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.plugin-in-motion .pin-step.pin-lit .pin-line-fill {
+    transform: scaleY(1);
+}
+
+/* The form, the installed row, and the closing line wait for the moment they
+   belong to rather than arriving with their step, so each is the one thing
+   moving when it lands. */
+.plugin-in-motion .pin-form,
+.plugin-in-motion .pin-installed,
+.plugin-in-motion .pin-epilogue {
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.45s ease-out, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.plugin-in-motion .pin-form.is-in,
+.plugin-in-motion .pin-installed.is-in,
+.plugin-in-motion .pin-epilogue.is-in {
+    opacity: 1;
+    transform: none;
+}
+
+/* One wash of teal as the plugin row lands — the beat the `doctor` proof line
+   gets in Quick Start. */
+.plugin-in-motion .pin-installed.is-in {
+    animation: pinLand 1.5s ease-out 0.15s 1;
+}
+
+@keyframes pinLand {
+    0% { background: rgba(94, 234, 212, 0.05); box-shadow: 0 0 0 0 rgba(94, 234, 212, 0); }
+    20% { background: rgba(94, 234, 212, 0.14); box-shadow: 0 0 0 4px rgba(94, 234, 212, 0.12); }
+    100% { background: rgba(94, 234, 212, 0.05); box-shadow: 0 0 0 4px rgba(94, 234, 212, 0); }
 }
 
 /* ============================================
@@ -2620,6 +3109,26 @@ section {
 
     .steps-in-motion .step-row.step-lit .term::after,
     .step-spark {
+        display: none !important;
+    }
+
+    /* Same contract for the plugin steps: site.js skips the sequence, but the
+       setting can change after load, so never leave a step, a field, or the
+       installed row hidden. */
+    .plugin-in-motion .pin-body,
+    .plugin-in-motion .pin-node,
+    .plugin-in-motion .pin-form,
+    .plugin-in-motion .pin-installed,
+    .plugin-in-motion .pin-epilogue {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    .plugin-in-motion .pin-line-fill {
+        transform: scaleY(1) !important;
+    }
+
+    .plugin-in-motion .pin-step.pin-lit .pin-node::after {
         display: none !important;
     }
 

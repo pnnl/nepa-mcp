@@ -47,7 +47,9 @@ var FEATURE_CARDS = [
  * Client configuration options. The CLI writes to these same paths; see
  * nepa_mcp/clients.py for the authoritative targets. `path` is the literal file,
  * shown in the terminal's title bar; `scope` is the sentence below the block,
- * and says which directory decides the location.
+ * and says which directory decides the location and what the client needs
+ * afterward — the tools do not appear until it reloads, and what that means
+ * differs per client.
  */
 var CLIENT_CONFIGS = [
     {
@@ -56,7 +58,7 @@ var CLIENT_CONFIGS = [
         icon: 'fa-terminal',
         command: 'nepa-mcp configure claude',
         path: '.mcp.json',
-        scope: 'Created in the directory you run it from.'
+        scope: 'Created in the directory you run it from. Reload Claude Code afterward.'
     },
     {
         id: 'vscode',
@@ -64,7 +66,7 @@ var CLIENT_CONFIGS = [
         icon: 'fa-code',
         command: 'nepa-mcp configure vscode',
         path: '.vscode/mcp.json',
-        scope: 'Created in the workspace directory you run it from.'
+        scope: 'Created in the workspace directory you run it from. Reload VS Code afterward.'
     },
     {
         id: 'codex',
@@ -72,7 +74,7 @@ var CLIENT_CONFIGS = [
         icon: 'fa-laptop-code',
         command: 'nepa-mcp configure codex',
         path: '~/.codex/config.toml',
-        scope: 'One global file, so any directory works.',
+        scope: 'One global file, so any directory works. Start a new Codex task afterward.',
         note: 'The Codex plugin below registers the same 19 servers and adds the screening skill. Use one or the other — do not run this command as well.'
     }
 ];
@@ -496,6 +498,7 @@ function renderClientConfigs() {
             tab.setAttribute('aria-selected', selected ? 'true' : 'false');
             tab.tabIndex = selected ? 0 : -1;
         });
+        var shown = null;
         Array.prototype.forEach.call(panels.children, function (panel) {
             var selected = panel.dataset.client === id;
             panel.hidden = !selected;
@@ -504,9 +507,21 @@ function renderClientConfigs() {
                 // Reading offsetWidth restarts the animation on a repeat select.
                 void panel.offsetWidth;
                 panel.classList.add('seg-panel-in');
+                shown = panel;
             }
         });
         positionThumb();
+
+        // Each tab is a different command, so switching retypes it rather than
+        // swapping in a finished line — the step reads the same however the
+        // visitor arrives at it. Only once the step itself has played, so a
+        // switch made before then does not pre-empt its own arrival.
+        if (shown && document.querySelector('#qs-step-3.step-lit')) {
+            var block = shown.querySelector('pre[data-type]');
+            if (block) {
+                typeCommandBlock(block);
+            }
+        }
     }
 
     CLIENT_CONFIGS.forEach(function (client, index) {
@@ -541,10 +556,15 @@ function renderClientConfigs() {
         panel.setAttribute('role', 'tabpanel');
         panel.hidden = index !== 0;
 
+        // The prompt carries the directory, because where the command is run is
+        // what decides where its config lands. `type` opts the block into the
+        // same live typing steps 1 and 2 run, so the sequence does not go static
+        // at the one step the visitor has to act on.
         panel.appendChild(buildTerminal(
             'client-cli-' + client.id,
             client.command,
-            'writes ' + client.path
+            'writes ' + client.path,
+            { cwd: '~/my-project', type: 22 }
         ));
         panel.appendChild(el('p', 'seg-meta', client.scope));
         if (client.note) {
@@ -578,9 +598,14 @@ function renderClientConfigs() {
  * @param {string} id Applied to the <pre>, for copyCode.
  * @param {string} command One or more newline-separated commands.
  * @param {string} title Shown in the title bar.
+ * @param {{cwd?: string, type?: number}} [options] `cwd` puts a working
+ *   directory in the prompt. It is drawn by CSS from the attribute, so it stays
+ *   out of anything copied and survives a block being retyped by a set piece.
+ *   `type` is milliseconds per character, and opts the block into live typing.
  * @returns {HTMLElement}
  */
-function buildTerminal(id, command, title) {
+function buildTerminal(id, command, title, options) {
+    var settings = options || {};
     var figure = el('figure', 'term term-cmd');
 
     var bar = el('figcaption', 'term-bar');
@@ -604,12 +629,19 @@ function buildTerminal(id, command, title) {
 
     var pre = el('pre', 'term-body');
     pre.id = id;
+    if (settings.type) {
+        pre.dataset.type = String(settings.type);
+    }
     var code = el('code');
     command.split('\n').forEach(function (line, index) {
         if (index) {
             code.appendChild(document.createTextNode('\n'));
         }
-        code.appendChild(el('span', 'c-line', line));
+        var span = el('span', 'c-line', line);
+        if (settings.cwd) {
+            span.dataset.cwd = settings.cwd;
+        }
+        code.appendChild(span);
     });
     pre.appendChild(code);
     figure.appendChild(pre);
@@ -1736,11 +1768,30 @@ function prepareTerminals(container) {
 }
 
 /**
+ * The block a step should type. A step whose commands sit behind tabs has one
+ * per tab, and only the shown one is the visitor's — a link from the hero can
+ * preselect any of them before the step has arrived, so this cannot assume the
+ * first is the right one.
+ * @param {Element} row
+ * @returns {HTMLPreElement|null}
+ */
+function shownTypableBlock(row) {
+    var blocks = row.querySelectorAll('pre[data-type]');
+    for (var i = 0; i < blocks.length; i += 1) {
+        // Null offsetParent is the cheapest read of "inside a hidden panel".
+        if (blocks[i].offsetParent !== null) {
+            return blocks[i];
+        }
+    }
+    return blocks[0] || null;
+}
+
+/**
  * Run the one set piece that belongs to a step, once it has landed.
  * @param {Element} row
  */
 function runStepSetPiece(row) {
-    var typed = row.querySelector('pre[data-type]');
+    var typed = shownTypableBlock(row);
     if (typed) {
         typeCommandBlock(typed);
     }
@@ -2092,6 +2143,217 @@ function copyPrompt(card, text) {
 }
 
 /* ============================================
+   Codex Desktop plugin
+   ============================================ */
+
+/* Quick Start's steps are commands, so each plays in a terminal. These three are
+   form-filling in a desktop app, so the set piece is the form: the steps light
+   in turn, the two values type themselves into their fields, and the plugin row
+   lands installed. The sentences hold both values, so a reduced-motion or
+   script-less visit reads the same instructions with the form already filled. */
+
+var pluginInstall = null;
+
+function initCodexPlugin() {
+    var section = document.getElementById('codex-plugin');
+    if (!section) {
+        return;
+    }
+
+    var list = section.querySelector('[data-plugin-steps]');
+    if (!list || prefersReducedMotion() || !('IntersectionObserver' in window)) {
+        return;
+    }
+
+    var steps = Array.prototype.slice.call(list.querySelectorAll('[data-pin-step]'));
+    var fields = Array.prototype.slice.call(list.querySelectorAll('[data-pin-value]'));
+    if (steps.length < 3 || !fields.length) {
+        return;
+    }
+
+    pluginInstall = {
+        // The list stands in for a terminal, so the run token that keeps two
+        // terminals from interleaving keeps a replay from interleaving here.
+        stage: list,
+        steps: steps,
+        form: list.querySelector('.pin-form'),
+        fields: fields,
+        // Recorded before the first run blanks them; a replay retypes this.
+        texts: fields.map(function (node) {
+            return node.textContent.trim();
+        }),
+        installed: list.querySelector('[data-pin-installed]'),
+        epilogue: section.querySelector('[data-plugin-epilogue]')
+    };
+
+    section.classList.add('plugin-in-motion');
+
+    var replay = section.querySelector('[data-plugin-replay]');
+    if (replay) {
+        replay.addEventListener('click', function () {
+            replay.classList.remove('is-spinning');
+            void replay.offsetWidth;
+            replay.classList.add('is-spinning');
+            runPluginInstall();
+        });
+    }
+
+    var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) {
+                return;
+            }
+            observer.unobserve(entry.target);
+            runPluginInstall();
+        });
+    }, { threshold: 0.45 });
+
+    observer.observe(list);
+}
+
+/**
+ * Play the install: the dialog opens, the two values type into their fields,
+ * then the plugin row lands.
+ */
+function runPluginInstall() {
+    if (!pluginInstall) {
+        return;
+    }
+
+    var stage = pluginInstall.stage;
+    var token = beginTermRun(stage);
+
+    // Back to the start, whether this is the first run or a replay. The form is
+    // still hidden at this point, so blanking it is never seen.
+    pluginInstall.steps.forEach(function (step) {
+        step.classList.remove('pin-lit', 'pin-done');
+    });
+    pluginInstall.fields.forEach(function (node) {
+        node.textContent = '';
+        node.classList.remove('tw-typing');
+        pluginFieldOf(node).classList.remove('is-focus');
+    });
+    if (pluginInstall.form) {
+        pluginInstall.form.classList.remove('is-in');
+    }
+    if (pluginInstall.installed) {
+        pluginInstall.installed.classList.remove('is-in');
+    }
+    if (pluginInstall.epilogue) {
+        pluginInstall.epilogue.classList.remove('is-in');
+    }
+
+    // 1. Open Plugins, choose Add plugin marketplace.
+    window.setTimeout(function () {
+        if (!termRunIsCurrent(stage, token)) {
+            return;
+        }
+        pluginInstall.steps[0].classList.add('pin-lit');
+
+        window.setTimeout(function () {
+            if (!termRunIsCurrent(stage, token)) {
+                return;
+            }
+            // 2. The dialog is open, so the fields arrive and fill themselves.
+            pluginInstall.steps[0].classList.add('pin-done');
+            pluginInstall.steps[1].classList.add('pin-lit');
+            if (pluginInstall.form) {
+                pluginInstall.form.classList.add('is-in');
+            }
+            window.setTimeout(function () {
+                typePluginField(0, token);
+            }, 420);
+        }, 760);
+    }, 220);
+}
+
+/**
+ * The field a value sits in. Falls back to the node itself, so a markup change
+ * that drops the wrapper costs the focus ring and nothing more.
+ * @param {Element} node
+ * @returns {Element}
+ */
+function pluginFieldOf(node) {
+    return node.closest('.pin-field') || node;
+}
+
+/**
+ * Type one field value, then move to the next. Slower than the terminals: these
+ * are two values the visitor has to read off the screen and retype.
+ * @param {number} index
+ * @param {string} token
+ */
+function typePluginField(index, token) {
+    if (!pluginInstall) {
+        return;
+    }
+
+    var stage = pluginInstall.stage;
+    if (!termRunIsCurrent(stage, token)) {
+        return;
+    }
+
+    var node = pluginInstall.fields[index];
+    if (!node) {
+        finishPluginInstall(token);
+        return;
+    }
+
+    var field = pluginFieldOf(node);
+    field.classList.add('is-focus');
+
+    typeText(node, pluginInstall.texts[index], 38, stage, token, function () {
+        field.classList.remove('is-focus');
+        window.setTimeout(function () {
+            typePluginField(index + 1, token);
+        }, 260);
+    });
+}
+
+/**
+ * 3. Add the marketplace, then install: the plugin row lands with what the one
+ * install actually registers.
+ * @param {string} token
+ */
+function finishPluginInstall(token) {
+    var stage = pluginInstall.stage;
+    if (!termRunIsCurrent(stage, token)) {
+        return;
+    }
+
+    pluginInstall.steps[1].classList.add('pin-done');
+
+    window.setTimeout(function () {
+        if (!termRunIsCurrent(stage, token)) {
+            return;
+        }
+        pluginInstall.steps[2].classList.add('pin-lit');
+
+        window.setTimeout(function () {
+            if (!termRunIsCurrent(stage, token)) {
+                return;
+            }
+            if (pluginInstall.installed) {
+                pluginInstall.installed.classList.add('is-in');
+            }
+            pluginInstall.steps[2].classList.add('pin-done');
+
+            // The one thing left to do, so it arrives after the install has
+            // landed rather than before there is anything to reload for.
+            window.setTimeout(function () {
+                if (!termRunIsCurrent(stage, token)) {
+                    return;
+                }
+                if (pluginInstall.epilogue) {
+                    pluginInstall.epilogue.classList.add('is-in');
+                }
+                endTermRun(stage, token);
+            }, 480);
+        }, 520);
+    }, 300);
+}
+
+/* ============================================
    Init
    ============================================ */
 
@@ -2112,6 +2374,7 @@ function init() {
     initSmoothScroll();
     initScrollAnimations();
     initQuickStart();
+    initCodexPlugin();
     initUnifiedBadge();
     initJurisdictionFlow();
 }
