@@ -52,7 +52,7 @@
     <!-- ?v= is a cache buster. GitHub Pages serves these assets with a long
          max-age, so a returning visitor keeps the old CSS and JS until the URL
          changes. Bump the value whenever site.css or site.js changes. -->
-    <link rel="stylesheet" href="assets/css/site.css?v=25">
+    <link rel="stylesheet" href="assets/css/site.css?v=32">
 </head>
 <body class="bg-slate-50 text-slate-900 antialiased">
 
@@ -290,7 +290,17 @@
                             <figure class="term term-cmd">
                                 <figcaption class="term-bar">
                                     <span class="term-dots" aria-hidden="true"><span></span><span></span><span></span></span>
-                                    <span class="term-title">terminal</span>
+                                    <!-- The bar names where the package comes from, which is more
+                                         use than the word "terminal" and costs the step no height.
+                                         A badge rather than a title, because a title does not get
+                                         clicked. The command below already names the package, so
+                                         this carries the registry and the version instead. -->
+                                    <a class="term-badge" href="https://pypi.org/project/nepa-mcp/" target="_blank" rel="noopener noreferrer">
+                                        <i class="fab fa-python term-badge-mark" aria-hidden="true"></i>
+                                        <span class="term-badge-label">PyPI</span>
+                                        <span class="term-badge-ver">v<span data-release-version>0.1.1</span></span>
+                                        <i class="fas fa-arrow-up-right-from-square term-badge-out" aria-hidden="true"></i>
+                                    </a>
                                     <span class="term-tools">
                                         <button type="button" class="term-copy" onclick="copyCode(event, 'install-code')">
                                             <i class="fas fa-clone" aria-hidden="true"></i><span>Copy</span>
@@ -457,8 +467,11 @@
                                 <h3 class="step-title">Connect your client</h3>
                                 <span class="step-meta">per project</span>
                             </div>
+                            <!-- Where it is run decides where two of the three configs land, so
+                                 the prompt in each block carries the directory. Shown, not
+                                 described: no sentence here can be as clear as the prompt is. -->
                             <p class="step-lede">
-                                Go to the project directory you want configured, then run its command.
+                                Run it from your <strong>project root</strong>.
                             </p>
                             <!-- Codex Desktop belongs in the chooser, because a visitor who
                                  does not see it here picks Codex the CLI instead — and the
@@ -475,10 +488,14 @@
                             </div>
                             <div id="client-panels"></div>
                             <noscript>
+                                <!-- The panels carry each client's directory and its reload in
+                                     their own sentence, and they are built in script, so both
+                                     have to be stated here as well. -->
                                 <p class="step-note">
                                     Claude Code: <code>nepa-mcp configure claude</code> ·
                                     VS Code: <code>nepa-mcp configure vscode</code> ·
-                                    Codex: <code>nepa-mcp configure codex</code>
+                                    Codex: <code>nepa-mcp configure codex</code>.
+                                    Reload the client afterward; in Codex, start a new task.
                                 </p>
                             </noscript>
                         </div>
@@ -501,10 +518,6 @@
                                 <h3 class="step-title">Ask a question</h3>
                                 <span class="step-meta">first prompt</span>
                             </div>
-                            <p class="step-lede">
-                                Reload the client — in Codex, start a new task — then try one of these.
-                            </p>
-
                             <div class="ask" data-ask>
                                 <div class="ask-bar">
                                     <span class="ask-glyph" aria-hidden="true"><i class="fas fa-terminal"></i></span>
@@ -559,13 +572,13 @@
                     <div class="lg:col-span-2 min-w-0">
                         <div class="flex items-center gap-3 mb-4">
                             <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-puzzle-piece text-teal-300 text-lg" aria-hidden="true"></i>
+                                <i class="fab fa-github text-teal-300 text-lg" aria-hidden="true"></i>
                             </div>
-                            <p class="text-sm font-semibold text-white">Codex marketplace</p>
+                            <p class="text-sm font-semibold text-white">GitHub marketplace</p>
                         </div>
                         <p class="text-slate-300 text-sm leading-relaxed mb-5">
-                            The repository publishes a Codex marketplace and plugin. One install registers
-                            all 19 servers <em>and</em> the <code class="text-teal-300">nepa-screening</code>
+                            The repository is itself a GitHub-hosted plugin marketplace. One install
+                            registers all 19 servers <em>and</em> the <code class="text-teal-300">nepa-screening</code>
                             skill, which tells the agent how to establish a project area and pick the
                             right datasets.
                         </p>
@@ -580,42 +593,96 @@
                             </li>
                             <li class="flex items-start gap-2.5 text-sm text-slate-300">
                                 <i class="fas fa-circle-check text-teal-400 text-xs mt-1.5" aria-hidden="true"></i>
-                                <span>Adds directly from GitHub, with no repository clone required</span>
+                                <span>Adds from GitHub, no clone required</span>
                             </li>
                         </ul>
                     </div>
 
                     <div class="lg:col-span-3 min-w-0">
-                        <p class="text-xs text-slate-400 mb-3">In Codex Desktop, after <code class="text-teal-300">pipx install nepa-mcp</code>:</p>
-                        <ol class="space-y-2.5 mb-5 text-sm text-slate-300">
-                            <li><span class="font-semibold text-white">1.</span> Open <strong class="text-white">Plugins</strong> and select <strong class="text-white">Add plugin marketplace</strong>.</li>
-                            <li><span class="font-semibold text-white">2.</span> Enter <code class="text-teal-300">pnnl/nepa-mcp</code> for Source and <code class="text-teal-300">v0.1.1</code> for Git ref.</li>
-                            <li><span class="font-semibold text-white">3.</span> Add the marketplace, then install <strong class="text-white">NEPA-MCP</strong>.</li>
-                        </ol>
-                        <p class="text-xs text-slate-400 mb-2">Codex CLI alternative:</p>
-                        <figure class="term term-cmd term-on-dark">
-                            <figcaption class="term-bar">
-                                <span class="term-dots" aria-hidden="true"><span></span><span></span><span></span></span>
-                                <span class="term-title">terminal</span>
-                                <span class="term-tools">
-                                    <button type="button" class="term-copy" onclick="copyCode(event, 'plugin-code')">
-                                        <i class="fas fa-clone" aria-hidden="true"></i><span>Copy</span>
-                                    </button>
+                        <div class="pin-head">
+                            <p class="pin-label">In Codex Desktop, after <code>pipx install nepa-mcp</code>:</p>
+                            <button type="button" class="term-copy term-replay pin-replay" data-plugin-replay aria-label="Replay the install sequence">
+                                <i class="fas fa-rotate-right" aria-hidden="true"></i>
+                            </button>
+                        </div>
+
+                        <!-- These three steps are form-filling in a desktop app, not commands,
+                             so the set piece is the form: the two values type themselves into
+                             their fields, and the plugin row lands installed. The sentences
+                             carry both values, which is why the drawn form can be hidden from
+                             assistive tech and left filled for a reduced-motion visit without
+                             withholding anything. -->
+                        <ol class="pin-steps" data-plugin-steps>
+                            <li class="pin-step" data-pin-step="1">
+                                <span class="pin-marker" aria-hidden="true">
+                                    <span class="pin-node"><span class="pin-num">1</span><i class="fas fa-check pin-check"></i></span>
+                                    <span class="pin-line"><span class="pin-line-fill"></span></span>
                                 </span>
-                            </figcaption>
-                            <pre id="plugin-code" class="term-body"><code><span class="c-line">codex plugin marketplace add pnnl/nepa-mcp --ref v0.1.1</span>
-<span class="c-line">codex plugin add nepa-mcp@nepa-mcp-local</span></code></pre>
-                        </figure>
-                        <!-- The one rule a visitor can break here, and the reason this is an
-                             alternative to step 3 rather than an addition to it. Step 3 states it
-                             where the mistake would be made, so here it hangs off a footnote mark
-                             and costs the panel no height until asked for. The line ships visible
-                             and site.js hides it, so a script-less visit still reads it. -->
-                        <p class="text-xs text-slate-400 mt-3 leading-relaxed">
+                                <div class="pin-body">
+                                    <p class="pin-text">Open <strong>Plugins</strong> and select <strong>Add plugin marketplace</strong>.</p>
+                                </div>
+                            </li>
+                            <li class="pin-step" data-pin-step="2">
+                                <span class="pin-marker" aria-hidden="true">
+                                    <span class="pin-node"><span class="pin-num">2</span><i class="fas fa-check pin-check"></i></span>
+                                    <span class="pin-line"><span class="pin-line-fill"></span></span>
+                                </span>
+                                <div class="pin-body">
+                                    <p class="pin-text">Enter <code>pnnl/nepa-mcp</code> for Source and <code>v0.1.1</code> for Git ref.</p>
+                                    <div class="pin-form" aria-hidden="true">
+                                        <div class="pin-field">
+                                            <span class="pin-field-label">Source</span>
+                                            <span class="pin-field-box"><span class="pin-field-value" data-pin-value>pnnl/nepa-mcp</span></span>
+                                        </div>
+                                        <div class="pin-field">
+                                            <span class="pin-field-label">Git ref</span>
+                                            <span class="pin-field-box"><span class="pin-field-value" data-pin-value>v0.1.1</span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="pin-step" data-pin-step="3">
+                                <span class="pin-marker" aria-hidden="true">
+                                    <span class="pin-node"><span class="pin-num">3</span><i class="fas fa-check pin-check"></i></span>
+                                </span>
+                                <div class="pin-body">
+                                    <p class="pin-text">Add the marketplace, then install <strong>NEPA-MCP</strong>.</p>
+                                    <!-- What the one install actually registers, which is the claim
+                                         the left column makes in words. -->
+                                    <div class="pin-installed" aria-hidden="true" data-pin-installed>
+                                        <!-- The plugin's own mark, so the row shows the tile the
+                                             visitor will actually click in the marketplace. Same
+                                             file the plugin ships as its logo and composer icon. -->
+                                        <img class="pin-tile" src="assets/images/logos/nepa-mcp-plugin.svg" alt="" width="512" height="512">
+                                        <span class="pin-installed-text">
+                                            <span class="pin-installed-name">NEPA-MCP</span>
+                                            <span class="pin-installed-meta">19 servers · nepa-screening skill</span>
+                                        </span>
+                                        <span class="pin-installed-state"><i class="fas fa-check" aria-hidden="true"></i>Installed</span>
+                                    </div>
+                                </div>
+                            </li>
+                        </ol>
+
+                        <!-- The one thing left to do once the install has landed, so it
+                             arrives when the sequence does rather than sitting under an
+                             empty panel waiting for it. -->
+                        <p class="pin-epilogue text-xs text-slate-400 mt-3 leading-relaxed" data-plugin-epilogue>
                             Start a new Codex task after installing or updating the plugin so the tools
-                            and skill are loaded.<button type="button" class="info-sup" data-info-toggle aria-controls="plugin-rule" aria-expanded="true"><i class="fas fa-circle-info" aria-hidden="true"></i><span class="sr-only">One rule about combining the plugin with the CLI</span></button>
+                            and skill are loaded.<button type="button" class="info-sup" data-info-toggle aria-controls="plugin-rule" aria-expanded="true"><i class="fas fa-circle-info" aria-hidden="true"></i><span class="sr-only">Fine print about the plugin and the Codex CLI</span></button>
                         </p>
-                        <p id="plugin-rule" class="info-line">If you install the plugin, do not also run <code>nepa-mcp configure codex</code>.</p>
+                        <!-- Two pieces of fine print about the CLI, and neither belongs in a
+                             GUI walkthrough: the rule a visitor can break, and the terminal
+                             route for anyone who cannot use Desktop. Both hang off the footnote
+                             mark above and cost the panel no height until asked for. The line
+                             ships visible and site.js hides it, so a script-less visit still
+                             reads it. -->
+                        <p id="plugin-rule" class="info-line">
+                            If you install the plugin, do not also run <code>nepa-mcp configure codex</code>.
+                            No Desktop app? The
+                            <a class="info-line-link" href="https://github.com/pnnl/nepa-mcp#codex-plugin" target="_blank" rel="noopener noreferrer">README</a>
+                            has the equivalent <code>codex plugin</code> commands.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -888,6 +955,6 @@
     </footer>
 
     <script src="assets/js/site-data.js?v=14"></script>
-    <script src="assets/js/site.js?v=19"></script>
+    <script src="assets/js/site.js?v=23"></script>
 </body>
 </html>
