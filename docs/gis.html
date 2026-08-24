@@ -52,9 +52,12 @@
 
 /* Drafting type, sized in user units so it scales with the viewBox rather than
    with the viewport. */
-.dt{font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;fill:#475569}
+.dt{font-size:10px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;fill:#475569}
 .dt-num{font-size:9px;font-weight:600;letter-spacing:.06em;fill:#a8b3c2;font-variant-numeric:tabular-nums}
 .gt{font-size:10px;font-weight:500;letter-spacing:.05em;fill:#64748b}
+/* The layer count rides on the end of the group name, nearest the leaves it
+   counts. One numeral in place of a label on every leaf. */
+.gt-n{font-weight:600;fill:#b8c2ce;font-variant-numeric:tabular-nums}
 
 /* ---------- the stack ---------- */
 .band{transition:opacity .35s ease;cursor:pointer}
@@ -62,19 +65,47 @@
 /* Three states, one progression: painted, outlined, dashed.
    drawn  — a Map Composer overlay, ready to put on a map
    query  — a server returns it for a region of interest, but nothing draws it
-   open   — neither, yet */
-.f-drawn{fill:rgba(0,145,117,.10);stroke:var(--brand-primary);stroke-opacity:.55;stroke-width:1}
+   open   — neither, yet
+   Open leaves are the most numerous thing on the sheet and carry the least, so
+   they are drawn at the faintest weight the paper will hold: longer dashes,
+   fewer of them, and no fill. Otherwise thirty-one of them out-shout the
+   thirty-one that are finished. */
+.f-drawn{fill:rgba(0,145,117,.12);stroke:var(--brand-primary);stroke-opacity:.55;stroke-width:1}
 .f-query{fill:none;stroke:var(--brand-primary);stroke-opacity:.5;stroke-width:1}
-.f-open{fill:none;stroke:#64748b;stroke-opacity:.4;stroke-width:1;stroke-dasharray:5 4}
+.f-open{fill:none;stroke:#64748b;stroke-opacity:.26;stroke-width:1;stroke-dasharray:7 5}
 
 .bracket{fill:none;stroke:#cbd5e1;stroke-width:1}
 .band-name{transition:fill .3s ease}
-.stack .band:hover .leaf-face{stroke-opacity:.8}
 
-/* The project area, gold, reserved for it across the whole series. */
-.core-face{fill:var(--brand-accent);fill-opacity:.17;stroke:#c98f00;stroke-width:.9}
-.core-cap{fill:var(--brand-accent);stroke:#c98f00;stroke-width:1}
-.core-rule{stroke:#c98f00;stroke-width:1;stroke-dasharray:3 3;opacity:.7}
+/* ---------- pointing at a band ----------
+   Additive, never subtractive: hovering lifts one band rather than dimming the
+   other eight, so nothing moves on the sheet until the reader commits by
+   clicking.
+
+   Two ways in, one response. `.hov` is set from the reading column, `:hover` is
+   the leaves themselves, and the reader should not be able to tell which of the
+   two halves of the plate they are pointing at. */
+.stack:not([data-band]) .band.hov .leaf-face,
+.stack:not([data-band]) .band:hover .leaf-face{stroke-opacity:.85;stroke-width:1.3}
+.stack:not([data-band]) .band.hov .f-drawn,
+.stack:not([data-band]) .band:hover .f-drawn{fill:rgba(0,145,117,.18)}
+.stack:not([data-band]) .band.hov .f-open,
+.stack:not([data-band]) .band:hover .f-open{stroke-opacity:.5}
+.stack:not([data-band]) .band.hov .band-name,
+.stack:not([data-band]) .band:hover .band-name{fill:var(--brand-primary-dark)}
+
+/* The project area, gold, reserved for it across the whole series.
+   The shaft is graded rather than flat: solid amber where it passes through
+   painted laminate at the bottom, nearly clear where it passes through outlines
+   at the top. The core says how well the ground under a project is described,
+   which is the argument the whole sheet is making. */
+.core-face{fill:url(#coreFill);stroke:url(#coreEdge);stroke-width:.9}
+.core-side{opacity:.6}
+/* The cap sits at the top of the grade, where the shaft is at its faintest, so
+   it takes a little more amber than the grade would give it: it is what carries
+   the label, and it is the corner that makes the core read as a solid. */
+.core-cap{fill:rgba(249,184,0,.42);stroke:#c98f00;stroke-opacity:.62;stroke-width:1}
+.core-rule{stroke:#c98f00;stroke-width:1;stroke-dasharray:3 3;opacity:.6}
 
 /* ---------- assembly: the laminate builds from the bedrock up ----------
    This block sits ahead of the selection rules on purpose. `.stack.play X` and
@@ -90,11 +121,11 @@
 /* ---------- selection ----------
    Opening a band quiets the rest of the laminate rather than removing it: the
    whole stack staying on the sheet is the point of drawing it this way. */
-.stack[data-band] .band{opacity:.13}
+.stack[data-band] .band{opacity:.1}
 .stack[data-band] .band.sel{opacity:1}
-.stack[data-band] .band.sel .f-drawn{fill:rgba(0,145,117,.15);stroke-opacity:.9;stroke-width:1.3}
+.stack[data-band] .band.sel .f-drawn{fill:rgba(0,145,117,.16);stroke-opacity:.9;stroke-width:1.3}
 .stack[data-band] .band.sel .f-query{stroke-opacity:.85;stroke-width:1.3}
-.stack[data-band] .band.sel .f-open{stroke-opacity:.7;stroke-width:1.2}
+.stack[data-band] .band.sel .f-open{stroke-opacity:.62;stroke-width:1.2}
 
 /* Band names label the laminate at rest; group names label the leaves once a band
    is open. They share the same left margin, so only one set shows at a time. */
@@ -104,23 +135,72 @@
 
 /* ---------- an opened group's layers ----------
    Thin, inset, stroke-only leaves: they are detail on a plane, so they must not
-   compete with the plane itself. */
+   compete with the plane itself.
+
+   Each leaf carries its layer's name on its own face. That only works if the face
+   is actually clear, which is a question about the pitch and not about the
+   lettering: a leaf is 18 units deep, so any pitch under 18 puts a neighbour's
+   edge inside the face and straight through the type, whatever the type does to
+   defend itself. At a pitch of 20 no other leaf reaches into a leaf's own face
+   and the names have nothing to collide with — see SUB_PITCH. */
 .sleaf{
     opacity:0;pointer-events:none;
     transform:translateY(var(--dy,0px));
     transition:opacity .3s ease,transform .5s cubic-bezier(.16,1,.3,1);
 }
 .sleaf.on{opacity:1}
+.sleaf path{transition:fill .18s ease,stroke-opacity .18s ease,stroke-width .18s ease}
 .s-drawn{fill:rgba(0,145,117,.05);stroke:var(--brand-primary);stroke-opacity:.4;stroke-width:.8}
 .s-query{fill:none;stroke:var(--brand-primary);stroke-opacity:.35;stroke-width:.8}
-.s-open{fill:none;stroke:#94a3b8;stroke-opacity:.45;stroke-width:.8;stroke-dasharray:4 3}
+.s-open{fill:none;stroke:#94a3b8;stroke-opacity:.4;stroke-width:.8;stroke-dasharray:4 3}
 
-/* A white halo so a name stays readable where leaves overlap. */
+/* The name sits on the face, clear of both slanted edges. The halo is not there
+   to rescue the type from a crossing — the pitch already does that — but for the
+   two places the drawing genuinely crowds it: the group plane's own rear edge
+   behind the lowest leaf, and the core passing through. */
 .sub-lbl{
     font-size:8px;font-weight:500;fill:#475569;
-    paint-order:stroke;stroke:#fff;stroke-width:2.4px;stroke-linejoin:round;
+    paint-order:stroke;stroke:#fff;stroke-width:2.6px;stroke-linejoin:round;
+    transition:fill .18s ease;
 }
-.sub-lbl tspan{font-weight:400;fill:#a8b3c2}
+
+/* The one leaf the reader is pointing at, from the column. */
+.sleaf.hi .s-drawn{fill:rgba(0,145,117,.2);stroke-opacity:1;stroke-width:1.5}
+.sleaf.hi .s-query{stroke-opacity:.95;stroke-width:1.5}
+.sleaf.hi .s-open{stroke-opacity:.85;stroke-width:1.4}
+.sleaf.hi .sub-lbl{fill:var(--brand-primary-dark)}
+
+/* ---------- the meter ----------
+   The sheet's arithmetic and the drawing's key, as one object rather than two: a
+   count per state, the swatch that state is drawn with, and a bar of the split.
+   It stays put when a band opens and re-scopes to that band, so the key never
+   leaves the sheet and one band can be read against the whole eighty. */
+.meter{padding-bottom:1.05rem;margin-bottom:1.1rem;border-bottom:1px solid #e8eef4}
+.meter-head{display:flex;align-items:baseline;gap:.6rem;margin-bottom:.6rem}
+.meter-kicker{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#a8b3c2}
+.meter-scope{
+    margin-left:auto;font-size:11px;color:#94a3b8;text-align:right;
+    font-variant-numeric:tabular-nums;transition:color .25s ease;
+}
+.meter-row{display:flex;align-items:center;gap:.6rem;padding:.16rem 0}
+/* A serif figure against sans micro-caps: the count is the one thing on this
+   sheet that is a quantity rather than a label, and it should not read as
+   another line of interface type. Crimson Pro is already on the page. */
+.meter-n{
+    font-family:'Crimson Pro',Georgia,serif;font-size:1.4rem;font-weight:600;line-height:1;
+    color:var(--brand-ink);font-variant-numeric:tabular-nums;
+    min-width:1.65rem;text-align:right;transition:color .25s ease;
+}
+.meter-l{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#475569}
+.meter-note{margin-left:auto;font-size:10.5px;line-height:1.35;color:#a8b3c2;text-align:right}
+/* A state a band does not have is still worth stating, quietly. */
+.meter-row.is-zero .meter-n,.meter-row.is-zero .meter-l{color:#c9d1db}
+
+.meter-bar{display:flex;height:5px;margin-top:.85rem;border-radius:3px;overflow:hidden;background:#eef2f7}
+.meter-bar span{transition:width .5s cubic-bezier(.16,1,.3,1)}
+.mb-drawn{background:var(--brand-primary)}
+.mb-query{background:rgba(var(--brand-primary-rgb),.34)}
+.mb-open{background:repeating-linear-gradient(90deg,#cdd6e0 0 2px,transparent 2px 5px)}
 
 /* ---------- the panel ---------- */
 .pnl-band{
@@ -149,50 +229,70 @@
 }
 .grp-chev{font-size:8px;color:#b0bac7;transition:transform .25s ease;width:.55rem}
 .grp-toggle[aria-expanded='true'] .grp-chev{transform:rotate(90deg)}
-.grp-rows{padding:0 0 .55rem 1.05rem}
-.ly-row{display:flex;align-items:baseline;gap:.5rem;font-size:12.5px;line-height:1.5;color:#334155}
-.ly-row .pub{margin-left:auto;font-size:10.5px;color:#a8b3c2;white-space:nowrap;font-variant-numeric:tabular-nums}
-/* One custom property drives both fills, so a filled dot and a ring of the same
-   hue mean "drawn" and "queryable but not drawn" without doubling the rules. */
-.dot{--c:#b0bac7;width:8px;height:8px;flex:none;border-radius:2px;margin-top:.38rem;background:var(--c)}
-.dot.ring{background:transparent;border:1.5px solid var(--c)}
+/* One hairline ties a group's layers to the heading above them, in place of a
+   marker on each of the eighty rows. The rows are the sheet's finest type, so
+   they get the sheet's finest rule. */
+.grp-rows{margin:.05rem 0 .6rem .5rem;padding:.05rem 0 .1rem;border-left:1px solid #eef2f7}
+.ly-row{
+    display:flex;align-items:baseline;gap:.5rem;
+    padding:.1rem .4rem .1rem .65rem;border-radius:.3rem;
+    font-size:12.5px;line-height:1.55;color:#334155;
+    transition:background .15s ease,color .15s ease;
+}
+/* Hovering a row is how the column and the drawing are tied together, so the row
+   has to look like something you can point at. */
+.ly-row:hover{background:rgba(var(--brand-primary-rgb),.06);color:var(--brand-ink)}
+.ly-row .pub{
+    margin-left:auto;font-size:10.5px;letter-spacing:.03em;color:#a8b3c2;
+    white-space:nowrap;font-variant-numeric:tabular-nums;
+}
 
-/* Departments, not bureaus: five owners keeps the sheet calm where a hue per
-   publishing office would not, and the office is named in the row. */
-.d-doi{--c:#0f766e}
-.d-dod{--c:#4338ca}
-.d-usda{--c:#15803d}
-.d-doc{--c:#0369a1}
-.d-multi{--c:#57534e}
-
-/* A group's state, stated once on its heading rather than on every row. */
+/* A group's state, stated once on its heading rather than on every row.
+   `transparent` on the base rule keeps all three the same height. */
 .tag{font-size:8.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
-     padding:.08rem .34rem;border-radius:.25rem;white-space:nowrap}
+     padding:.08rem .34rem;border-radius:.25rem;white-space:nowrap;
+     border:1px solid transparent}
 .tag-drawn{background:rgba(var(--brand-primary-rgb),.13);color:var(--brand-primary-dark)}
 .tag-query{background:#eaeff5;color:#5b6b7f}
-.tag-open{color:#a8b3c2;border:1px dashed #cbd5e1}
-
-/* The key carries a `flex` utility, which ties with Tailwind's `[hidden]` rule on
-   specificity and wins on source order. Naming both puts the matter to rest. */
-.deptkey[hidden]{display:none}
-.dept-dot{width:9px;height:9px;flex:none;border-radius:2px}
+.tag-open{color:#a8b3c2;border-color:#cbd5e1;border-style:dashed}
 
 .sw{width:15px;height:15px;flex:none;border:1px solid #94a3b8;border-radius:3px}
-.sw-drawn{background:rgba(var(--brand-primary-rgb),.12);border-color:rgba(var(--brand-primary-rgb),.6)}
+/* The meter's rows and the footer note read at type size, not plate size. */
+.sw-sm{width:11px;height:11px;border-radius:2.5px}
+.sw-drawn{background:rgba(var(--brand-primary-rgb),.14);border-color:rgba(var(--brand-primary-rgb),.6)}
 .sw-query{border-color:rgba(var(--brand-primary-rgb),.55);background:#fff}
-.sw-open{border-style:dashed;border-color:rgba(100,116,139,.55);background:#fff}
+.sw-open{border-style:dashed;border-color:rgba(100,116,139,.5);background:#fff}
 .sw-core{background:var(--brand-accent);border-color:#c98f00}
+
+/* The gold is the one thing in the drawing the three states do not cover, so it
+   is named where the reader leaves the plate rather than in the meter, which
+   counts the layers the toolkit holds. */
+.core-note{display:inline-flex;align-items:center;gap:.55rem;font-size:11.5px;color:#64748b}
+
+/* There is nothing to reset while the whole stack is already showing, so the
+   control appears with the selection it clears. The row holds the height either
+   way, so the plate does not change size when it does. */
+.plate-foot{min-height:2rem}
+.stack-reset[hidden]{display:none}
 
 /* Desktop is the target medium. This drawing is carried by its labels, so
    scaling it to a phone would shrink the type past reading. It keeps its
-   proportions and pans instead. */
+   proportions and pans instead.
+
+   The floor has to be the width the type was drawn for, not merely more than the
+   viewport: at 560 the 585-unit drawing rendered at 0.96, which put the layer
+   names at 7.7px. 760 is the same 1.3 the two-column desktop layout gives it, so
+   a name reads the same on a phone as on a laptop and the sheet pans about two
+   screens. Anyone who would rather not pan has all eighty names in the reading
+   column below, at full size. */
 @media (max-width:1023px){
     .plate-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
-    .plate-scroll svg{min-width:560px}
+    .plate-scroll svg{min-width:760px}
 }
 
 @media (prefers-reduced-motion:reduce){
-    .band,.leaf,.sleaf,.leaf-face,.core-grp,.grp-name,.band-block,.grp-chev{transition:none !important}
+    .band,.leaf,.sleaf,.sleaf path,.sub-lbl,.leaf-face,.core-grp,.grp-name,.band-block,.grp-chev,
+    .meter-bar span,.meter-n,.meter-scope{transition:none !important}
     .stack .leaf{opacity:1;transform:none}
     .stack .core-grp,.stack .band-block,.stack .bracket{opacity:1}
 }
@@ -294,7 +394,10 @@
                     <div class="rounded-2xl border border-slate-200/80 bg-white shadow-sm overflow-hidden">
 
                         <div class="flex items-center justify-between gap-4 px-5 md:px-7 py-4 border-b border-slate-100">
-                            <p class="text-xs font-semibold text-slate-500 uppercase tracking-widest">Oblique section &mdash; nine bands, twenty-four groups</p>
+                            <!-- The meter counts the layers and the bands. What is left for the
+                                 plate's title is the drawing's grammar: what one leaf stands
+                                 for, which is the thing a reader has to know to count it. -->
+                            <p class="text-xs font-semibold text-slate-500 uppercase tracking-widest">Oblique section &mdash; twenty-four groups, one leaf each</p>
                             <p class="text-xs text-slate-400 uppercase tracking-widest hidden sm:block">
                                 <i class="fas fa-hand-pointer mr-1.5" aria-hidden="true"></i>Open a band
                             </p>
@@ -313,31 +416,64 @@
                                 </svg>
                             </div>
 
-                            <!-- The reading column. At rest it indexes the whole laminate; opening a
-                                 band swaps it for that band's groups and named layers. -->
+                            <!-- The reading column. The meter at its head holds the sheet's
+                                 arithmetic and the drawing's key and never leaves; below it,
+                                 an index of the whole laminate that opening a band swaps for
+                                 that band's groups and named layers. -->
                             <!-- Top-aligned: an opened band can make the drawing tall, and a
                                  centred index would float in the middle of the column. -->
                             <div class="px-5 md:px-6 py-6 bg-slate-50/50 lg:bg-transparent">
+
+                                <!-- Values here are the whole-stack figures, which is also what
+                                     the script sets on load. They are in the markup rather than
+                                     built by it so the numbers survive a page that never runs
+                                     the script, and so the bar has nodes to travel between when
+                                     a band re-scopes it. -->
+                                <div class="meter" role="group" aria-label="Layer coverage by state">
+                                    <div class="meter-head">
+                                        <p class="meter-kicker">Coverage</p>
+                                        <p class="meter-scope" id="meterScope">80 layers &middot; 9 bands</p>
+                                    </div>
+                                    <div class="meter-row" id="mrDrawn">
+                                        <span class="sw sw-sm sw-drawn" aria-hidden="true"></span>
+                                        <span class="meter-n" id="mDrawn">31</span>
+                                        <span class="meter-l">Drawn</span>
+                                        <span class="meter-note">Map&nbsp;Composer overlays</span>
+                                    </div>
+                                    <div class="meter-row" id="mrQuery">
+                                        <span class="sw sw-sm sw-query" aria-hidden="true"></span>
+                                        <span class="meter-n" id="mQuery">18</span>
+                                        <span class="meter-l">Queryable</span>
+                                        <span class="meter-note">answered, never&nbsp;drawn</span>
+                                    </div>
+                                    <div class="meter-row" id="mrOpen">
+                                        <span class="sw sw-sm sw-open" aria-hidden="true"></span>
+                                        <span class="meter-n" id="mOpen">31</span>
+                                        <span class="meter-l">Open</span>
+                                        <span class="meter-note">neither, yet</span>
+                                    </div>
+                                    <div class="meter-bar" aria-hidden="true">
+                                        <span class="mb-drawn" id="mbDrawn" style="width:38.75%"></span>
+                                        <span class="mb-query" id="mbQuery" style="width:22.5%"></span>
+                                        <span class="mb-open" id="mbOpen" style="width:38.75%"></span>
+                                    </div>
+                                </div>
+
                                 <div id="panel" class="w-full"></div>
                             </div>
                         </div>
 
-                        <div class="px-5 md:px-7 py-4 border-t border-slate-100 bg-slate-50/60">
-                            <div class="flex flex-wrap items-center gap-x-6 gap-y-3">
-                                <span class="flex items-center gap-2.5 text-xs font-medium text-slate-600 uppercase tracking-wider"><span class="sw sw-drawn"></span>Drawn</span>
-                                <span class="flex items-center gap-2.5 text-xs font-medium text-slate-600 uppercase tracking-wider"><span class="sw sw-query"></span>Queryable</span>
-                                <span class="flex items-center gap-2.5 text-xs font-medium text-slate-600 uppercase tracking-wider"><span class="sw sw-open"></span>Open</span>
-                                <span class="flex items-center gap-2.5 text-xs font-medium text-slate-600 uppercase tracking-wider"><span class="sw sw-core"></span>Project area</span>
-                                <button class="filter-chip sm:ml-auto" type="button" id="stackReset">Whole stack</button>
-                            </div>
-                            <div class="deptkey mt-3 flex flex-wrap items-center gap-x-5 gap-y-2" id="deptKey" hidden>
-                                <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">Published by</span>
-                                <span class="flex items-center gap-2 text-xs text-slate-600"><span class="dept-dot" style="background:#0f766e"></span>Interior</span>
-                                <span class="flex items-center gap-2 text-xs text-slate-600"><span class="dept-dot" style="background:#4338ca"></span>Defense</span>
-                                <span class="flex items-center gap-2 text-xs text-slate-600"><span class="dept-dot" style="background:#15803d"></span>Agriculture</span>
-                                <span class="flex items-center gap-2 text-xs text-slate-600"><span class="dept-dot" style="background:#0369a1"></span>Commerce</span>
-                                <span class="flex items-center gap-2 text-xs text-slate-600"><span class="dept-dot" style="background:#57534e"></span>Other federal</span>
-                                <span class="flex items-center gap-2 text-xs text-slate-500"><span class="dept-dot" style="border:1px solid #b0bac7"></span>Not drawn</span>
+                        <!-- The three states are keyed in the meter, beside the counts they
+                             belong to. What is left for the foot of the plate is the gold,
+                             which is not a layer state but the thing all of them are being
+                             asked about. -->
+                        <div class="px-5 md:px-7 py-3.5 border-t border-slate-100 bg-slate-50/60">
+                            <div class="plate-foot flex flex-wrap items-center gap-x-5 gap-y-2.5">
+                                <span class="core-note">
+                                    <span class="sw sw-sm sw-core" aria-hidden="true"></span>
+                                    Project&nbsp;area &mdash; the thirty-second overlay, cut through every band as the core
+                                </span>
+                                <button class="filter-chip stack-reset sm:ml-auto" type="button" id="stackReset" hidden>Whole stack</button>
                             </div>
                         </div>
                     </div>
@@ -419,40 +555,47 @@
 (function () {
     var stack = document.getElementById('stack');
     var panelEl = document.getElementById('panel');
-    var deptKey = document.getElementById('deptKey');
-    if (!stack || !panelEl) return;
+    var resetBtn = document.getElementById('stackReset');
+    if (!stack || !panelEl || !resetBtn) return;
 
     var NS = 'http://www.w3.org/2000/svg';
 
     /* ============================================================
-       The table. Layer names and publishers come from the live catalog
-       (map_composer LAYER_METADATA); a group with `open: true` is one the
-       catalog does not carry. Drawn counts here sum to the real 32: 28 in the
-       bedrock band, 2 jurisdictional, 1 precedent, plus the project-area frame
-       that is drawn as the core rather than as a leaf.
+       The table, and the only place any of these numbers is written down: the
+       drawing, the rail, the meter and the reading column are all counted from
+       it, so none of them can drift from another.
+
+       `n` names a layer, `p` the office that publishes it, and a group's `state`
+       is one of drawn / query / open. Layer names and publishers come from the
+       live catalog (map_composer LAYER_METADATA); a group in state `open` is one
+       the catalog does not carry.
+
+       Drawn rows here sum to 31, which with the project-area frame — drawn as the
+       core rather than as a leaf — is the 32 Map Composer ships: 28 in the bedrock
+       bands, 2 jurisdictional, 1 precedent.
        ============================================================ */
     var BANDS = [
         {
             key: 'land', name: ['Land use', '&amp; management'], plain: 'Land use & management',
             groups: [
                 { name: 'Federal managers', state: 'drawn', rows: [
-                    { n: 'Protected lands', p: 'PAD-US', d: 'doi' },
-                    { n: 'National forests', p: 'USFS', d: 'usda' },
-                    { n: 'Roadless areas', p: 'USFS', d: 'usda' },
-                    { n: 'Park units', p: 'NPS', d: 'doi' }
+                    { n: 'Protected lands', p: 'PAD-US' },
+                    { n: 'National forests', p: 'USFS' },
+                    { n: 'Roadless areas', p: 'USFS' },
+                    { n: 'Park units', p: 'NPS' }
                 ] },
                 { name: 'BLM planning', state: 'drawn', rows: [
-                    { n: 'Surface management', p: 'BLM', d: 'doi' },
-                    { n: 'Land use plans', p: 'BLM', d: 'doi' },
-                    { n: 'Plans in revision', p: 'BLM', d: 'doi' },
-                    { n: 'Wilderness study areas', p: 'BLM', d: 'doi' },
-                    { n: 'National monuments', p: 'BLM', d: 'doi' },
-                    { n: 'No surface occupancy', p: 'BLM', d: 'doi' }
+                    { n: 'Surface management', p: 'BLM' },
+                    { n: 'Land use plans', p: 'BLM' },
+                    { n: 'Plans in revision', p: 'BLM' },
+                    { n: 'Wilderness study areas', p: 'BLM' },
+                    { n: 'National monuments', p: 'BLM' },
+                    { n: 'No surface occupancy', p: 'BLM' }
                 ] },
                 { name: 'Trails, parcels &amp; fire', state: 'drawn', rows: [
-                    { n: 'National trails', p: 'BLM', d: 'doi' },
-                    { n: 'LWCF parcels', p: 'BLM', d: 'doi' },
-                    { n: 'Fire perimeters', p: 'NIFC', d: 'multi' }
+                    { n: 'National trails', p: 'BLM' },
+                    { n: 'LWCF parcels', p: 'BLM' },
+                    { n: 'Fire perimeters', p: 'NIFC' }
                 ] }
             ]
         },
@@ -460,23 +603,23 @@
             key: 'bio', name: ['Biological', 'resources'], plain: 'Biological resources',
             groups: [
                 { name: 'Habitat overlays', state: 'drawn', rows: [
-                    { n: 'Critical habitat', p: 'USFWS', d: 'doi' },
-                    { n: 'Wildlife refuges', p: 'USFWS', d: 'doi' },
-                    { n: 'Sage-grouse habitat', p: 'BLM', d: 'doi' },
-                    { n: 'Sagebrush focal areas', p: 'BLM', d: 'doi' },
-                    { n: 'Wild horse HMAs', p: 'BLM', d: 'doi' }
+                    { n: 'Critical habitat', p: 'USFWS' },
+                    { n: 'Wildlife refuges', p: 'USFWS' },
+                    { n: 'Sage-grouse habitat', p: 'BLM' },
+                    { n: 'Sagebrush focal areas', p: 'BLM' },
+                    { n: 'Wild horse HMAs', p: 'BLM' }
                 ] },
                 { name: 'Species queries', state: 'query', rows: [
-                    { n: 'IPaC species list', p: 'USFWS', d: 'doi' },
-                    { n: 'ESA species ranges', p: 'NOAA', d: 'doc' },
-                    { n: 'Critical habitat', p: 'NOAA', d: 'doc' },
-                    { n: 'Species occurrences', p: 'GBIF', d: 'multi' }
+                    { n: 'IPaC species list', p: 'USFWS' },
+                    { n: 'ESA species ranges', p: 'NOAA' },
+                    { n: 'Critical habitat', p: 'NOAA' },
+                    { n: 'Species occurrences', p: 'GBIF' }
                 ] },
                 { name: 'Fisheries &amp; birds', state: 'query', rows: [
-                    { n: 'Essential fish habitat', p: 'NOAA', d: 'doc' },
-                    { n: 'Habitat areas of concern', p: 'NOAA', d: 'doc' },
-                    { n: 'Salmon EFH by watershed', p: 'NOAA', d: 'doc' },
-                    { n: 'Migratory birds', p: 'USFWS', d: 'doi' }
+                    { n: 'Essential fish habitat', p: 'NOAA' },
+                    { n: 'Habitat areas of concern', p: 'NOAA' },
+                    { n: 'Salmon EFH by watershed', p: 'NOAA' },
+                    { n: 'Migratory birds', p: 'USFWS' }
                 ] }
             ]
         },
@@ -484,24 +627,24 @@
             key: 'water', name: ['Water', 'resources'], plain: 'Water resources',
             groups: [
                 { name: 'Corps jurisdiction', state: 'drawn', rows: [
-                    { n: 'Regulatory districts', p: 'USACE', d: 'dod' },
-                    { n: 'Wetland regions', p: 'USACE', d: 'dod' },
-                    { n: 'Wetland subregions', p: 'USACE', d: 'dod' }
+                    { n: 'Regulatory districts', p: 'USACE' },
+                    { n: 'Wetland regions', p: 'USACE' },
+                    { n: 'Wetland subregions', p: 'USACE' }
                 ] },
                 { name: 'Hydrography', state: 'drawn', rows: [
-                    { n: 'Perennial streams', p: 'USGS', d: 'doi' },
-                    { n: 'Stream areas', p: 'USGS', d: 'doi' },
-                    { n: 'Lakes &amp; ponds', p: 'USGS', d: 'doi' },
-                    { n: 'Reservoirs', p: 'USGS', d: 'doi' },
-                    { n: 'Estuaries', p: 'USGS', d: 'doi' },
-                    { n: 'Glaciers &amp; ice', p: 'USGS', d: 'doi' },
-                    { n: 'Water infrastructure', p: 'USGS', d: 'doi' }
+                    { n: 'Perennial streams', p: 'USGS' },
+                    { n: 'Stream areas', p: 'USGS' },
+                    { n: 'Lakes &amp; ponds', p: 'USGS' },
+                    { n: 'Reservoirs', p: 'USGS' },
+                    { n: 'Estuaries', p: 'USGS' },
+                    { n: 'Glaciers &amp; ice', p: 'USGS' },
+                    { n: 'Water infrastructure', p: 'USGS' }
                 ] },
                 { name: 'Wetlands &amp; floodplain', state: 'query', rows: [
-                    { n: 'Wetlands inventory', p: 'USFWS', d: 'doi' },
-                    { n: 'Flood hazard zones', p: 'FEMA', d: 'multi' },
-                    { n: 'Levees', p: 'FEMA', d: 'multi' },
-                    { n: 'Water areas', p: 'FEMA', d: 'multi' }
+                    { n: 'Wetlands inventory', p: 'USFWS' },
+                    { n: 'Flood hazard zones', p: 'FEMA' },
+                    { n: 'Levees', p: 'FEMA' },
+                    { n: 'Water areas', p: 'FEMA' }
                 ] }
             ]
         },
@@ -509,9 +652,9 @@
             key: 'air', name: ['Air', 'quality'], plain: 'Air quality',
             groups: [
                 { name: 'Monitors &amp; baseline', state: 'query', rows: [
-                    { n: 'Monitoring stations', p: 'EPA AQS', d: 'multi' },
-                    { n: 'Annual criteria pollutants', p: 'EPA AQS', d: 'multi' },
-                    { n: 'Baseline screening', p: 'EPA AQS', d: 'multi' }
+                    { n: 'Monitoring stations', p: 'EPA AQS' },
+                    { n: 'Annual criteria pollutants', p: 'EPA AQS' },
+                    { n: 'Baseline screening', p: 'EPA AQS' }
                 ] },
                 { name: 'Attainment &amp; visibility', state: 'open', rows: [
                     { n: 'Nonattainment areas' },
@@ -524,7 +667,7 @@
             key: 'cultural', name: ['Cultural', 'resources'], plain: 'Cultural resources',
             groups: [
                 { name: 'Historic properties', state: 'query', rows: [
-                    { n: 'Listed properties', p: 'NRHP', d: 'doi' }
+                    { n: 'Listed properties', p: 'NRHP' }
                 ] },
                 { name: 'Sensitivity &amp; consultation', state: 'open', rows: [
                     { n: 'Archaeological sensitivity' },
@@ -537,8 +680,8 @@
             key: 'community', name: ['Community', '&amp; receptors'], plain: 'Community & receptors',
             groups: [
                 { name: 'Demographics &amp; screening', state: 'query', rows: [
-                    { n: 'Socioeconomic indicators', p: 'Census ACS', d: 'doc' },
-                    { n: 'NEPAssist screening', p: 'EPA', d: 'multi' }
+                    { n: 'Socioeconomic indicators', p: 'Census ACS' },
+                    { n: 'NEPAssist screening', p: 'EPA' }
                 ] },
                 { name: 'Receptors &amp; access', state: 'open', rows: [
                     { n: 'Residences' },
@@ -551,8 +694,8 @@
             key: 'jurisdiction', name: ['Jurisdiction', '&amp; authority'], plain: 'Jurisdiction & authority',
             groups: [
                 { name: 'Civil boundaries', state: 'drawn', rows: [
-                    { n: 'County boundaries', p: 'Census', d: 'doc' },
-                    { n: 'Tribal lands', p: 'Census', d: 'doc' }
+                    { n: 'County boundaries', p: 'Census' },
+                    { n: 'Tribal lands', p: 'Census' }
                 ] },
                 { name: 'Nested geography', state: 'open', rows: [
                     { n: 'Adjacent counties' },
@@ -572,7 +715,7 @@
             key: 'precedent', name: ['Precedent', '&amp; process'], plain: 'Precedent & process',
             groups: [
                 { name: 'Planning outlines', state: 'drawn', rows: [
-                    { n: 'Western EIS boundaries', p: 'BLM', d: 'doi' }
+                    { n: 'Western EIS boundaries', p: 'BLM' }
                 ] },
                 { name: 'Prior review areas', state: 'open', rows: [
                     { n: 'EIS project areas' },
@@ -613,13 +756,34 @@
        leaf per layer above it, and everything higher moves up to make room, so the
        stack accordions instead of overlapping itself. */
     var X0 = 165, W = 290, DX = 110, DY = -34;
-    var PITCH = 18, BAND_GAP = 38, BOTTOM = 640;
-    var SUB_PITCH = 14;
+    /* A leaf's own depth (-34) is nearly two pitches, so leaves inside a band
+       necessarily overlap — that is what a laminate looks like in this projection.
+       The gap between bands has to clear that overlap and then some, or nine bands
+       read as one thick slab. */
+    var PITCH = 18, BAND_GAP = 45, BOTTOM = 640;
     /* Sub-leaf: inset, narrower, and on the same oblique slope (-18/58 matches
        -34/110), so an opened group reads as detail of its own plane. */
     var SX = 211, SW = 210, SDX = 58, SDY = -18;
+    /* Every sub-leaf is named on its own face, and the pitch is what makes that
+       possible. A leaf is |SDY| = 18 deep, so at any pitch under 18 the leaf above
+       lays its front edge inside this leaf's face and the leaf below lays its rear
+       edge there too — which is exactly where the name goes. At 20 both fall
+       outside the face, the leaves tile with a two-unit gap, and the face is the
+       reader's to write on. This number is load-bearing: below 18 the labels start
+       being struck through again. */
+    var SUB_PITCH = 20;
+    /* The name, on the face, past the leading slanted edge. That edge is at
+       x = 250 where the type is tallest, so 274 clears it by a comfortable margin
+       and still leaves ~165 units before the trailing edge — enough for the
+       longest name in the table. */
+    var SUB_LBL_X = SX + SDX + 5, SUB_LBL_DY = -6;
     var LBL_X = 151, BR_X = 157;
-    var AP = { x: 327, w: 24, dx: 10, dy: -3, v: -14 };
+    /* The core, and the aperture every leaf carries for it. At twenty-four units
+       in a two-hundred-and-ninety-unit leaf it read as a highlighter drawn down
+       the sheet; wide enough to have two faces, it reads as a solid the section
+       was cut through. Same oblique ratio as everything else (-4/13 ≈ -34/110). */
+    var AP = { x: 326, w: 34, dx: 13, dy: -4, v: -14 };
+    var CORE_MID = AP.x + (AP.w + AP.dx) / 2;
 
     function el(name, attrs) {
         var n = document.createElementNS(NS, name);
@@ -653,6 +817,21 @@
     });
     function grp0(band) { return band.groups[band.groups.length - 1].base; }
 
+    /* ---------- where the names live ----------
+       A layer's name has to be readable over everything the drawing puts behind
+       it, and the core is drawn last so that it reads as a cut rather than an
+       underlay. Eleven of the thirteen names in the widest band reach into it.
+
+       So the names get their own layer, appended after the core: the leaf and its
+       name are two groups carrying the same --dy and the same on/hi state, so they
+       travel together, and the name is painted last. Annotation over the section
+       is what a drafting sheet does; the halo is what makes it work.
+
+       grp.subs[ri] is therefore the pair — [leaf, name] — and every site that
+       moves or lights a sub-leaf moves or lights both. */
+    var lblLayer = el('g', { class: 'sub-labels', 'pointer-events': 'none' });
+    function eachSub(pair, fn) { fn(pair[0]); fn(pair[1]); }
+
     BANDS.forEach(function (band, bi) {
         var g = el('g', { class: 'band', 'data-band': band.key });
         var yb = band.groups[0].base, yt = grp0(band);
@@ -665,15 +844,25 @@
         band.groups.forEach(function (grp, gi) {
             var y = grp.base;
 
-            /* Sub-leaves first, so the group's own plane reads in front of them. */
+            /* Sub-leaves first, so the group's own plane reads in front of them.
+               The publisher stays in the reading column: the drawing says what a
+               layer is and where it sits, the column says who publishes it, and
+               splitting them that way keeps every name inside its own face. */
             grp.subs = grp.rows.map(function (r, ri) {
                 var sl = el('g', { class: 'sleaf' });
                 sl.appendChild(el('path', { class: 's-' + grp.state, d: subPath(y) }));
-                var t = el('text', { class: 'sub-lbl', x: SX + 10, y: y - 6 });
-                t.innerHTML = r.n + (r.p ? '  <tspan>' + r.p + '</tspan>' : '');
-                sl.appendChild(t);
                 g.appendChild(sl);
-                return sl;
+
+                var ln = el('g', { class: 'sleaf' });
+                /* innerHTML, not textContent: two names in the table carry an
+                   `&amp;`, because the reading column injects the same strings as
+                   markup and both readings have to resolve the same way. */
+                var t = el('text', { class: 'sub-lbl', x: SUB_LBL_X, y: y + SUB_LBL_DY });
+                t.innerHTML = r.n;
+                ln.appendChild(t);
+                lblLayer.appendChild(ln);
+
+                return [sl, ln];
             });
 
             var lf = el('g', {
@@ -683,8 +872,10 @@
             lf.appendChild(el('path', {
                 class: 'leaf-face f-' + grp.state, 'fill-rule': 'evenodd', d: leafPath(y)
             }));
+            /* The count sits at the end of the name, hard against the leaves it
+               counts: one numeral where a label on every leaf used to be. */
             var gn = el('text', { class: 'gt grp-name', x: LBL_X, y: y - 3, 'text-anchor': 'end' });
-            gn.innerHTML = grp.name;
+            gn.innerHTML = grp.name + '<tspan class="gt-n" dx="5">' + grp.rows.length + '</tspan>';
             lf.appendChild(gn);
             /* A group opens from the drawing as well as from the reading column;
                the band must not close underneath the click. */
@@ -704,9 +895,13 @@
         n1.innerHTML = band.name[0];
         var n2 = el('text', { class: 'dt band-name', x: LBL_X, y: mid + 6, 'text-anchor': 'end' });
         n2.innerHTML = band.name[1];
+        /* The best this band gets, with its count: the furthest-along state the
+           band reaches, so the rail reads as a ladder rather than as three
+           different kinds of remark. */
         var n3 = el('text', { class: 'dt-num', x: LBL_X, y: mid + 20, 'text-anchor': 'end' });
         n3.textContent = band.tally.drawn ? band.tally.drawn + ' drawn'
-                       : band.tally.query ? 'queryable' : 'open';
+                       : band.tally.query ? band.tally.query + ' queryable'
+                       : band.tally.open + ' open';
         blk.appendChild(n1); blk.appendChild(n2); blk.appendChild(n3);
         g.appendChild(blk);
         band.block = blk;
@@ -714,19 +909,52 @@
         stack.appendChild(g);
     });
 
-    /* The core is the hole the section was cut through, so it has to reach past
-       whatever the topmost leaf currently is. */
+    /* ---------- the core ----------
+       The hole the section was cut through, so it has to reach past whatever the
+       topmost leaf currently is.
+
+       Graded, not flat. The laminate is thick and painted at the bottom and thins
+       to outlines at the top, and the core is read against it: dense amber where
+       the ground under a project is already described, nearly clear where it is
+       not. Both gradients are in user space and re-anchored in layout(), because
+       the core's own length changes every time a group opens. */
+    var CORE_FILL = [
+        ['0', 'rgba(249,184,0,.05)'],
+        ['.5', 'rgba(249,184,0,.13)'],
+        ['1', 'rgba(249,184,0,.3)']
+    ];
+    var CORE_EDGE = [
+        ['0', 'rgba(201,143,0,.24)'],
+        ['.5', 'rgba(201,143,0,.58)'],
+        ['1', 'rgba(201,143,0,.95)']
+    ];
+    var defs = el('defs');
+    var grads = [['coreFill', CORE_FILL], ['coreEdge', CORE_EDGE]].map(function (spec) {
+        var lg = el('linearGradient', {
+            id: spec[0], gradientUnits: 'userSpaceOnUse', x1: 0, x2: 0, y1: 0, y2: 1
+        });
+        spec[1].forEach(function (s) {
+            lg.appendChild(el('stop', { offset: s[0], 'stop-color': s[1] }));
+        });
+        defs.appendChild(lg);
+        return lg;
+    });
+    stack.appendChild(defs);
+
     var core = el('g', { class: 'core-grp', 'pointer-events': 'none' });
     var coreParts = {
         front: el('path', { class: 'core-face' }),
-        side: el('path', { class: 'core-face' }),
+        side: el('path', { class: 'core-face core-side' }),
         cap: el('path', { class: 'core-cap' }),
         rule: el('path', { class: 'core-rule' }),
-        label: el('text', { class: 'dt', x: 345, 'text-anchor': 'middle', fill: '#a16207' })
+        label: el('text', { class: 'dt', x: CORE_MID, 'text-anchor': 'middle', fill: '#a16207' })
     };
     coreParts.label.textContent = 'Project area';
     ['front', 'side', 'cap', 'rule', 'label'].forEach(function (k) { core.appendChild(coreParts[k]); });
     stack.appendChild(core);
+
+    /* Last, so the layer names read over the core as well as over the laminate. */
+    stack.appendChild(lblLayer);
 
     /* ---------- the accordion ---------- */
     var expanded = {};
@@ -765,8 +993,8 @@
                striations. They stay on the sheet, because the whole laminate is the
                argument, but they stop spending height on labels nobody is reading. */
             var focused = !sel || sel === band.key;
-            var pitch = focused ? PITCH : 8;
-            var gap = focused ? BAND_GAP : 18;
+            var pitch = focused ? PITCH : 6;
+            var gap = focused ? BAND_GAP : 14;
 
             band.groups.forEach(function (grp, gi) {
                 grp.y = cur;
@@ -785,12 +1013,14 @@
             band.groups.forEach(function (grp, gi) {
                 var open = !!expanded[gkey(band.key, gi)];
                 grp.el.style.setProperty('--dy', (grp.y - grp.base) + 'px');
-                grp.subs.forEach(function (sl, ri) {
+                grp.subs.forEach(function (pair, ri) {
                     /* Collapsed sub-leaves park on their group's plane, so they look
                        like they came out of it rather than fading in from nowhere. */
                     var ty = open ? grp.rows[ri].y : grp.y;
-                    sl.style.setProperty('--dy', (ty - grp.base) + 'px');
-                    sl.classList.toggle('on', open && sel === band.key);
+                    eachSub(pair, function (sl) {
+                        sl.style.setProperty('--dy', (ty - grp.base) + 'px');
+                        sl.classList.toggle('on', open && sel === band.key);
+                    });
                 });
             });
             var yb = band.groups[0].y, yt = band.groups[band.groups.length - 1].y;
@@ -803,11 +1033,25 @@
         });
 
         var cTop = minY + AP.v - 14, cBot = BOTTOM + AP.v + 21;
-        coreParts.front.setAttribute('d', 'M327,' + cTop + ' L351,' + cTop + ' L351,' + cBot + ' L327,' + cBot + ' Z');
-        coreParts.side.setAttribute('d', 'M351,' + cTop + ' L361,' + (cTop - 3) + ' L361,' + (cBot - 3) + ' L351,' + cBot + ' Z');
-        coreParts.cap.setAttribute('d', 'M327,' + cTop + ' L351,' + cTop + ' L361,' + (cTop - 3) + ' L337,' + (cTop - 3) + ' Z');
-        coreParts.rule.setAttribute('d', 'M345,' + (cTop - 3) + ' V' + (cTop - 17));
+        var xL = AP.x, xR = AP.x + AP.w, xB = xR + AP.dx;
+        coreParts.front.setAttribute('d',
+            'M' + xL + ',' + cTop + ' L' + xR + ',' + cTop +
+            ' L' + xR + ',' + cBot + ' L' + xL + ',' + cBot + ' Z');
+        coreParts.side.setAttribute('d',
+            'M' + xR + ',' + cTop + ' L' + xB + ',' + (cTop + AP.dy) +
+            ' L' + xB + ',' + (cBot + AP.dy) + ' L' + xR + ',' + cBot + ' Z');
+        coreParts.cap.setAttribute('d',
+            'M' + xL + ',' + cTop + ' L' + xR + ',' + cTop +
+            ' L' + xB + ',' + (cTop + AP.dy) + ' L' + (xL + AP.dx) + ',' + (cTop + AP.dy) + ' Z');
+        coreParts.rule.setAttribute('d', 'M' + CORE_MID + ',' + (cTop + AP.dy) + ' V' + (cTop - 17));
         coreParts.label.setAttribute('y', cTop - 24);
+
+        /* Re-anchor the grade to the core's current ends, so the dense amber stays
+           on the painted laminate however tall an opened band makes the sheet. */
+        grads.forEach(function (g) {
+            g.setAttribute('y1', cTop.toFixed(1));
+            g.setAttribute('y2', cBot.toFixed(1));
+        });
 
         var top = minY + DY - 44, bottom = BOTTOM + 28;
         setViewBox(Math.round(top), Math.round(bottom - top), animate);
@@ -822,6 +1066,33 @@
     }
     function bandByKey(k) {
         return BANDS.filter(function (b) { return b.key === k; })[0];
+    }
+
+    /* ---------- the meter ----------
+       Same three states as the drawing's key, counted. At rest it is the whole
+       eighty; with a band open it re-scopes to that band, and because the nodes
+       are in the markup rather than rebuilt, the bar travels to the new split
+       instead of cutting to it. */
+    var TOTAL = { drawn: 0, query: 0, open: 0 };
+    BANDS.forEach(function (b) {
+        ['drawn', 'query', 'open'].forEach(function (k) { TOTAL[k] += b.tally[k]; });
+    });
+    var TOTAL_N = TOTAL.drawn + TOTAL.query + TOTAL.open;
+
+    var meter = {
+        scope: document.getElementById('meterScope'),
+        n: { drawn: document.getElementById('mDrawn'), query: document.getElementById('mQuery'), open: document.getElementById('mOpen') },
+        row: { drawn: document.getElementById('mrDrawn'), query: document.getElementById('mrQuery'), open: document.getElementById('mrOpen') },
+        bar: { drawn: document.getElementById('mbDrawn'), query: document.getElementById('mbQuery'), open: document.getElementById('mbOpen') }
+    };
+    function setMeter(t, scope) {
+        var sum = t.drawn + t.query + t.open;
+        meter.scope.textContent = scope;
+        ['drawn', 'query', 'open'].forEach(function (k) {
+            meter.n[k].textContent = t[k];
+            meter.row[k].classList.toggle('is-zero', !t[k]);
+            meter.bar[k].style.width = (sum ? (t[k] / sum) * 100 : 0).toFixed(2) + '%';
+        });
     }
 
     /* ---------- the reading column ---------- */
@@ -840,12 +1111,16 @@
     }
 
     function renderIndex() {
+        clearHi();
         var h = '<p class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">The laminate</p>';
         BANDS.forEach(function (band) {
+            /* The tally must never break across lines: it is one reading, and a
+               band name long enough to wrap is what would push it there. The name
+               takes the wrap instead. */
             h += '<button class="pnl-band" type="button" data-open="' + band.key + '" aria-pressed="false">' +
-                 '<span class="flex items-baseline gap-2">' +
-                   '<span class="text-[14.5px] font-semibold text-ink">' + band.plain + '</span>' +
-                   '<span class="ml-auto text-[10.5px] tabular-nums ' +
+                 '<span class="flex items-baseline gap-2.5">' +
+                   '<span class="min-w-0 text-[14.5px] font-semibold text-ink">' + band.plain + '</span>' +
+                   '<span class="ml-auto shrink-0 whitespace-nowrap text-[10.5px] tabular-nums ' +
                      (band.tally.drawn ? 'text-teal-700' : 'text-slate-400') + '">' + tallyLine(band) + '</span>' +
                  '</span>' +
                  '<span class="block mt-1 text-[11.5px] leading-snug text-slate-500">' + groupNames(band) + '</span>' +
@@ -853,16 +1128,40 @@
         });
         panelEl.innerHTML = h;
         panelEl.querySelectorAll('[data-open]').forEach(function (b) {
-            b.addEventListener('click', function () { paint(b.getAttribute('data-open')); });
+            var k = b.getAttribute('data-open');
+            b.addEventListener('click', function () { paint(k); });
+            /* Pointing at a band in the index lifts it in the drawing, so the two
+               halves of the plate are one thing before anything is clicked. */
+            b.addEventListener('mouseenter', function () { hoverBand(k); });
+            b.addEventListener('mouseleave', function () { hoverBand(null); });
+            b.addEventListener('focus', function () { hoverBand(k); });
+            b.addEventListener('blur', function () { hoverBand(null); });
         });
     }
 
+    function hoverBand(key) {
+        stack.querySelectorAll('.band').forEach(function (g) {
+            g.classList.toggle('hov', !!key && g.getAttribute('data-band') === key);
+        });
+    }
+
+    /* A row's highlight belongs to the row. Replacing the panel's markup destroys
+       the row the pointer is over without any guarantee of a mouseleave, which
+       would leave a leaf and its name lit in the drawing with nothing pointing at
+       them. Clear the lot whenever the rows go. */
+    function clearHi() {
+        stack.querySelectorAll('.sleaf.hi').forEach(function (sl) { sl.classList.remove('hi'); });
+    }
+
     function renderBand(band) {
+        clearHi();
         var h = '<button class="text-xs font-semibold text-teal-700 uppercase tracking-widest mb-3 inline-flex items-center gap-1.5" type="button" id="pnlBack">' +
                 '<i class="fas fa-arrow-left text-[10px]" aria-hidden="true"></i>All bands</button>' +
+                /* The band's split is on the meter directly above, so the header
+                   states only what the meter cannot: how the band is divided. */
                 '<p class="text-xl font-semibold text-ink leading-tight">' + band.plain + '</p>' +
                 '<p class="text-[11px] text-slate-400 uppercase tracking-widest mt-1 mb-4">' +
-                band.leaves + ' groups &middot; ' + tallyLine(band) + '</p>';
+                band.leaves + ' groups</p>';
 
         band.groups.forEach(function (g, gi) {
             var open = !!expanded[gkey(band.key, gi)];
@@ -875,12 +1174,11 @@
                  '</button>';
             if (open) {
                 h += '<div class="grp-rows">';
-                g.rows.forEach(function (r) {
-                    /* A ring rather than a fill for anything the map does not draw:
-                       same hue, unpainted. */
-                    var ring = g.state === 'drawn' ? '' : ' ring';
-                    h += '<div class="ly-row">' +
-                           '<span class="dot' + ring + (r.d ? ' d-' + r.d : '') + '"></span>' +
+                g.rows.forEach(function (r, ri) {
+                    /* No mark on the row. Its group's tag already states the one
+                       thing a mark could say, and the publishing office is named at
+                       the end of the line in the office's own initials. */
+                    h += '<div class="ly-row" data-gi="' + gi + '" data-ri="' + ri + '">' +
                            '<span>' + r.n + '</span>' +
                            (r.p ? '<span class="pub">' + r.p + '</span>' : '') +
                          '</div>';
@@ -893,6 +1191,18 @@
         document.getElementById('pnlBack').addEventListener('click', function () { paint(null); });
         panelEl.querySelectorAll('.grp-toggle').forEach(function (b) {
             b.addEventListener('click', function () { toggleGroup(Number(b.getAttribute('data-gi'))); });
+        });
+        /* The drawing and the column carry the same eighty names. Pointing at a row
+           lights its leaf and its name in the drawing, which is what makes the two
+           readings one reading rather than two lists. */
+        panelEl.querySelectorAll('.ly-row').forEach(function (row) {
+            var pair = band.groups[Number(row.getAttribute('data-gi'))].subs[Number(row.getAttribute('data-ri'))];
+            row.addEventListener('mouseenter', function () {
+                eachSub(pair, function (sl) { sl.classList.add('hi'); });
+            });
+            row.addEventListener('mouseleave', function () {
+                eachSub(pair, function (sl) { sl.classList.remove('hi'); });
+            });
         });
     }
 
@@ -914,11 +1224,15 @@
         sel = key;
         if (key) stack.setAttribute('data-band', key);
         else stack.removeAttribute('data-band');
+        resetBtn.hidden = !key;
 
         stack.querySelectorAll('.band').forEach(function (g) {
             g.classList.toggle('sel', g.getAttribute('data-band') === key);
+            /* The hover lift is the index's preview of a closed band. Once a band
+               is open it has a selected state of its own, and a stale .hov left on
+               a band the reader has since compressed would fight it. */
+            g.classList.remove('hov');
         });
-        deptKey.hidden = !key;
 
         /* Opening a band opens all of it: every group, every layer, in the drawing
            and in the reading column at once. Picking a single group is what the
@@ -927,8 +1241,10 @@
         if (key) {
             var band = bandByKey(key);
             band.groups.forEach(function (g, gi) { expanded[gkey(key, gi)] = true; });
+            setMeter(band.tally, band.plain);
             renderBand(band);
         } else {
+            setMeter(TOTAL, TOTAL_N + ' layers · ' + BANDS.length + ' bands');
             renderIndex();
         }
         layout(true);
@@ -940,7 +1256,7 @@
             paint(sel === k ? null : k);
         });
     });
-    document.getElementById('stackReset').addEventListener('click', function () { paint(null); });
+    resetBtn.addEventListener('click', function () { paint(null); });
 
     layout(false);
     paint(null);
