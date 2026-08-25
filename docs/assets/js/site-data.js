@@ -10,20 +10,20 @@
 var SITE_DATA = {
   "generatedFrom": "pyproject.toml, nepa_mcp.registry, and each server's live MCP tools/list contract",
   "release": {
-    "version": "0.1.2",
+    "version": "0.1.3",
     "license": "BSD-3-Clause",
     "licenseName": "BSD 3-Clause",
     "description": "MCP servers for federal environmental data, regulatory research, and geospatial screening",
     "repository": "https://github.com/pnnl/nepa-mcp"
   },
   "counts": {
-    "servers": 19,
-    "tools": 46,
+    "servers": 20,
+    "tools": 47,
     "layers": 32,
     "agencies": 12,
     "profiles": 5,
-    "capabilities": 78,
-    "credentialFreeServers": 17
+    "capabilities": 79,
+    "credentialFreeServers": 18
   },
   "servers": [
     {
@@ -59,6 +59,14 @@ var SITE_DATA = {
       "accent": "sky",
       "credentials": [],
       "toolCount": 4
+    },
+    {
+      "name": "epa_acres",
+      "description": "EPA ACRES Brownfields property records",
+      "agency": "U.S. Environmental Protection Agency",
+      "accent": "emerald",
+      "credentials": [],
+      "toolCount": 1
     },
     {
       "name": "epa_aqs",
@@ -766,6 +774,53 @@ var SITE_DATA = {
           "required": false,
           "default": "25.0",
           "description": "Buffer distance in miles, valid range 0.1 to 100.0.",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "server": "epa_acres",
+      "name": "get_epa_acres_properties_in_roi",
+      "purpose": "Query EPA ACRES Brownfields property records within a region of interest.",
+      "parameters": [
+        {
+          "name": "latitude",
+          "type": "number",
+          "required": true,
+          "default": "",
+          "description": "Latitude in decimal degrees (WGS84), valid range -90 to 90.",
+          "choices": []
+        },
+        {
+          "name": "longitude",
+          "type": "number",
+          "required": true,
+          "default": "",
+          "description": "Longitude in decimal degrees (WGS84), valid range -180 to 180.",
+          "choices": []
+        },
+        {
+          "name": "buffer_miles",
+          "type": "number",
+          "required": false,
+          "default": "25.0",
+          "description": "Buffer distance in miles, valid range 0.1 to 100.0.",
+          "choices": []
+        },
+        {
+          "name": "max_results",
+          "type": "number",
+          "required": false,
+          "default": "100",
+          "description": "Maximum property records to return, valid range 1 to 100 (default: 100).",
+          "choices": []
+        },
+        {
+          "name": "result_offset",
+          "type": "number",
+          "required": false,
+          "default": "0",
+          "description": "Zero-based offset into the nearest-first property list, valid range 0 to 9999 (default: 0).",
           "choices": []
         }
       ]

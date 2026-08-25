@@ -75,7 +75,7 @@ var CLIENT_CONFIGS = [
         command: 'nepa-mcp configure codex',
         path: '~/.codex/config.toml',
         scope: 'One global file, so any directory works. Start a new Codex task afterward.',
-        note: 'The Codex plugin below registers the same 19 servers and adds the screening skill. Use one or the other — do not run this command as well.'
+        note: 'The Codex plugin below registers the same 20 servers and adds the screening skill. Use one or the other — do not run this command as well.'
     }
 ];
 
@@ -146,6 +146,14 @@ var SERVER_COVERAGE = {
             ['Essential Fish Habitat', 'EFH areas and HAPC designations'],
             ['Salmon habitat', 'Salmon EFH by HUC-8 watershed'],
             ['Managed species', 'HMS, coastal pelagic, and groundfish']
+        ]
+    },
+    epa_acres: {
+        icon: 'fa-industry',
+        items: [
+            ['Brownfields grant properties', 'Identifiable EPA ACRES records near the project area'],
+            ['Nearest-first screening', 'Distance, location, EPA region, FRS ID, and ACRES ID'],
+            ['Evidence boundary', 'Not a complete inventory or contamination determination']
         ]
     },
     epa_aqs: {
@@ -760,7 +768,7 @@ function buildServerCard(server) {
 // Server cards shown before the "show more" control. Eight fills whole rows at
 // the four- and two-column grids; the three-column grid between them ends one
 // short, where the fade reads as a cut list rather than a gap. No count below
-// twelve divides evenly into 2, 3, and 4, and twelve of nineteen is no preview.
+// twelve divides evenly into 2, 3, and 4, and twelve of twenty is no preview.
 var SERVER_PREVIEW = 8;
 
 // Cards in the clipped teaser row below the preview. Four fills the widest grid;
