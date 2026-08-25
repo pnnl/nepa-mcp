@@ -1,7 +1,7 @@
 # MCP Data Source Licenses
 
 This reference consolidates data-source license notes for the current flat
-19-server repository. It is a public-release aid, not legal advice. Verify final
+20-server repository. It is a public-release aid, not legal advice. Verify final
 license determinations before publishing or redistributing derived datasets.
 
 | Server | Agency / Publisher | Dataset / Service | Primary endpoint | Auth required | License / terms signal | Risk flag | Notes |
@@ -10,6 +10,7 @@ license determinations before publishing or redistributing derived datasets.
 | `census` | U.S. Census Bureau | ACS 5-Year profile API and TIGERweb county boundaries | `api.census.gov/data/.../acs/acs5/profile`; `tigerweb.geo.census.gov/.../tigerWMS_Current/MapServer` | Yes for ACS API key | ACS API metadata declares CC0; TIGERweb follows Census API terms with attribution requirements | Medium | Census API terms require attribution and prohibit misuse such as re-identification. |
 | `cfr` | OFR / NARA / GPO; Federal Register | eCFR, Federal Register documents, Executive Orders | `ecfr.gov/api`; `federalregister.gov/api/v1` | No | Unrestricted reproduction / republication for Federal Register materials under 1 CFR 2.6 | Low | API responses are official federal regulatory publication data; verify citation currency. |
 | `efh` | NOAA Fisheries | EFH Mapper, HAPC, Pacific salmon EFH, HMS/CPS/groundfish EFH | `services2.arcgis.com/C8EMgrsFcRFL6LrL/.../FeatureServer` | No | Federal agency data; NOAA Fisheries service terms should be verified | Medium | Current tool docs disclose the applicable NOAA Fisheries scope. No-hit outside a dataset's geography is not a national absence finding. |
+| `epa_acres` | EPA | ACRES Brownfields property points (Envirofacts facility points) | `geopub.epa.gov/ArcGIS/rest/services/EMEF/efpoints/MapServer/5` | No | Federal agency data; no layer-specific license identified in the ArcGIS metadata | Medium | ACRES records are grantee-reported and cover only EPA Brownfields grant-program properties, not all brownfields or contaminated sites. Verify EPA reuse terms and preserve per-record facility URLs. |
 | `epa_aqs` | EPA | Air Quality System API | `aqs.epa.gov/data/api` | Yes | EPA web policies permit non-commercial, scientific, and educational use; API has rate-limit and account terms | High | Requires EPA AQS email and API key. Avoid presenting screening comparisons as formal NAAQS compliance determinations. |
 | `esa_ranges` | NOAA Fisheries | West Coast Region ESA-listed salmon and steelhead ranges by HUC-12 | `maps.fisheries.noaa.gov/.../Ranges_dice/FeatureServer` | No | Federal agency data; NOAA Fisheries service terms should be verified | Medium | Current tool docs disclose West Coast Region scope and salmon/steelhead coverage. |
 | `fema_nfhl` | FEMA | National Flood Hazard Layer | `hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer` | No | No explicit NFHL service license found in the reviewed source materials | Medium | Treat results as screening data, not a site-specific engineering flood determination. |

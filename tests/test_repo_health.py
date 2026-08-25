@@ -26,6 +26,7 @@ SERVER_NAMES = [
     "census",
     "cfr",
     "efh",
+    "epa_acres",
     "epa_aqs",
     "esa_ranges",
     "fema_nfhl",

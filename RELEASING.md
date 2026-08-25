@@ -63,16 +63,16 @@ the first production upload.
 1. Create an annotated stable tag on the exact merge commit:
 
    ```bash
-   git tag -a v0.1.2 -m "NEPA MCP v0.1.2" <merge-commit>
-   git push origin v0.1.2
+   git tag -a v0.1.3 -m "NEPA MCP v0.1.3" <merge-commit>
+   git push origin v0.1.3
    ```
 
 2. Dispatch `Publish to PyPI` from that same tag. With the GitHub CLI:
 
    ```bash
    gh workflow run publish-pypi.yml \
-     --ref v0.1.2 \
-     -f tag=v0.1.2 \
+     --ref v0.1.3 \
+     -f tag=v0.1.3 \
      -f confirmation=publish
    ```
 
@@ -88,13 +88,13 @@ the first production upload.
 2. Clean-install the production package on Python 3.12 and 3.14:
 
    ```bash
-   pipx install nepa-mcp==0.1.2
+   pipx install nepa-mcp==0.1.3
    nepa-mcp --version
    nepa-mcp doctor
    nepa-mcp list-servers
    ```
 
-3. Start all 19 installed servers over MCP stdio and confirm all 46 tools.
+3. Start all 20 installed servers over MCP stdio and confirm all 47 tools.
 4. Run representative GIS and CFR live calls.
 5. Publish the matching stable GitHub release.
 6. Update the `github-pages` branch to the stable version and production

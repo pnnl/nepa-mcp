@@ -40,6 +40,16 @@
         "PYTHONUNBUFFERED": "1"
       }
     },
+    "epa_acres": {
+      "command": "nepa-mcp",
+      "args": [
+        "server",
+        "epa_acres"
+      ],
+      "env": {
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
     "epa_aqs": {
       "command": "nepa-mcp",
       "args": [

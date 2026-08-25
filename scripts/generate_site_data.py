@@ -33,6 +33,7 @@ SERVER_PRESENTATION: dict[str, dict[str, str]] = {
     "census": {"agency": "U.S. Census Bureau", "accent": "indigo"},
     "cfr": {"agency": "Federal Register / GPO", "accent": "slate"},
     "efh": {"agency": "NOAA Fisheries", "accent": "sky"},
+    "epa_acres": {"agency": "U.S. Environmental Protection Agency", "accent": "emerald"},
     "epa_aqs": {"agency": "U.S. Environmental Protection Agency", "accent": "emerald"},
     "esa_ranges": {"agency": "NOAA Fisheries", "accent": "sky"},
     "fema_nfhl": {"agency": "Federal Emergency Management Agency", "accent": "rose"},
@@ -56,8 +57,8 @@ FEDERAL_AGENCY_COUNT = 12
 
 # Verified invariants. The generator fails loudly rather than quietly shipping a
 # page whose headline numbers drifted away from the code.
-EXPECTED_SERVER_COUNT = 19
-EXPECTED_TOOL_COUNT = 46
+EXPECTED_SERVER_COUNT = 20
+EXPECTED_TOOL_COUNT = 47
 EXPECTED_LAYER_COUNT = 32
 EXPECTED_PROFILE_SIZES = {
     "screening": 12,

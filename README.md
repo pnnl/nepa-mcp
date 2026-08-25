@@ -1,6 +1,6 @@
 <div align="center" style="text-align: center;">
 
-  <img src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.2/docs/assets/permitai-nepa-mcp-toolkit-tm.svg" alt="PermitAI — NEPA MCP Toolkit™" width="740">
+  <img src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.3/docs/assets/permitai-nepa-mcp-toolkit-tm.svg" alt="PermitAI — NEPA MCP Toolkit™" width="740">
   <br>
 
   <p>
@@ -9,10 +9,10 @@
 
   <p>
   Works with<br>
-  <a href="#configure-an-mcp-client"><img alt="Codex MCP client" src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.2/docs/assets/badges/codex-client-config.svg" height="20"></a>
-  <a href="#codex-plugin"><img alt="Codex plugin" src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.2/docs/assets/badges/codex-plugin.svg" height="20"></a>
+  <a href="#configure-an-mcp-client"><img alt="Codex MCP client" src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.3/docs/assets/badges/codex-client-config.svg" height="20"></a>
+  <a href="#codex-plugin"><img alt="Codex plugin" src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.3/docs/assets/badges/codex-plugin.svg" height="20"></a>
   <a href="#configure-an-mcp-client"><img alt="Claude Code client configuration" src="https://img.shields.io/badge/Claude_Code-MCP_Client-D97757?style=flat-square&amp;logo=anthropic&amp;logoColor=white" height="20"></a>
-  <a href="#configure-an-mcp-client"><img alt="VS Code client configuration" src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.2/docs/assets/badges/vscode-mcp-client.svg" height="20"></a>
+  <a href="#configure-an-mcp-client"><img alt="VS Code client configuration" src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.3/docs/assets/badges/vscode-mcp-client.svg" height="20"></a>
   </p>
 
   <p>
@@ -31,8 +31,8 @@ toolkit. It gives AI agents structured access to federal environmental,
 regulatory, biological, cultural, socioeconomic, and jurisdictional data used
 in NEPA screening and permitting research.
 
-The current inventory includes 19 MCP servers, 46 MCP tools, and 32 GIS
-layers. Together, the tools and layers represent **78 environmental and
+The current inventory includes 20 MCP servers, 47 MCP tools, and 32 GIS
+layers. Together, the tools and layers represent **79 environmental and
 regulatory research capabilities**. These capabilities draw on public data
 from 12 federal agencies, along with interagency and nonfederal sources.
 
@@ -110,7 +110,7 @@ new task.
 
 ## Codex Plugin
 
-The Codex plugin registers all 19 servers and includes the `nepa-screening`
+The Codex plugin registers all 20 servers and includes the `nepa-screening`
 skill. If you use the plugin, do not also run `nepa-mcp configure codex`.
 
 Install and verify the Python runtime before adding the plugin:
@@ -120,18 +120,18 @@ pipx install nepa-mcp
 nepa-mcp doctor
 ```
 
-`doctor` should report `Installed servers: 19`. Then add the marketplace in
+`doctor` should report `Installed servers: 20`. Then add the marketplace in
 Codex Desktop:
 
 1. Open **Plugins** and select **Add plugin marketplace**.
-2. Enter `pnnl/nepa-mcp` for **Source** and `v0.1.2` for **Git ref**.
+2. Enter `pnnl/nepa-mcp` for **Source** and `v0.1.3` for **Git ref**.
 3. Leave **Sparse paths** blank, then select **Add marketplace**.
 4. Install **NEPA-MCP** from the **NEPA-MCP Local** marketplace.
 
 The equivalent Codex CLI commands are:
 
 ```bash
-codex plugin marketplace add pnnl/nepa-mcp --ref v0.1.2
+codex plugin marketplace add pnnl/nepa-mcp --ref v0.1.3
 codex plugin add nepa-mcp@nepa-mcp-local
 ```
 
@@ -152,7 +152,7 @@ partial, and failed layer counts so source coverage remains visible.
 
 <p align="center">
   <a href="https://github.com/pnnl/nepa-mcp/blob/main/docs/map-composer.md">
-    <img src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.2/docs/assets/map-composer-washington-dc-chesapeake.png" alt="Interactive Map Composer view of a 20-mile Chesapeake Bay watershed project area with 12 overlays visible" width="900">
+    <img src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.3/docs/assets/map-composer-washington-dc-chesapeake.png" alt="Interactive Map Composer view of a 20-mile Chesapeake Bay watershed project area with 12 overlays visible" width="900">
   </a>
 </p>
 
@@ -165,7 +165,7 @@ complete 32-layer catalog, output behavior, provenance, and artifact storage.
 
 ## Credentials
 
-Credentials are not required to install NEPA MCP or use the other 17 servers.
+Credentials are not required to install NEPA MCP or use the other 18 servers.
 The Census and EPA AQS servers require credentials before they can return data:
 
 | Server | Environment variables |
@@ -195,6 +195,7 @@ Credentials are not copied into MCP client or plugin configuration, and
 | `census` | [U.S. Census Bureau](https://www.census.gov/) | ACS 5-Year socioeconomic indicators for intersecting TIGERweb counties |
 | `cfr` | [Office of the Federal Register / National Archives](https://www.archives.gov/federal-register) and [U.S. Government Publishing Office](https://www.gpo.gov/) | eCFR and Federal Register records, including executive orders |
 | `efh` | [NOAA Fisheries](https://www.fisheries.noaa.gov/) | EFH Mapper data for EFH, HAPC, salmon, HMS, coastal pelagic species, and groundfish screening |
+| `epa_acres` | [U.S. Environmental Protection Agency](https://www.epa.gov/) | ACRES grant-reported Brownfields property records for redevelopment and site-screening context |
 | `epa_aqs` | [U.S. Environmental Protection Agency](https://www.epa.gov/) | Air Quality System monitoring data and NAAQS screening comparisons |
 | `esa_ranges` | [NOAA Fisheries, West Coast Region](https://www.fisheries.noaa.gov/about/west-coast-region) | ESA-listed salmon and steelhead ranges by HUC-12 watershed |
 | `fema_nfhl` | [Federal Emergency Management Agency](https://www.fema.gov/) | National Flood Hazard Layer flood zones, levees, and water areas |
@@ -335,7 +336,7 @@ or cite it as:
   year         = {2026},
   institution  = {Pacific Northwest National Laboratory},
   url          = {https://github.com/pnnl/nepa-mcp},
-  version      = {0.1.2},
+  version      = {0.1.3},
   license      = {BSD-3-Clause}
 }
 ```

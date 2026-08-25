@@ -23,6 +23,10 @@ Before location-scoped calls, confirm or derive latitude, longitude, and buffer 
 - Use `fema_nfhl` for flood zones, levees, water areas, and flood-risk summaries.
 - Use `epa_aqs` for air monitors, annual air-quality data, and NAAQS screening context.
 - Use `nepa_assist` for EPA NEPAssist screening categories.
+- Use `epa_acres` for identifiable EPA ACRES Brownfields property records; treat
+  results as grant-reported screening data, not a complete contaminated-site
+  inventory. Dense results are nearest-first and paginated; follow the returned
+  `result_offset` instruction when the complete property list is needed.
 - Use `padus` for protected areas, ownership, management, and conservation status.
 - Use `blm` for BLM land use plans, wilderness areas, and national monuments.
 - Use `usace` for Corps districts and wetland delineation regions.

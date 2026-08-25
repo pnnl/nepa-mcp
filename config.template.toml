@@ -18,6 +18,11 @@ command = "nepa-mcp"
 args = ["server", "efh"]
 env = { PYTHONUNBUFFERED = "1" }
 
+[mcp_servers.epa_acres]
+command = "nepa-mcp"
+args = ["server", "epa_acres"]
+env = { PYTHONUNBUFFERED = "1" }
+
 [mcp_servers.epa_aqs]
 command = "nepa-mcp"
 args = ["server", "epa_aqs"]
