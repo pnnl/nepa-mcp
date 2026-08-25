@@ -56,7 +56,10 @@ class TestParsingThroughput:
     def test_large_feature_set_parses_quickly(self, monkeypatch):
         api = _load_padus_api()
         _patch_roi(api, monkeypatch)
-        features = [{"attributes": {"Own_Type": "FED", "Own_Name": f"Owner {i}", "GIS_Acres": i}} for i in range(5000)]
+        features = [
+            {"attributes": {"Category": "Fee", "Own_Type": "FED", "Own_Name": f"Owner {i}", "GIS_Acres": i}}
+            for i in range(5000)
+        ]
         _patch_features(api, monkeypatch, features)
         start = time.perf_counter()
         result = api.get_padus_in_roi(34.5, -106.5)
@@ -69,7 +72,15 @@ class TestParsingThroughput:
         api = _load_padus_api()
         _patch_roi(api, monkeypatch)
         features = [
-            {"attributes": {"Own_Type": f"T{i % 20}", "Own_Name": f"Owner {i}", "GIS_Acres": i}} for i in range(5000)
+            {
+                "attributes": {
+                    "Category": f"C{i % 7}",
+                    "Own_Type": f"T{i % 20}",
+                    "Own_Name": f"Owner {i}",
+                    "GIS_Acres": i,
+                }
+            }
+            for i in range(5000)
         ]
         _patch_features(api, monkeypatch, features)
         data = api.get_padus_in_roi(34.5, -106.5)
@@ -77,20 +88,26 @@ class TestParsingThroughput:
         out = api.format_padus_summary(data)
         elapsed = time.perf_counter() - start
         # Top-10 slice keeps the rendered list short regardless of input size.
-        assert "Top 10 Largest Records by Mapped Acres:" in out
+        assert "Top 10 Largest Intersecting Source Features by Full Mapped Acreage (not clipped to ROI):" in out
         assert elapsed < 1.0
 
 
-class TestAcreageAggregation:
-    def test_acreage_summed_per_owner_type(self, monkeypatch):
+class TestAcreagePresentation:
+    def test_source_acreage_is_not_aggregated_as_roi_area(self, monkeypatch):
         api = _load_padus_api()
         _patch_roi(api, monkeypatch)
-        # 300 FED records of 10 acres each, 200 STAT of 5 acres each.
-        features = [{"attributes": {"Own_Type": "FED", "GIS_Acres": 10}} for _ in range(300)]
-        features += [{"attributes": {"Own_Type": "STAT", "GIS_Acres": 5}} for _ in range(200)]
+        # 300 fee records of 10 acres each, 200 designation records of 5 acres each.
+        features = [{"attributes": {"Category": "Fee", "Own_Type": "FED", "GIS_Acres": 10}} for _ in range(300)]
+        features += [
+            {"attributes": {"Category": "Designation", "Own_Type": "DESG", "GIS_Acres": 5}} for _ in range(200)
+        ]
         _patch_features(api, monkeypatch, features)
         data = api.get_padus_in_roi(34.5, -106.5)
         out = api.format_padus_summary(data)
         assert data["total_records"] == 500
-        assert "FED: 300 records, 3,000 acres" in out
-        assert "STAT: 200 records, 1,000 acres" in out
+        assert "Federal (FED): 300 records" in out
+        assert "Designation (DESG): 200 records" in out
+        assert "Fee: 300 records" in out
+        assert "Designation: 200 records" in out
+        assert "3,000 acres" not in out
+        assert "1,000 acres" not in out
