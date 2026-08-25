@@ -1,27 +1,52 @@
 """
 PADUS (Protected Areas Database of the United States) protected-area utilities.
 
-This module provides access to USGS PAD-US protected area ownership and management
-records. PAD-US is not a cadastral ownership source and should not be treated as
-complete private land ownership coverage.
+This module provides access to USGS PAD-US protected-area records, covering fee
+ownership, designations, easements, marine, and proclamation boundaries. PAD-US is
+not a cadastral ownership source and should not be treated as complete private land
+ownership coverage.
 
 API Documentation: https://www.usgs.gov/programs/gap-analysis-project/science/pad-us-data-overview
 """
 
 from __future__ import annotations
 
+from collections import Counter
 from typing import Dict
 
 from nepa_mcp_common.arcgis import ArcGISService
 
 # PADUS 4.1 MapServer endpoints (National Map)
-PADUS_BASE_URL = "https://edits.nationalmap.gov/arcgis/rest/services/PAD-US/PAD_US_4_1/MapServer"
+PADUS_BASE_URL = "https://edits.nationalmap.gov/arcgis/rest/services/PAD-US/PAD_US_gaz_combined/MapServer"
+PADUS_COMBINED_LAYER = 0  # PADUS4_1Combined layer: Fee, Designation, Easement, Marine, Proclamation
+
+# Retained for callers that still reference the fee-only service.
+PADUS_FEE_BASE_URL = "https://edits.nationalmap.gov/arcgis/rest/services/PAD-US/PAD_US_4_1/MapServer"
 PADUS_FEE_LAYER = 0  # PADUS4_1Fee layer
+
+PADUS_OWNER_TYPE_LABELS = {
+    "DESG": "Designation",
+    "DIST": "Regional Agency Special District",
+    "FED": "Federal",
+    "JNT": "Joint",
+    "LOC": "Local Government",
+    "NGO": "Non-Governmental Organization",
+    "PVT": "Private",
+    "STAT": "State",
+    "TERR": "Territorial",
+    "TRIB": "American Indian Lands",
+    "UNK": "Unknown",
+}
 
 
 def get_padus_in_roi(lat: float, lon: float, buffer_miles: float = 25.0) -> Dict:
     """
-    Query PADUS protected-area ownership records within a Region of Interest.
+    Query PADUS protected-area records within a Region of Interest.
+
+    Uses the PAD-US Combined layer, which carries designation records such as
+    Wilderness Study Areas, National Conservation Areas, and designated Wilderness
+    alongside fee ownership. Designation status carries management standards that
+    fee ownership alone does not express.
 
     Args:
         lat: Latitude in decimal degrees (WGS84)
@@ -33,17 +58,19 @@ def get_padus_in_roi(lat: float, lon: float, buffer_miles: float = 25.0) -> Dict
         - center: Query center point
         - buffer_miles: Buffer distance
         - total_records: Number of PAD-US records found
-        - records: List of protected-area ownership/management records
+        - records: List of protected-area ownership, management, and designation records
     """
     buffer_geom = ArcGISService.create_roi_buffer(lat, lon, buffer_miles)
 
     result = ArcGISService.query_features(
         PADUS_BASE_URL,
-        PADUS_FEE_LAYER,
+        PADUS_COMBINED_LAYER,
         buffer_geom,
-        out_fields="Own_Type,Own_Name,Mang_Type,Mang_Name,Des_Tp,Unit_Nm,State_Nm,GIS_Acres,GAP_Sts,IUCN_Cat,Date_Est",
+        out_fields=(
+            "Category,Own_Type,Own_Name,Mang_Type,Mang_Name,Des_Tp,Unit_Nm,State_Nm,GIS_Acres,GAP_Sts,IUCN_Cat,Date_Est"
+        ),
         timeout=30,
-        service_name="USGS PAD-US Fee layer",
+        service_name="USGS PAD-US Combined layer",
     )
 
     records = []
@@ -58,15 +85,22 @@ def get_padus_in_roi(lat: float, lon: float, buffer_miles: float = 25.0) -> Dict
         except (ValueError, TypeError):
             gis_acres = 0.0
 
+        category = attrs.get("Category") or "Unknown"
+        owner_type = attrs.get("Own_Type") or "Unknown"
+        source_gis_acres = round(gis_acres, 2)
         record = {
-            "owner_type": attrs.get("Own_Type", "Unknown"),
-            "owner_name": attrs.get("Own_Name", "Unknown"),
+            "category": category,
+            "owner_type": owner_type,
+            "owner_name": attrs.get("Own_Name") or "Unknown",
             "manager_type": attrs.get("Mang_Type", ""),
             "manager_name": attrs.get("Mang_Name", ""),
             "designation_type": attrs.get("Des_Tp", ""),
             "unit_name": attrs.get("Unit_Nm", ""),
             "state": attrs.get("State_Nm", ""),
-            "gis_acres": round(gis_acres, 2),
+            # Preserve the upstream feature-area attribute for callers that use
+            # it, but do not present it as area within the ROI.
+            "gis_acres": source_gis_acres,
+            "source_gis_acres": source_gis_acres,
             "gap_status": attrs.get("GAP_Sts", ""),
             "iucn_category": attrs.get("IUCN_Cat", ""),
             "date_established": attrs.get("Date_Est", ""),
@@ -108,12 +142,6 @@ def format_padus_summary(padus_data: Dict) -> str:
             by_owner_type[owner_type] = []
         by_owner_type[owner_type].append(record)
 
-    # Calculate total acreage by owner type
-    acreage_summary = {}
-    for owner_type, owner_records in by_owner_type.items():
-        total_acres = sum(p["gis_acres"] for p in owner_records)
-        acreage_summary[owner_type] = {"count": len(owner_records), "acres": round(total_acres, 2)}
-
     # Build summary text
     lines = [
         f"Location: ({lat}, {lon})",
@@ -126,14 +154,23 @@ def format_padus_summary(padus_data: Dict) -> str:
     for warning in padus_data.get("warnings", []):
         lines.extend([f"Warning: {warning}", ""])
 
-    for owner_type in sorted(acreage_summary.keys()):
-        count = acreage_summary[owner_type]["count"]
-        acres = acreage_summary[owner_type]["acres"]
-        lines.append(f"  {owner_type}: {count} records, {acres:,.0f} acres")
+    for owner_type in sorted(by_owner_type):
+        count = len(by_owner_type[owner_type])
+        record_label = "record" if count == 1 else "records"
+        owner_label = PADUS_OWNER_TYPE_LABELS.get(owner_type, owner_type)
+        lines.append(f"  {owner_label} ({owner_type}): {count} {record_label}")
+
+    by_category = Counter((record.get("category") or "Unknown") for record in records)
+    if by_category:
+        lines.extend(["", "PAD-US Records by Category:"])
+        for category in sorted(by_category):
+            count = by_category[category]
+            record_label = "record" if count == 1 else "records"
+            lines.append(f"  {category}: {count} {record_label}")
 
     # Top 10 records by acreage
     if records:
-        lines.extend(["", "Top 10 Largest Records by Mapped Acres:"])
+        lines.extend(["", "Top 10 Largest Intersecting Source Features by Full Mapped Acreage (not clipped to ROI):"])
 
         records_by_size = sorted(records, key=lambda x: x["gis_acres"], reverse=True)[:10]
 
@@ -141,13 +178,18 @@ def format_padus_summary(padus_data: Dict) -> str:
             name = record["unit_name"] or record["owner_name"]
             acres = record["gis_acres"]
             owner = record["owner_type"]
-            lines.append(f"  {i}. {name} ({owner}) - {acres:,.0f} acres")
+            category = record.get("category") or "Unknown"
+            lines.append(f"  {i}. {name} ({category}; {owner}) - {acres:,.0f} source-feature acres")
 
     lines.extend(
         [
             "",
             "Data Source: USGS Protected Areas Database (PAD-US) v4.1",
             "Note: PAD-US is protected-area screening data, not comprehensive cadastral land ownership.",
+            "Note: Source-feature acreage is the full mapped area of each intersecting source feature and may "
+            "extend beyond the ROI.",
+            "Note: PAD-US Combined-layer records may overlap within and across categories; source-feature "
+            "acreages are not additive and do not represent total land area within the ROI.",
         ]
     )
 

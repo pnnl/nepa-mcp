@@ -1,6 +1,6 @@
 <div align="center" style="text-align: center;">
 
-  <img src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.1/docs/assets/permitai-nepa-mcp-toolkit-tm.svg" alt="PermitAI — NEPA MCP Toolkit™" width="740">
+  <img src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.2/docs/assets/permitai-nepa-mcp-toolkit-tm.svg" alt="PermitAI — NEPA MCP Toolkit™" width="740">
   <br>
 
   <p>
@@ -9,10 +9,10 @@
 
   <p>
   Works with<br>
-  <a href="#configure-an-mcp-client"><img alt="Codex MCP client" src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.1/docs/assets/badges/codex-client-config.svg" height="20"></a>
-  <a href="#codex-plugin"><img alt="Codex plugin" src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.1/docs/assets/badges/codex-plugin.svg" height="20"></a>
+  <a href="#configure-an-mcp-client"><img alt="Codex MCP client" src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.2/docs/assets/badges/codex-client-config.svg" height="20"></a>
+  <a href="#codex-plugin"><img alt="Codex plugin" src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.2/docs/assets/badges/codex-plugin.svg" height="20"></a>
   <a href="#configure-an-mcp-client"><img alt="Claude Code client configuration" src="https://img.shields.io/badge/Claude_Code-MCP_Client-D97757?style=flat-square&amp;logo=anthropic&amp;logoColor=white" height="20"></a>
-  <a href="#configure-an-mcp-client"><img alt="VS Code client configuration" src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.1/docs/assets/badges/vscode-mcp-client.svg" height="20"></a>
+  <a href="#configure-an-mcp-client"><img alt="VS Code client configuration" src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.2/docs/assets/badges/vscode-mcp-client.svg" height="20"></a>
   </p>
 
   <p>
@@ -57,6 +57,7 @@ export.
 - [`pipx`](https://pipx.pypa.io/) for an isolated installation
 
 Install the stable package from PyPI:
+<a href="https://pypi.org/project/nepa-mcp/"><img alt="PyPI version" src="https://img.shields.io/pypi/v/nepa-mcp?style=flat-square&amp;logo=pypi&amp;logoColor=white&amp;label=PyPI&amp;color=3775A9" height="20"></a>
 
 ```bash
 pipx install nepa-mcp
@@ -79,6 +80,17 @@ Upgrade an existing PyPI installation:
 ```bash
 pipx upgrade nepa-mcp
 ```
+
+If `pipx upgrade` keeps an older version that was originally installed from a
+local checkout or Git URL, replace that pipx environment with the current PyPI
+release:
+
+```bash
+pipx install --force nepa-mcp
+nepa-mcp doctor
+```
+
+This leaves the separate per-user NEPA MCP credential file unchanged.
 
 ## Configure an MCP Client
 
@@ -112,14 +124,14 @@ nepa-mcp doctor
 Codex Desktop:
 
 1. Open **Plugins** and select **Add plugin marketplace**.
-2. Enter `pnnl/nepa-mcp` for **Source** and `v0.1.1` for **Git ref**.
+2. Enter `pnnl/nepa-mcp` for **Source** and `v0.1.2` for **Git ref**.
 3. Leave **Sparse paths** blank, then select **Add marketplace**.
 4. Install **NEPA-MCP** from the **NEPA-MCP Local** marketplace.
 
 The equivalent Codex CLI commands are:
 
 ```bash
-codex plugin marketplace add pnnl/nepa-mcp --ref v0.1.1
+codex plugin marketplace add pnnl/nepa-mcp --ref v0.1.2
 codex plugin add nepa-mcp@nepa-mcp-local
 ```
 
@@ -140,7 +152,7 @@ partial, and failed layer counts so source coverage remains visible.
 
 <p align="center">
   <a href="https://github.com/pnnl/nepa-mcp/blob/main/docs/map-composer.md">
-    <img src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.1/docs/assets/map-composer-washington-dc-chesapeake.png" alt="Interactive Map Composer view of a 20-mile Chesapeake Bay watershed project area with 12 overlays visible" width="900">
+    <img src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.2/docs/assets/map-composer-washington-dc-chesapeake.png" alt="Interactive Map Composer view of a 20-mile Chesapeake Bay watershed project area with 12 overlays visible" width="900">
   </a>
 </p>
 
@@ -323,7 +335,7 @@ or cite it as:
   year         = {2026},
   institution  = {Pacific Northwest National Laboratory},
   url          = {https://github.com/pnnl/nepa-mcp},
-  version      = {0.1.1},
+  version      = {0.1.2},
   license      = {BSD-3-Clause}
 }
 ```

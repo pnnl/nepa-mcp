@@ -68,6 +68,7 @@ class TestRecordParsing:
             [
                 {
                     "attributes": {
+                        "Category": "Designation",
                         "Own_Type": "FED",
                         "Own_Name": "BLM",
                         "Mang_Type": "FED",
@@ -86,6 +87,7 @@ class TestRecordParsing:
         result = api.get_padus_in_roi(34.5, -106.5, 25.0)
         assert result["total_records"] == 1
         rec = result["records"][0]
+        assert rec["category"] == "Designation"
         assert rec["owner_type"] == "FED"
         assert rec["owner_name"] == "BLM"
         assert rec["manager_type"] == "FED"
@@ -94,6 +96,7 @@ class TestRecordParsing:
         assert rec["unit_name"] == "Rio Grande del Norte"
         assert rec["state"] == "NM"
         assert rec["gis_acres"] == 242455.5
+        assert rec["source_gis_acres"] == 242455.5
         assert rec["gap_status"] == "2"
         assert rec["iucn_category"] == "III"
         assert rec["date_established"] == "2013"
@@ -106,6 +109,7 @@ class TestRecordParsing:
         _patch_query(api, monkeypatch, [{"attributes": {}}])
         result = api.get_padus_in_roi(34.5, -106.5)
         rec = result["records"][0]
+        assert rec["category"] == "Unknown"
         assert rec["owner_type"] == "Unknown"
         assert rec["owner_name"] == "Unknown"
         assert rec["manager_type"] == ""
@@ -132,6 +136,24 @@ class TestRecordParsing:
         result = api.get_padus_in_roi(34.5, -106.5)
         assert result["total_records"] == 0
         assert result["records"] == []
+
+    def test_requests_combined_layer_category_without_geometry(self, monkeypatch):
+        api = _load_padus_api()
+        _patch_roi(api, monkeypatch)
+        captured = {}
+
+        def query_features(*args, **kwargs):
+            captured["args"] = args
+            captured["kwargs"] = kwargs
+            return ArcGISFeatureQueryResult(features=[], warnings=[])
+
+        monkeypatch.setattr(api.ArcGISService, "query_features", query_features)
+        api.get_padus_in_roi(34.5, -106.5)
+
+        assert captured["args"][:2] == (api.PADUS_BASE_URL, api.PADUS_COMBINED_LAYER)
+        assert "Category" in captured["kwargs"]["out_fields"].split(",")
+        assert captured["kwargs"].get("return_geometry", False) is False
+        assert "out_sr" not in captured["kwargs"]
 
 
 # ---------------------------------------------------------------------------
@@ -177,25 +199,30 @@ class TestFormatter:
         data = self._data(
             [
                 {
+                    "category": "Fee",
                     "owner_type": "FED",
                     "owner_name": "BLM",
                     "unit_name": "Rio Grande del Norte",
                     "gis_acres": 1000.0,
                 },
                 {
+                    "category": "Fee",
                     "owner_type": "FED",
                     "owner_name": "USFS",
                     "unit_name": "Carson NF",
                     "gis_acres": 500.0,
                 },
-            ]
+            ],
         )
         out = api.format_padus_summary(data)
         assert "Total PAD-US Records: 2" in out
         assert "PAD-US Protected-Area Records by Owner Type:" in out
-        assert "FED: 2 records, 1,500 acres" in out
-        assert "Top 10 Largest Records by Mapped Acres:" in out
-        assert "Rio Grande del Norte (FED)" in out
+        assert "Federal (FED): 2 records" in out
+        assert "PAD-US Records by Category:" in out
+        assert "Fee: 2 records" in out
+        assert "Top 10 Largest Intersecting Source Features by Full Mapped Acreage (not clipped to ROI):" in out
+        assert "Rio Grande del Norte (Fee; FED)" in out
+        assert "1,000 source-feature acres" in out
         assert "USGS Protected Areas Database (PAD-US) v4.1" in out
 
     def test_summary_handles_empty(self, monkeypatch):
@@ -205,6 +232,13 @@ class TestFormatter:
         # No records => no "Top 10" section.
         assert "Top 10 Largest Records" not in out
 
+    def test_summary_warns_that_source_feature_acres_are_not_roi_area(self, monkeypatch):
+        api = _load_padus_api()
+        out = api.format_padus_summary(self._data([]))
+        assert "full mapped area of each intersecting source feature" in out
+        assert "source-feature acreages are not additive" in out
+        assert "do not represent total land area within the ROI" in out
+
     def test_summary_surfaces_warnings(self, monkeypatch):
         api = _load_padus_api()
         out = api.format_padus_summary(self._data([], warnings=["upstream degraded"]))
@@ -212,6 +246,8 @@ class TestFormatter:
 
     def test_top_records_fall_back_to_owner_name_when_no_unit(self, monkeypatch):
         api = _load_padus_api()
-        data = self._data([{"owner_type": "FED", "owner_name": "BLM", "unit_name": "", "gis_acres": 42.0}])
+        data = self._data(
+            [{"category": "Fee", "owner_type": "FED", "owner_name": "BLM", "unit_name": "", "gis_acres": 42.0}]
+        )
         out = api.format_padus_summary(data)
-        assert "BLM (FED)" in out
+        assert "BLM (Fee; FED)" in out
