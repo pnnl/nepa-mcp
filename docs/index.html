@@ -52,7 +52,7 @@
     <!-- ?v= is a cache buster. GitHub Pages serves these assets with a long
          max-age, so a returning visitor keeps the old CSS and JS until the URL
          changes. Bump the value whenever site.css or site.js changes. -->
-    <link rel="stylesheet" href="assets/css/site.css?v=32">
+    <link rel="stylesheet" href="assets/css/site.css?v=33">
 </head>
 <body class="bg-slate-50 text-slate-900 antialiased">
 
@@ -362,17 +362,18 @@
                             </figure>
 
                             <p class="step-note">
-                                Run <code>nepa-mcp list-servers</code> for the full table. The two amber
+                                Run <code>nepa-mcp list-servers</code> for the full table. The amber
                                 lines are optional keys —
                                 <a href="#qs-credentials" class="step-note-link">add them below</a>, or skip them.
                             </p>
                         </div>
                     </div>
 
-                    <!-- Optional, and not a fifth step: two of the nineteen servers read
-                         keyed APIs. Collapsed, because nothing here blocks a first setup —
-                         but it sits right after `doctor`, which is where a visitor first
-                         sees the missing-credential lines. -->
+                    <!-- Optional, and not a fifth step: a couple of servers read keyed
+                         APIs. Collapsed, because nothing here blocks a first setup — but
+                         it sits right after `doctor`, which is where a visitor first sees
+                         the missing-credential lines. No server count in the copy: the
+                         registry grows, and the rows below already name the servers. -->
                     <div class="step-row step-row-aside" id="qs-credentials">
                         <div class="step-marker">
                             <span class="step-node step-node-key">
@@ -385,8 +386,8 @@
                                 <summary class="cred-summary">
                                     <span class="cred-tag">Optional</span>
                                     <span class="cred-summary-text">
-                                        <span class="cred-title">API keys for two of the 19 servers</span>
-                                        <span class="cred-hint"><code>census</code> and <code>epa_aqs</code> only — the other 17 servers need nothing.</span>
+                                        <span class="cred-title">Some servers need a free API key</span>
+                                        <span class="cred-hint"><code>census</code> and <code>epa_aqs</code> only. Keys are free and issued immediately.</span>
                                     </span>
                                     <span class="cred-toggle" aria-hidden="true">
                                         <span class="cred-toggle-label"></span>
@@ -395,12 +396,10 @@
                                 </summary>
 
                                 <div class="cred-body">
-                                    <p class="cred-lede">
-                                        Both read keyed federal APIs, so those two lines in
-                                        <code>doctor</code> stay <em>missing</em> until you add a free key.
-                                        Each key is free and issued immediately.
-                                    </p>
-
+                                    <!-- No lede: the summary above says what these are, and each
+                                         row below names its server, its variables, and where the
+                                         key comes from. A sentence between the two would only
+                                         restate one of them. -->
                                     <dl class="cred-vars">
                                         <div class="cred-var">
                                             <dt><code>census</code></dt>
@@ -432,18 +431,13 @@
 <span class="c-line">nepa-mcp doctor</span></code></pre>
                                     </figure>
 
-                                    <div class="cred-foot">
-                                        <a class="cred-link" href="https://github.com/pnnl/nepa-mcp#credentials" target="_blank" rel="noopener noreferrer">
-                                            <i class="fas fa-book-open" aria-hidden="true"></i>
-                                            <span>Credentials setup in the README</span>
-                                            <i class="fas fa-arrow-right cred-link-arrow" aria-hidden="true"></i>
-                                        </a>
-                                        <p class="cred-fine">
-                                            Keys live in your per-user <code>credentials.env</code>, or in the shell
-                                            environment. They are never copied into client or plugin config, and
-                                            <code>doctor</code> reports only whether each value is present.
-                                        </p>
-                                    </div>
+                                    <!-- No README link: its Credentials section adds only the
+                                         config-file override and precedence, and `configure`
+                                         prints the file's path when it writes it. -->
+                                    <p class="cred-fine">
+                                        Read from your per-user <code>credentials.env</code> or the shell
+                                        environment, never copied into client or plugin config.
+                                    </p>
                                 </div>
                             </details>
                         </div>

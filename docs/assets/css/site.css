@@ -612,7 +612,6 @@ section {
 
 .step-lede code,
 .step-note code,
-.cred-lede code,
 .cred-fine code {
     font-size: 0.9em;
     color: var(--brand-primary-darker);
@@ -635,11 +634,11 @@ section {
 
 /* --- Optional credentials panel ------------------------------------------ */
 
-/* Two of the nineteen servers, and nothing here blocks a first setup — so it
-   stays a closed disclosure the visitor opens on purpose, rather than a fifth
-   step in the middle of four. It still carries the brand's amber, which is the
-   same amber marking the two credential lines in the `doctor` output above, so
-   it is impossible to miss while being easy to skip. */
+/* A minority of servers, and nothing here blocks a first setup — so it stays a
+   closed disclosure the visitor opens on purpose, rather than a fifth step in
+   the middle of four. It still carries the brand's amber, which is the same
+   amber marking the credential lines in the `doctor` output above, so it is
+   impossible to miss while being easy to skip. */
 .cred-card {
     position: relative;
     margin-top: 0.4rem;
@@ -764,13 +763,6 @@ section {
     to { opacity: 1; transform: none; }
 }
 
-.cred-lede {
-    margin: 1rem 0 0;
-    font-size: 0.875rem;
-    line-height: 1.65;
-    color: #52606d;
-}
-
 .cred-vars {
     display: grid;
     gap: 0.5rem;
@@ -841,40 +833,10 @@ section {
     gap: 0.45rem;
 }
 
-.cred-foot {
-    margin-top: 1.05rem;
-}
-
-.cred-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.55rem;
-    padding: 0.55rem 0.95rem;
-    border-radius: 0.7rem;
-    font-size: 0.8125rem;
-    font-weight: 600;
-    color: #fff;
-    background: linear-gradient(135deg, var(--brand-primary-darkest) 0%, var(--brand-primary) 100%);
-    box-shadow: 0 8px 22px -14px rgba(var(--brand-primary-rgb), 0.9);
-    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
-}
-
-.cred-link:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 12px 26px -14px rgba(var(--brand-primary-rgb), 1);
-}
-
-.cred-link-arrow {
-    font-size: 0.6875rem;
-    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.cred-link:hover .cred-link-arrow {
-    transform: translateX(3px);
-}
-
+/* One line, under the command that writes the file: where the values are read
+   from, and where they are not. */
 .cred-fine {
-    margin-top: 0.8rem;
+    margin-top: 0.9rem;
     font-size: 0.75rem;
     line-height: 1.6;
     color: #6b7684;
@@ -1297,6 +1259,33 @@ section {
 
     .step-meta {
         font-size: 0.5625rem;
+    }
+
+    /* The tag, the title, and the toggle cannot share a row this narrow — three
+       columns leave the title about a dozen characters and it breaks mid-word.
+       So the row splits: controls above, sentence below at full width. */
+    .cred-summary {
+        flex-wrap: wrap;
+        gap: 0.55rem 0.75rem;
+        padding: 0.95rem 1rem;
+    }
+
+    .cred-summary-text {
+        order: 2;
+        flex: 1 0 100%;
+    }
+
+    .cred-toggle {
+        order: 1;
+        padding-top: 0;
+    }
+
+    .cred-tag {
+        margin-top: 0;
+    }
+
+    .cred-body {
+        padding: 0 1rem 1.1rem;
     }
 
     .ask-text {
@@ -3162,7 +3151,6 @@ section {
     .btn-premium:hover,
     .mcp-client-item:hover,
     .prompt-card:hover,
-    .cred-link:hover,
     .nav-vision:hover,
     .vision-disclose:hover,
     .show-more:hover {
