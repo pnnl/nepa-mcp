@@ -18,6 +18,7 @@ SERVER_SPECS = (
     ServerSpec("census", "Census ACS socioeconomic indicators", ("CENSUS_API_KEY",)),
     ServerSpec("cfr", "CFR, Federal Register, and executive-order lookup"),
     ServerSpec("efh", "NOAA Essential Fish Habitat and HAPC screening"),
+    ServerSpec("epa_acres", "EPA ACRES Brownfields property records"),
     ServerSpec(
         "epa_aqs",
         "EPA air-quality monitoring and NAAQS screening",

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "nepa-mcp"
-version = "0.1.2"
+version = "0.1.3"
 description = "MCP servers for federal environmental data, regulatory research, and geospatial screening"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -85,6 +85,7 @@ include = [
     "/census",
     "/cfr",
     "/efh",
+    "/epa_acres",
     "/epa_aqs",
     "/esa_ranges",
     "/fema_nfhl",
@@ -107,6 +108,7 @@ include = [
 "census" = "nepa_mcp/_servers/census"
 "cfr" = "nepa_mcp/_servers/cfr"
 "efh" = "nepa_mcp/_servers/efh"
+"epa_acres" = "nepa_mcp/_servers/epa_acres"
 "epa_aqs" = "nepa_mcp/_servers/epa_aqs"
 "esa_ranges" = "nepa_mcp/_servers/esa_ranges"
 "fema_nfhl" = "nepa_mcp/_servers/fema_nfhl"

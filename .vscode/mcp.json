@@ -44,6 +44,17 @@
         "PYTHONUNBUFFERED": "1"
       }
     },
+    "epa_acres": {
+      "type": "stdio",
+      "command": "nepa-mcp",
+      "args": [
+        "server",
+        "epa_acres"
+      ],
+      "env": {
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
     "epa_aqs": {
       "type": "stdio",
       "command": "nepa-mcp",

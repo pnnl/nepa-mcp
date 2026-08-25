@@ -18,6 +18,7 @@ EXPECTED_TOOL_COUNTS = {
     "census": 1,
     "cfr": 7,
     "efh": 4,
+    "epa_acres": 1,
     "epa_aqs": 3,
     "esa_ranges": 1,
     "fema_nfhl": 4,
@@ -57,6 +58,7 @@ EXPECTED_TOOL_NAMES = {
         "get_efh_hms_cps_groundfish",
         "get_efh_salmon",
     },
+    "epa_acres": {"get_epa_acres_properties_in_roi"},
     "epa_aqs": {
         "analyze_epa_aqs_air_quality_baseline",
         "get_epa_aqs_air_quality_monitors",

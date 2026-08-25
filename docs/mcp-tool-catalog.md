@@ -1,6 +1,6 @@
 # MCP Tool Catalog
 
-NEPA MCP provides 19 independent servers with 46 tools. Use this catalog to choose the smallest set of servers needed for a workflow.
+NEPA MCP provides 20 independent servers with 47 tools. Use this catalog to choose the smallest set of servers needed for a workflow.
 
 This file is generated from the server registry and each server's live MCP `tools/list` contract. Do not edit it manually. Regenerate it with `uv run python scripts/generate_tool_catalog.py`; add `--check` to verify it without writing.
 
@@ -21,6 +21,7 @@ This file is generated from the server registry and each server's live MCP `tool
 | `efh` | `get_efh_hapc` | Query NOAA for Habitat Areas of Particular Concern (HAPC) within the ROI. |
 | `efh` | `get_efh_hms_cps_groundfish` | Query NOAA for HMS, Coastal Pelagic, and Groundfish EFH within the ROI. |
 | `efh` | `get_efh_salmon` | Query NOAA for salmon Essential Fish Habitat by HUC-8 watershed within the ROI. |
+| `epa_acres` | `get_epa_acres_properties_in_roi` | Query EPA ACRES Brownfields property records within a region of interest. |
 | `epa_aqs` | `analyze_epa_aqs_air_quality_baseline` | Analyze EPA AQS air quality baseline data for NEPA screening. |
 | `epa_aqs` | `get_epa_aqs_air_quality_monitors` | Identify EPA air quality monitoring stations within a region of interest. |
 | `epa_aqs` | `get_epa_aqs_annual_air_quality` | Get annual air quality statistics for criteria pollutants in a region. |
