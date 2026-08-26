@@ -93,7 +93,7 @@ class TestParsingThroughput:
 
 
 class TestAcreagePresentation:
-    def test_source_acreage_is_not_aggregated_as_roi_area(self, monkeypatch):
+    def test_source_acreage_is_retained_but_not_presented_as_roi_area(self, monkeypatch):
         api = _load_padus_api()
         _patch_roi(api, monkeypatch)
         # 300 fee records of 10 acres each, 200 designation records of 5 acres each.
@@ -105,6 +105,8 @@ class TestAcreagePresentation:
         data = api.get_padus_in_roi(34.5, -106.5)
         out = api.format_padus_summary(data)
         assert data["total_records"] == 500
+        assert data["area_by_owner_type"]["FED"]["source_feature_acres"] == 3000.0
+        assert data["area_by_owner_type"]["DESG"]["source_feature_acres"] == 1000.0
         assert "Federal (FED): 300 records" in out
         assert "Designation (DESG): 200 records" in out
         assert "Fee: 300 records" in out
