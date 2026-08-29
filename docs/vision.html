@@ -186,12 +186,12 @@
 /* ---------- grain: what stands behind a cell ----------
    A cell is divided into one layer per server, never resized. Height belongs to
    the jurisdiction axis, so an earlier pass that made a cell as tall as its
-   server count had to cap NEPA's twenty at six and read as tiles on a floor.
+   server count had to cap NEPA's twenty-one at six and read as tiles on a floor.
    Dividing a full cell spends nothing: the cell keeps its place and its size,
    and the pitch carries the count.
 
    Because the pitch is the cell over the count, density is the encoding and it
-   cannot overflow. Twenty layers is a fine grain that reads as solid — which
+   cannot overflow. Twenty-one layers is a fine grain that reads as solid — which
    is the honest reason NEPA's cell is the solid one — and one layer is a cell
    with no line in it at all. Both ends work, with nothing clamped in between. */
 .part{--pitch:calc(var(--cy) / var(--srv,1))}
@@ -203,12 +203,12 @@
 }
 
 /* The open-sourced cell is not grained, and that is the point rather than an
-   omission. Twenty layers in a 42px cell is a 2.1px pitch: the lines wash out
+   omission. Twenty-one layers in a 42px cell is a 2px pitch: the lines wash out
    under the projection at any contrast, so the channel simply does not reach
    that far. It does not need to. That cell is the whole toolkit, not a count
    drawn from it, which is exactly the difference the legend already names —
    open sourced against partly covered. Solid where the others are grained says
-   it in the material. The twenty is on its tick, and clicking it names them. */
+   it in the material. The twenty-one is on its tick, and clicking it names them. */
 
 /* open sourced today */
 .today{transition:opacity .55s var(--ease),--sx .6s cubic-bezier(.34,1.4,.5,1),--sy .6s cubic-bezier(.34,1.4,.5,1),--sz .6s cubic-bezier(.34,1.4,.5,1)}
@@ -584,7 +584,7 @@
                         </div>
 
                         <div class="stage px-2" id="stage" role="img" tabindex="0"
-                             aria-label="Axonometric diagram of the toolkit's permitting coverage. A solid cell at the origin marks what is open sourced today: NEPA, at the federal level, for energy infrastructure. Beside it along the statutory framework axis, five filled cells mark statutes the toolkit already returns data for, each tick carrying the number of servers behind it: ESA section 7 with four, NHPA section 106 with one, Clean Water Act section 404 with two, Clean Air Act New Source Review with one, and FLPMA with two. The NEPA cell draws on all twenty. Two translucent slabs extrude from the origin along the remaining axes: jurisdiction, running up through Tribal, state, and regional and local; and project sector, running back through minerals and mining, geothermal, and hydropower. A faint wireframe lattice encloses the combinations the toolkit does not reach yet.">
+                             aria-label="Axonometric diagram of the toolkit's permitting coverage. A solid cell at the origin marks what is open sourced today: NEPA, at the federal level, for energy infrastructure. Beside it along the statutory framework axis, five filled cells mark statutes the toolkit already returns data for, each tick carrying the number of servers behind it: ESA section 7 with four, NHPA section 106 with one, Clean Water Act section 404 with two, Clean Air Act New Source Review with one, and FLPMA with two. The NEPA cell draws on all twenty-one. Two translucent slabs extrude from the origin along the remaining axes: jurisdiction, running up through Tribal, state, and regional and local; and project sector, running back through minerals and mining, geothermal, and hydropower. A faint wireframe lattice encloses the combinations the toolkit does not reach yet.">
                             <div class="stage-in" id="stageIn">
                                 <div class="vol" id="vol">
 
@@ -634,7 +634,7 @@
                                     </div>
 
                                     <!-- open sourced today -->
-                                    <div class="box today" data-cell="nepa" title="NEPA — all 20 servers" style="--w:var(--cx);--h:var(--cy);--d:var(--cz);--x:0px;--y:0px;--z:0px">
+                                    <div class="box today" data-cell="nepa" title="NEPA — all 21 servers" style="--w:var(--cx);--h:var(--cy);--d:var(--cz);--x:0px;--y:0px;--z:0px">
                                         <i class="fr"></i><i class="bk"></i><i class="tp"></i><i class="bt"></i><i class="lf"></i><i class="rt"></i>
                                     </div>
 
@@ -643,8 +643,8 @@
                                          companion sheet's idiom: one numeral where a label on every
                                          layer would not fit. It is also the exact channel, which is
                                          what lets NEPA's cell saturate at six layers while its tick
-                                         still says twenty. -->
-                                    <div class="lbl mid tick-x tick-open" data-tick="nepa" style="--lx:calc(0.5 * var(--cx));--ly:calc(var(--H) + 20px);--lz:0px"><span>NEPA <em class="n">20</em></span></div>
+                                         still says twenty-one. -->
+                                    <div class="lbl mid tick-x tick-open" data-tick="nepa" style="--lx:calc(0.5 * var(--cx));--ly:calc(var(--H) + 20px);--lz:0px"><span>NEPA <em class="n">21</em></span></div>
                                     <div class="lbl mid tick-x tick-open" data-tick="esa" style="--lx:calc(1.5 * var(--cx));--ly:calc(var(--H) + 20px);--lz:0px"><span>ESA &sect;7 <em class="n">4</em></span></div>
                                     <div class="lbl mid tick-x tick-open" data-tick="nhpa" style="--lx:calc(2.5 * var(--cx));--ly:calc(var(--H) + 20px);--lz:0px"><span>NHPA &sect;106 <em class="n">1</em></span></div>
                                     <div class="lbl mid tick-x tick-open" data-tick="cwa" style="--lx:calc(3.5 * var(--cx));--ly:calc(var(--H) + 20px);--lz:0px"><span>CWA &sect;404 <em class="n">2</em></span></div>
@@ -738,7 +738,7 @@
 
                     <div class="mt-10 text-center">
                         <p class="text-base md:text-lg text-slate-600 font-light max-w-2xl mx-auto leading-relaxed">
-                            The toolkit already covers 20 servers across 12 federal agencies. Each new
+                            The toolkit already covers 21 servers across 13 federal agencies. Each new
                             dataset is a new adapter behind the same interface, and the code is public,
                             so a state agency or research group can add its own data and contribute it
                             back.
@@ -915,7 +915,7 @@
             label: 'NEPA',
             note: 'A federal NEPA screening draws on all of them.',
             servers: ['nepa_assist', 'gis', 'map_composer', 'tigerweb_counties', 'census',
-                      'ipac', 'esa_ranges', 'noaa', 'pcsrf', 'efh', 'epa_acres', 'gbif', 'nrhp',
+                      'ipac', 'esa_ranges', 'noaa', 'nrcs_soils', 'pcsrf', 'efh', 'epa_acres', 'gbif', 'nrhp',
                       'usace', 'blm', 'padus', 'tribal', 'fema_nfhl', 'epa_aqs', 'cfr']
         },
         esa:   { label: 'ESA §7',   servers: ['ipac', 'esa_ranges', 'noaa', 'pcsrf'] },

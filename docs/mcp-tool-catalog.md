@@ -1,6 +1,6 @@
 # MCP Tool Catalog
 
-NEPA MCP provides 20 independent servers with 47 tools. Use this catalog to choose the smallest set of servers needed for a workflow.
+NEPA MCP provides 21 independent servers with 50 tools. Use this catalog to choose the smallest set of servers needed for a workflow.
 
 This file is generated from the server registry and each server's live MCP `tools/list` contract. Do not edit it manually. Regenerate it with `uv run python scripts/generate_tool_catalog.py`; add `--check` to verify it without writing.
 
@@ -41,6 +41,9 @@ This file is generated from the server registry and each server's live MCP `tool
 | `map_composer` | `list_available_layers` | List Map Composer layer IDs, source publishers, review uses, and profiles. |
 | `nepa_assist` | `analyze_nepa_assist_screening` | Analyze EPA NEPAssist environmental screening layers for a location. |
 | `noaa` | `get_noaa_critical_habitat_in_roi` | Query NOAA for West Coast Region ESA critical habitat within the ROI. |
+| `nrcs_soils` | `analyze_nrcs_ssurgo_soil_constraints` | Summarize NRCS SSURGO soil indicators relevant to early siting review. |
+| `nrcs_soils` | `get_nrcs_ssurgo_farmland_classification_in_roi` | Get exact NRCS SSURGO farmland classifications within a project-area buffer. |
+| `nrcs_soils` | `get_nrcs_ssurgo_mapunits_in_roi` | Get USDA-NRCS SSURGO soil map units intersecting a project-area buffer. |
 | `nrhp` | `get_nrhp_properties_in_roi` | Query NRHP for historic properties within the ROI for Section 106 NHPA screening. |
 | `padus` | `get_padus_protected_areas_in_roi` | Query PAD-US protected-area records within a region of interest. |
 | `pcsrf` | `get_atlantic_salmon_efh_hapc_in_roi` | Query Atlantic salmon EFH/HAPC buffers within the ROI. |

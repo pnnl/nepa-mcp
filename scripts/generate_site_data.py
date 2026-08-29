@@ -43,6 +43,7 @@ SERVER_PRESENTATION: dict[str, dict[str, str]] = {
     "map_composer": {"agency": "Eight federal GIS publishers", "accent": "teal"},
     "nepa_assist": {"agency": "U.S. Environmental Protection Agency", "accent": "emerald"},
     "noaa": {"agency": "NOAA Fisheries", "accent": "sky"},
+    "nrcs_soils": {"agency": "USDA Natural Resources Conservation Service", "accent": "emerald"},
     "nrhp": {"agency": "National Park Service", "accent": "orange"},
     "padus": {"agency": "U.S. Geological Survey", "accent": "cyan"},
     "pcsrf": {"agency": "NOAA Fisheries", "accent": "sky"},
@@ -53,12 +54,12 @@ SERVER_PRESENTATION: dict[str, dict[str, str]] = {
 
 # Distinct source agencies and publishers named in the README's inventory. Kept
 # here so the site never has to hardcode a headline count in markup.
-FEDERAL_AGENCY_COUNT = 12
+FEDERAL_AGENCY_COUNT = 13
 
 # Verified invariants. The generator fails loudly rather than quietly shipping a
 # page whose headline numbers drifted away from the code.
-EXPECTED_SERVER_COUNT = 20
-EXPECTED_TOOL_COUNT = 47
+EXPECTED_SERVER_COUNT = 21
+EXPECTED_TOOL_COUNT = 50
 EXPECTED_LAYER_COUNT = 32
 EXPECTED_PROFILE_SIZES = {
     "screening": 12,

@@ -154,6 +154,17 @@
         "PYTHONUNBUFFERED": "1"
       }
     },
+    "nrcs_soils": {
+      "type": "stdio",
+      "command": "nepa-mcp",
+      "args": [
+        "server",
+        "nrcs_soils"
+      ],
+      "env": {
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
     "nrhp": {
       "type": "stdio",
       "command": "nepa-mcp",

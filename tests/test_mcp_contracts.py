@@ -28,6 +28,7 @@ EXPECTED_TOOL_COUNTS = {
     "map_composer": 3,
     "nepa_assist": 1,
     "noaa": 1,
+    "nrcs_soils": 3,
     "nrhp": 1,
     "padus": 1,
     "pcsrf": 4,
@@ -88,6 +89,11 @@ EXPECTED_TOOL_NAMES = {
     },
     "nepa_assist": {"analyze_nepa_assist_screening"},
     "noaa": {"get_noaa_critical_habitat_in_roi"},
+    "nrcs_soils": {
+        "analyze_nrcs_ssurgo_soil_constraints",
+        "get_nrcs_ssurgo_farmland_classification_in_roi",
+        "get_nrcs_ssurgo_mapunits_in_roi",
+    },
     "nrhp": {"get_nrhp_properties_in_roi"},
     "padus": {"get_padus_protected_areas_in_roi"},
     "pcsrf": {
@@ -225,10 +231,12 @@ def test_geo_tool_schemas_document_ranges_and_units(server_name: str) -> None:
         distance_name = "radius_miles" if "radius_miles" in properties else "buffer_miles"
         distance_description = properties[distance_name]["description"].lower()
         assert "mile" in distance_description
-        assert "0.1" in distance_description and "100" in distance_description
+        expected_maximum = 10.0 if server_name == "nrcs_soils" else 100.0
+        expected_default = 1.0 if server_name == "nrcs_soils" else 25.0
+        assert "0.1" in distance_description and f"{expected_maximum:g}" in distance_description
         assert properties[distance_name]["minimum"] == 0.1
-        assert properties[distance_name]["maximum"] == 100.0
-        assert properties[distance_name]["default"] == 25.0
+        assert properties[distance_name]["maximum"] == expected_maximum
+        assert properties[distance_name]["default"] == expected_default
 
 
 async def _assert_geo_validation_errors(server_name: str) -> None:

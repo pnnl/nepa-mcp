@@ -16,7 +16,7 @@
     <meta name="description" content="Model Context Protocol servers giving AI agents direct access to public federal data for NEPA screening, regulatory research, and permitting analysis.">
 
     <meta property="og:title" content="NEPA MCP Toolkit">
-    <meta property="og:description" content="12 federal agencies · 20 servers · 79 research capabilities · one protocol. Public federal data for AI-assisted NEPA workflows.">
+    <meta property="og:description" content="13 federal agencies · 21 servers · 82 research capabilities · one protocol. Public federal data for AI-assisted NEPA workflows.">
     <meta property="og:type" content="website">
     <meta property="og:image" content="assets/images/map-composer-chesapeake-1400.webp">
     <meta name="twitter:card" content="summary_large_image">
@@ -157,13 +157,13 @@
                         NEPA MCP <span class="font-semibold">Toolkit</span>
                     </h1>
                     <div id="unified-badge" class="inline-flex flex-wrap justify-center items-center gap-x-2.5 gap-y-1 badge-premium text-white px-6 py-2.5 rounded-full text-sm font-medium tracking-wide mt-2 cursor-pointer" role="button" tabindex="0" title="Replay">
-                        <span class="badge-stat">12 Federal Agencies</span>
+                        <span class="badge-stat">13 Federal Agencies</span>
                         <span class="badge-arrow text-teal-200" aria-hidden="true">→</span>
-                        <span class="badge-stat">20 Servers</span>
+                        <span class="badge-stat">21 Servers</span>
                         <span class="badge-arrow text-teal-200" aria-hidden="true">→</span>
-                        <!-- 79 = 47 MCP tools + 32 GIS layers, the figure the README uses.
+                        <!-- 82 = 50 MCP tools + 32 GIS layers, the figure the README uses.
                              Exact tool and layer counts appear in their own sections. -->
-                        <span class="badge-stat">79 Research Capabilities</span>
+                        <span class="badge-stat">82 Research Capabilities</span>
                         <span class="badge-arrow text-teal-200" aria-hidden="true">→</span>
                         <span class="badge-stat badge-finale">One Protocol</span>
                     </div>
@@ -172,7 +172,7 @@
                 <div class="fade-in-up delay-200 mt-8">
                     <p class="text-xl md:text-2xl text-slate-600 max-w-3xl mx-auto font-light leading-relaxed">
                         Model Context Protocol servers giving AI agents direct access to public
-                        federal data for NEPA screening, regulatory research, and permitting analysis.
+                        federal data for NEPA screening, soil constraints, regulatory research, and permitting analysis.
                     </p>
                 </div>
 
@@ -260,7 +260,7 @@
             <div class="text-center mb-11">
                 <span class="inline-block bg-teal-100 text-teal-800 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wide mb-4">Four steps · one-time setup</span>
                 <h2 class="text-4xl lg:text-5xl font-light text-ink mb-4">Quick Start</h2>
-                <p class="text-xl text-slate-600 font-light">Install once, then point your agent at any of the 20 servers</p>
+                <p class="text-xl text-slate-600 font-light">Install once, then point your agent at any of the 21 servers</p>
             </div>
 
             <div id="quick-start-steps" class="qs-card">
@@ -285,7 +285,7 @@
                                 <h3 class="step-title">Install</h3>
                                 <span class="step-meta">one-time</span>
                             </div>
-                            <p class="step-lede">Python 3.12+ and pipx. One package installs all 20 servers.</p>
+                            <p class="step-lede">Python 3.12+ and pipx. One package installs all 21 servers.</p>
 
                             <figure class="term term-cmd">
                                 <figcaption class="term-bar">
@@ -298,7 +298,7 @@
                                     <a class="term-badge" href="https://pypi.org/project/nepa-mcp/" target="_blank" rel="noopener noreferrer">
                                         <i class="fab fa-python term-badge-mark" aria-hidden="true"></i>
                                         <span class="term-badge-label">PyPI</span>
-                                        <span class="term-badge-ver">v<span data-release-version>0.1.3</span></span>
+                                        <span class="term-badge-ver">v<span data-release-version>0.1.4</span></span>
                                         <i class="fas fa-arrow-up-right-from-square term-badge-out" aria-hidden="true"></i>
                                     </a>
                                     <span class="term-tools">
@@ -337,7 +337,7 @@
                                 <span class="step-meta">before you connect</span>
                             </div>
                             <p class="step-lede">
-                                Confirm 20 servers before you wire up a client.
+                                Confirm 21 servers before you wire up a client.
                                 <code>doctor</code> exits non-zero if one is missing.
                             </p>
 
@@ -353,10 +353,10 @@
                                     </span>
                                 </figcaption>
                                 <pre class="term-body"><code><span class="t-line t-prompt">nepa-mcp doctor</span>
-<span class="t-line">nepa-mcp version: <span data-release-version>0.1.3</span></span>
+<span class="t-line">nepa-mcp version: <span data-release-version>0.1.4</span></span>
 <span class="t-line">Python: 3.12.12</span>
 <span class="t-line">Credential file: ~/…/nepa-mcp/credentials.env (not found)</span>
-<span class="t-line t-proof">Installed servers: 20</span>
+<span class="t-line t-proof">Installed servers: 21</span>
 <span class="t-line t-key">census credentials: optional, missing CENSUS_API_KEY</span>
 <span class="t-line t-key">epa_aqs credentials: optional, missing EPA_AQS_EMAIL, EPA_AQS_API_KEY</span></code></pre>
                             </figure>
@@ -558,7 +558,7 @@
             <div class="text-center mb-9">
                 <span class="inline-block bg-teal-50 text-teal-800 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wide mb-4 border border-teal-200/70">Instead of step 3</span>
                 <h2 class="text-4xl lg:text-5xl font-light text-ink mb-4">Codex Desktop plugin</h2>
-                <p class="text-xl text-slate-600 font-light">One install for all 20 servers and the screening skill</p>
+                <p class="text-xl text-slate-600 font-light">One install for all 21 servers and the screening skill</p>
             </div>
 
             <div class="plugin-panel rounded-2xl p-8 lg:p-9">
@@ -572,14 +572,14 @@
                         </div>
                         <p class="text-slate-300 text-sm leading-relaxed mb-5">
                             The repository is itself a GitHub-hosted plugin marketplace. One install
-                            registers all 20 servers <em>and</em> the <code class="text-teal-300">nepa-screening</code>
+                            registers all 21 servers <em>and</em> the <code class="text-teal-300">nepa-screening</code>
                             skill, which tells the agent how to establish a project area and pick the
                             right datasets.
                         </p>
                         <ul class="space-y-2.5">
                             <li class="flex items-start gap-2.5 text-sm text-slate-300">
                                 <i class="fas fa-circle-check text-teal-400 text-xs mt-1.5" aria-hidden="true"></i>
-                                <span>All 20 servers at once, with no per-server entries</span>
+                                <span>All 21 servers at once, with no per-server entries</span>
                             </li>
                             <li class="flex items-start gap-2.5 text-sm text-slate-300">
                                 <i class="fas fa-circle-check text-teal-400 text-xs mt-1.5" aria-hidden="true"></i>
@@ -622,7 +622,7 @@
                                     <span class="pin-line"><span class="pin-line-fill"></span></span>
                                 </span>
                                 <div class="pin-body">
-                                    <p class="pin-text">Enter <code>pnnl/nepa-mcp</code> for Source and <code>v0.1.3</code> for Git ref.</p>
+                                    <p class="pin-text">Enter <code>pnnl/nepa-mcp</code> for Source and <code>v0.1.4</code> for Git ref.</p>
                                     <div class="pin-form" aria-hidden="true">
                                         <div class="pin-field">
                                             <span class="pin-field-label">Source</span>
@@ -630,7 +630,7 @@
                                         </div>
                                         <div class="pin-field">
                                             <span class="pin-field-label">Git ref</span>
-                                            <span class="pin-field-box"><span class="pin-field-value" data-pin-value>v0.1.3</span></span>
+                                            <span class="pin-field-box"><span class="pin-field-value" data-pin-value>v0.1.4</span></span>
                                         </div>
                                     </div>
                                 </div>
@@ -650,7 +650,7 @@
                                         <img class="pin-tile" src="assets/images/logos/nepa-mcp-plugin.svg" alt="" width="512" height="512">
                                         <span class="pin-installed-text">
                                             <span class="pin-installed-name">NEPA-MCP</span>
-                                            <span class="pin-installed-meta">20 servers · nepa-screening skill</span>
+                                            <span class="pin-installed-meta">21 servers · nepa-screening skill</span>
                                         </span>
                                         <span class="pin-installed-state"><i class="fas fa-check" aria-hidden="true"></i>Installed</span>
                                     </div>
@@ -690,7 +690,7 @@
         <div class="container mx-auto max-w-7xl">
             <div class="text-center mb-12">
                 <h2 class="text-4xl lg:text-5xl font-light text-ink mb-4">MCP Servers</h2>
-                <p class="text-xl text-slate-600 font-light">Twenty specialized servers for federal environmental data</p>
+                <p class="text-xl text-slate-600 font-light">Twenty-one specialized servers for federal environmental data</p>
                 <p class="text-sm text-slate-500 mt-3">
                     <i class="fas fa-hand-pointer mr-1.5 text-teal-600" aria-hidden="true"></i>
                     Flip any card to see what it covers
@@ -728,7 +728,7 @@
         <div class="container mx-auto max-w-5xl">
             <div class="text-center mb-9">
                 <h2 class="text-4xl lg:text-5xl font-light text-ink mb-4">Tools Reference</h2>
-                <p class="text-xl text-slate-600 font-light">Search all 47 tools and the parameters they take</p>
+                <p class="text-xl text-slate-600 font-light">Search all 50 tools and the parameters they take</p>
             </div>
 
             <div class="premium-card rounded-2xl p-5 md:p-7 shadow-lg" style="transform: none;">
@@ -878,7 +878,7 @@
                     <h4 class="text-white font-semibold mb-4">Resources</h4>
                     <ul class="space-y-3 text-sm">
                         <li><a href="https://github.com/pnnl/nepa-mcp/tree/main" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fab fa-github mr-2" aria-hidden="true"></i>Repository</a></li>
-                        <li><a href="https://github.com/pnnl/nepa-mcp/releases/tag/v0.1.3" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-tag mr-2" aria-hidden="true"></i>Release notes</a></li>
+                        <li><a href="https://github.com/pnnl/nepa-mcp/releases/tag/v0.1.4" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-tag mr-2" aria-hidden="true"></i>Release notes</a></li>
                         <li><a href="https://github.com/pnnl/nepa-mcp/blob/main/SUPPORT.md" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-life-ring mr-2" aria-hidden="true"></i>Support</a></li>
                         <li><a href="https://github.com/pnnl/nepa-mcp/blob/main/SECURITY.md" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-shield-halved mr-2" aria-hidden="true"></i>Security</a></li>
                         <li class="inline-flex items-center text-slate-400"><i class="fas fa-scale-balanced mr-2" aria-hidden="true"></i><a href="https://github.com/pnnl/nepa-mcp/blob/main/LICENSE" class="hover:text-white transition-colors"><span data-license-name>BSD 3-Clause</span> License</a></li>
@@ -890,7 +890,7 @@
                     <p class="text-sm text-slate-400 leading-relaxed">
                         BLM · Census Bureau · EPA · FEMA<br>
                         NARA / GPO · NOAA Fisheries · NPS<br>
-                        USACE · USFWS · USFS · USGS · NIFC<br>
+                        USACE · USFWS · USDA-NRCS · USFS · USGS · NIFC<br>
                         <span class="text-slate-500">with GBIF and Esri</span>
                     </p>
                 </div>
@@ -928,7 +928,7 @@
                         <summary class="inline-block cursor-pointer underline decoration-slate-600 hover:decoration-slate-300">Cite this work</summary>
                         <div class="mt-4 rounded-xl border border-teal-900/60 bg-slate-950/30 p-5 text-left shadow-inner">
                             <p class="mb-2 font-semibold uppercase tracking-wider text-slate-300">APA</p>
-                            <p id="apa-citation" class="text-slate-300 leading-relaxed">Chaturvedi, S., Chintalapati, R., Nally, D., Parker, M., Munikoti, S., &amp; Horawalavithana, S. (2026). <em>PermitAI NEPA MCP Toolkit: Federal environmental data, regulatory research, and geospatial screening</em> (Version <span data-release-version>0.1.3</span>) [Computer software]. Pacific Northwest National Laboratory. https://github.com/pnnl/nepa-mcp</p>
+                            <p id="apa-citation" class="text-slate-300 leading-relaxed">Chaturvedi, S., Chintalapati, R., Nally, D., Parker, M., Munikoti, S., &amp; Horawalavithana, S. (2026). <em>PermitAI NEPA MCP Toolkit: Federal environmental data, regulatory research, and geospatial screening</em> (Version <span data-release-version>0.1.4</span>) [Computer software]. Pacific Northwest National Laboratory. https://github.com/pnnl/nepa-mcp</p>
                             <div class="mt-4 flex flex-wrap items-center gap-3">
                                 <button type="button" onclick="copyCode(event, 'apa-citation')" class="bg-slate-700/90 hover:bg-slate-600 text-white px-3 py-2 rounded-lg text-xs font-medium transition-colors"><i class="fas fa-copy mr-2" aria-hidden="true"></i>Copy APA</button>
                                 <a href="https://github.com/pnnl/nepa-mcp/blob/main/CITATION.cff" class="inline-flex items-center px-3 py-2 rounded-lg border border-slate-700 text-slate-300 hover:border-slate-500 hover:text-white transition-colors"><i class="fas fa-file-lines mr-2" aria-hidden="true"></i>CITATION.cff</a>
@@ -948,7 +948,7 @@
         </div>
     </footer>
 
-    <script src="assets/js/site-data.js?v=16"></script>
-    <script src="assets/js/site.js?v=24"></script>
+    <script src="assets/js/site-data.js?v=17"></script>
+    <script src="assets/js/site.js?v=25"></script>
 </body>
 </html>
