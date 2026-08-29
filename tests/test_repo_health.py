@@ -35,6 +35,7 @@ SERVER_NAMES = [
     "ipac",
     "nepa_assist",
     "noaa",
+    "nrcs_soils",
     "nrhp",
     "padus",
     "pcsrf",
@@ -158,7 +159,7 @@ class TestDependencyHygiene:
     def test_area_servers_declare_geometry_deps(self):
         # The four ROI-area servers must ship pyproj + shapely in their
         # standalone requirements (equal-area clipping depends on them).
-        for name in ("efh", "esa_ranges", "noaa", "pcsrf"):
+        for name in ("efh", "esa_ranges", "noaa", "nrcs_soils", "pcsrf"):
             req = ROOT / name / "requirements.txt"
             assert req.exists(), f"{name}/requirements.txt missing"
             text = req.read_text(encoding="utf-8")

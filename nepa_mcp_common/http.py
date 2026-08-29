@@ -50,3 +50,31 @@ def get_json(
         raise UpstreamServiceError(f"{service_name} returned an error: {_format_arcgis_error(data['error'])}")
 
     return data
+
+
+def post_json(
+    url: str,
+    *,
+    json_body: dict[str, Any],
+    timeout: float | tuple[float, float] = DEFAULT_TIMEOUT_SECONDS,
+    service_name: str = "upstream service",
+) -> dict[str, Any]:
+    """POST a JSON object and return a JSON-object response with consistent errors."""
+    try:
+        response = requests.post(url, json=json_body, timeout=timeout)
+        response.raise_for_status()
+    except requests.RequestException as exc:
+        raise UpstreamServiceError(f"{service_name} request failed: {exc}") from exc
+
+    try:
+        data = response.json()
+    except ValueError as exc:
+        raise UpstreamServiceError(f"{service_name} returned invalid JSON") from exc
+
+    if not isinstance(data, dict):
+        raise UpstreamServiceError(f"{service_name} returned unexpected JSON type: {type(data).__name__}")
+
+    if "error" in data:
+        raise UpstreamServiceError(f"{service_name} returned an error: {data['error']}")
+
+    return data

@@ -15,7 +15,7 @@ from enum import Enum
 from typing import Any, Iterable, Mapping, Sequence
 
 from pyproj import CRS, Geod, Transformer
-from shapely import make_valid
+from shapely import make_valid, to_wkt
 from shapely.geometry import MultiPolygon, Polygon
 from shapely.geometry.base import BaseGeometry
 from shapely.ops import transform, unary_union
@@ -69,6 +69,40 @@ class ClippedAreaResult:
 
 class SpatialGeometryError(ValueError):
     """Raised when an ESRI geometry cannot be interpreted safely."""
+
+
+def esri_polygon_to_wgs84_wkt(
+    geometry: Mapping[str, Any],
+    *,
+    default_wkid: int = 4326,
+    rounding_precision: int = 8,
+) -> str:
+    """Convert an ESRI polygon to validated WGS84 WKT.
+
+    Ring nesting is reconstructed instead of inferred from source orientation,
+    so multipart polygons and holes survive conversion. Longitudes outside the
+    conventional WGS84 range are rejected because downstream services may
+    interpret antimeridian-spanning WKT inconsistently.
+    """
+    if not 0 <= rounding_precision <= 15:
+        raise ValueError("rounding_precision must be between 0 and 15")
+
+    rings = _geometry_rings_in_wgs84(geometry, default_wkid=default_wkid)
+    reference_longitude = _circular_mean_longitude(rings)
+    prepared = _prepare_rings(
+        rings,
+        reference_longitude=reference_longitude,
+        max_segment_length_meters=10_000.0,
+    )
+    if any(not -180.0 <= longitude <= 180.0 for ring in prepared for longitude, _latitude in ring):
+        raise SpatialGeometryError(
+            "Polygon crosses the antimeridian; this upstream WKT query cannot be represented safely."
+        )
+
+    polygon = _polygon_from_rings(prepared)
+    if polygon.is_empty or polygon.area <= 0:
+        raise SpatialGeometryError("Geometry is empty or has no polygon area.")
+    return to_wkt(polygon, rounding_precision=rounding_precision, trim=True)
 
 
 def convert_area(area_square_meters: float, unit: AreaUnit | str) -> float:
