@@ -32,6 +32,7 @@ SERVER_SPECS = (
     ServerSpec("map_composer", "Interactive environmental maps and GeoJSON exports"),
     ServerSpec("nepa_assist", "EPA NEPAssist environmental screening"),
     ServerSpec("noaa", "NOAA West Coast critical habitat"),
+    ServerSpec("nrcs_soils", "USDA-NRCS SSURGO soil and farmland screening"),
     ServerSpec("nrhp", "National Register of Historic Places properties"),
     ServerSpec("padus", "PAD-US protected areas and land management"),
     ServerSpec("pcsrf", "NOAA species, habitat, and recovery-program datasets"),

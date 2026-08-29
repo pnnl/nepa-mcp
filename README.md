@@ -31,10 +31,10 @@ toolkit. It gives AI agents structured access to federal environmental,
 regulatory, biological, cultural, socioeconomic, and jurisdictional data used
 in NEPA screening and permitting research.
 
-The current inventory includes 20 MCP servers, 47 MCP tools, and 32 GIS
-layers. Together, the tools and layers represent **79 environmental and
+The current inventory includes 21 MCP servers, 50 MCP tools, and 32 GIS
+layers. Together, the tools and layers represent **82 environmental and
 regulatory research capabilities**. These capabilities draw on public data
-from 12 federal agencies, along with interagency and nonfederal sources.
+from 13 federal agencies, along with interagency and nonfederal sources.
 
 The [MCP Tool Catalog](https://github.com/pnnl/nepa-mcp/blob/main/docs/mcp-tool-catalog.md) provides the complete server
 and tool inventory. The [Map Composer MCP server](https://github.com/pnnl/nepa-mcp/blob/main/docs/map-composer.md) queries
@@ -110,7 +110,7 @@ new task.
 
 ## Codex Plugin
 
-The Codex plugin registers all 20 servers and includes the `nepa-screening`
+The Codex plugin registers all 21 servers and includes the `nepa-screening`
 skill. If you use the plugin, do not also run `nepa-mcp configure codex`.
 
 Install and verify the Python runtime before adding the plugin:
@@ -205,6 +205,7 @@ Credentials are not copied into MCP client or plugin configuration, and
 | `map_composer` | Census, USFWS, USACE, USGS, BLM, USFS, NPS, and NIFC public GIS services | Interactive project-area maps and provenance-rich GeoJSON exports across 32 selectable layers |
 | `nepa_assist` | [U.S. Environmental Protection Agency](https://www.epa.gov/) | NEPAssist aggregated environmental-screening indicators |
 | `noaa` | [NOAA Fisheries, West Coast Region](https://www.fisheries.noaa.gov/about/west-coast-region) | ESA critical-habitat designations |
+| `nrcs_soils` | [USDA Natural Resources Conservation Service](https://www.nrcs.usda.gov/) | SSURGO soil map units, siting-related soil indicators, and farmland classifications |
 | `nrhp` | [National Park Service](https://www.nps.gov/) / [Department of the Interior](https://www.doi.gov/) | National Register-listed property locations |
 | `padus` | [U.S. Geological Survey](https://www.usgs.gov/) / [Department of the Interior](https://www.doi.gov/) | PAD-US 4.1 protected-area owner and manager attributes for screening |
 | `pcsrf` | [NOAA Fisheries](https://www.fisheries.noaa.gov/) | PCSRF projects plus species ranges, a 2021 critical-habitat snapshot, and Atlantic salmon EFH/HAPC |
@@ -280,6 +281,7 @@ and contributing dataset publishers
 · [NOAA Fisheries](https://www.fisheries.noaa.gov/)
 · [U.S. Army Corps of Engineers](https://www.usace.army.mil/)
 · [U.S. Fish and Wildlife Service](https://www.fws.gov/)
+· [USDA Natural Resources Conservation Service](https://www.nrcs.usda.gov/)
 · [USDA Forest Service](https://www.fs.usda.gov/)
 · [U.S. Geological Survey](https://www.usgs.gov/)
 

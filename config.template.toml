@@ -68,6 +68,11 @@ command = "nepa-mcp"
 args = ["server", "noaa"]
 env = { PYTHONUNBUFFERED = "1" }
 
+[mcp_servers.nrcs_soils]
+command = "nepa-mcp"
+args = ["server", "nrcs_soils"]
+env = { PYTHONUNBUFFERED = "1" }
+
 [mcp_servers.nrhp]
 command = "nepa-mcp"
 args = ["server", "nrhp"]

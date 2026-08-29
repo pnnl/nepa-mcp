@@ -10,6 +10,8 @@ MCP.
   and point-buffer distance. Project-polygon input is not yet supported.
 - Tool schemas constrain point buffers to 0.1–100 miles. The default is 25
   miles unless a tool documents another value.
+- `nrcs_soils` uses a 1-mile default and a 10-mile maximum because SSURGO
+  map-unit and component detail is intended for site-scale screening.
 
 ## Map Composer layer status
 
@@ -42,6 +44,11 @@ See the [Map Composer guide](map-composer.md) for profiles, the complete
   length retains its legacy source-coordinate estimate and is explicitly marked
   as not ROI-clipped; recovery projects and species-range tools retain their
   existing behavior.
+- `nrcs_soils` intersects SSURGO map-unit polygons with the point-buffer ROI
+  inside USDA Soil Data Access and reports clipped acreage. Component-weighted
+  estimates multiply that acreage by NRCS component percentages; components
+  are not spatially located within map units, so those estimates are not mapped
+  subareas or parcel-specific measurements.
 
 ## Coverage and upstream failures
 
