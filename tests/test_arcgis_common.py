@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 
 import requests
+import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -120,6 +121,28 @@ def test_query_features_can_skip_simplification(monkeypatch) -> None:
     )
 
     assert json.loads(posted_data["geometry"]) == geometry
+
+
+def test_query_features_strict_mode_rejects_null_features(monkeypatch) -> None:
+    ArcGISService = _arcgis_service()
+
+    class _NullFeaturesResponse:
+        def raise_for_status(self) -> None:
+            return None
+
+        def json(self) -> dict[str, Any]:
+            return {"features": None}
+
+    monkeypatch.setattr(requests, "post", lambda *_args, **_kwargs: _NullFeaturesResponse())
+
+    with pytest.raises(RuntimeError, match="missing or null features list"):
+        ArcGISService.query_features(
+            "https://example.test/FeatureServer",
+            0,
+            {"rings": [[[0, 0], [0, 1], [1, 0], [0, 0]]]},
+            out_fields="*",
+            strict_features=True,
+        )
 
 
 def test_query_features_requests_geometry_crs_and_preserves_response_crs(monkeypatch) -> None:

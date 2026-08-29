@@ -171,6 +171,7 @@ class ArcGISService:
         spatial_relation: str = "esriSpatialRelIntersects",
         extra_params: dict[str, Any] | None = None,
         max_attempts: int = 3,
+        strict_features: bool = False,
     ) -> ArcGISFeatureQueryResult:
         """Query ArcGIS features with pagination and defensive response handling.
 
@@ -271,7 +272,10 @@ class ArcGISService:
                     message = str(error)
                 raise RuntimeError(f"{service_label} returned an error: {message}")
 
-            page_features = payload.get("features") or []
+            raw_features = payload.get("features")
+            if raw_features is None and strict_features:
+                raise RuntimeError(f"{service_label} returned a missing or null features list")
+            page_features = raw_features or []
             if not isinstance(page_features, list):
                 raise RuntimeError(f"{service_label} returned malformed features")
 

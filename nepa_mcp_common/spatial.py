@@ -19,6 +19,7 @@ from shapely import make_valid, to_wkt
 from shapely.geometry import MultiPolygon, Polygon
 from shapely.geometry.base import BaseGeometry
 from shapely.ops import transform, unary_union
+from shapely.strtree import STRtree
 
 
 SQ_METERS_PER_ACRE = 4046.8564224
@@ -187,7 +188,8 @@ def clipped_union_area_from_esri_geometries(
             input_geometry_count=len(geometries),
         )
 
-    projected_features: list[BaseGeometry] = []
+    clipped_features: list[BaseGeometry] = []
+    used_geometry_count = 0
     nonempty_inputs = 0
     for index, esri_geometry in enumerate(geometries):
         if not esri_geometry:
@@ -207,13 +209,19 @@ def clipped_union_area_from_esri_geometries(
             if projected.is_empty or projected.area <= 0:
                 warnings.append(f"Geometry {index} is empty or has no polygon area and was skipped.")
                 continue
-            projected_features.append(projected)
+            used_geometry_count += 1
+            # Intersection distributes over union. Clipping here produces the
+            # same final area as unioning full source polygons first, while
+            # avoiding expensive union work on geometry outside the ROI.
+            clipped_feature = _valid_polygonal(projected.intersection(roi_projected))
+            if not clipped_feature.is_empty and clipped_feature.area > 0:
+                clipped_features.append(clipped_feature)
         except SpatialGeometryError as exc:
             warnings.append(f"Geometry {index} was skipped: {exc}")
         except Exception as exc:
             warnings.append(f"Geometry {index} could not be processed and was skipped: {exc}")
 
-    if not projected_features:
+    if used_geometry_count == 0:
         status = SpatialAreaStatus.NO_GEOMETRY if nonempty_inputs == 0 else SpatialAreaStatus.INVALID_GEOMETRY
         if status is SpatialAreaStatus.NO_GEOMETRY:
             warnings.append("No feature polygon geometries were provided.")
@@ -225,8 +233,7 @@ def clipped_union_area_from_esri_geometries(
         )
 
     try:
-        unioned = _valid_polygonal(unary_union(projected_features))
-        clipped = _valid_polygonal(unioned.intersection(roi_projected))
+        clipped = _valid_polygonal(unary_union(clipped_features)) if clipped_features else MultiPolygon()
     except Exception as exc:
         warnings.append(f"Feature union or ROI intersection failed: {exc}")
         return ClippedAreaResult(
@@ -234,7 +241,7 @@ def clipped_union_area_from_esri_geometries(
             status=SpatialAreaStatus.INVALID_GEOMETRY,
             warnings=tuple(warnings),
             input_geometry_count=len(geometries),
-            used_geometry_count=len(projected_features),
+            used_geometry_count=used_geometry_count,
         )
 
     if clipped.is_empty or clipped.area <= 0:
@@ -243,8 +250,8 @@ def clipped_union_area_from_esri_geometries(
             status=SpatialAreaStatus.NO_OVERLAP,
             warnings=tuple(warnings),
             input_geometry_count=len(geometries),
-            used_geometry_count=len(projected_features),
-            complete=len(projected_features) == len(geometries),
+            used_geometry_count=used_geometry_count,
+            complete=used_geometry_count == len(geometries),
         )
 
     return ClippedAreaResult(
@@ -252,8 +259,8 @@ def clipped_union_area_from_esri_geometries(
         status=SpatialAreaStatus.OK,
         warnings=tuple(warnings),
         input_geometry_count=len(geometries),
-        used_geometry_count=len(projected_features),
-        complete=len(projected_features) == len(geometries),
+        used_geometry_count=used_geometry_count,
+        complete=used_geometry_count == len(geometries),
     )
 
 
@@ -396,7 +403,7 @@ def _polygon_from_rings(rings: Sequence[Sequence[tuple[float, float]]]) -> BaseG
     ring_polygons: list[Polygon] = []
     for ring_index, ring in enumerate(rings):
         polygon = Polygon(ring)
-        if polygon.is_empty or polygon.area <= 0:
+        if polygon.is_empty:
             raise SpatialGeometryError(f"Ring {ring_index} is empty or has no area.")
         if not polygon.is_valid:
             repaired = make_valid(polygon)
@@ -404,16 +411,22 @@ def _polygon_from_rings(rings: Sequence[Sequence[tuple[float, float]]]) -> BaseG
             if not repaired_polygons:
                 raise SpatialGeometryError(f"Ring {ring_index} is invalid and could not be repaired.")
             ring_polygons.extend(Polygon(part.exterior.coords) for part in repaired_polygons)
+        elif polygon.area <= 0:
+            raise SpatialGeometryError(f"Ring {ring_index} is empty or has no area.")
         else:
             ring_polygons.append(polygon)
 
+    # PAD-US multipart features can contain thousands of disjoint rings. Use
+    # a spatial index rather than comparing every ring with every other ring.
+    ring_tree = STRtree(ring_polygons)
     parents: list[int | None] = []
     for index, polygon in enumerate(ring_polygons):
-        containers = [
-            candidate_index
-            for candidate_index, candidate in enumerate(ring_polygons)
-            if candidate_index != index and candidate.area > polygon.area and candidate.covers(polygon)
-        ]
+        containers = []
+        for tree_index in ring_tree.query(polygon):
+            candidate_index = int(tree_index)
+            candidate = ring_polygons[candidate_index]
+            if candidate_index != index and candidate.area > polygon.area and candidate.covers(polygon):
+                containers.append(candidate_index)
         parents.append(min(containers, key=lambda candidate_index: ring_polygons[candidate_index].area, default=None))
 
     depths: list[int] = []
@@ -438,7 +451,8 @@ def _polygon_from_rings(rings: Sequence[Sequence[tuple[float, float]]]) -> BaseG
             for child, parent in enumerate(parents)
             if parent == index and depths[child] == depths[index] + 1
         ]
-        polygons.append(Polygon(shell.exterior.coords, holes))
+        reconstructed = _valid_polygonal(Polygon(shell.exterior.coords, holes))
+        polygons.extend(_polygon_parts(reconstructed))
 
     if not polygons:
         raise SpatialGeometryError("No polygon shells could be reconstructed from the ESRI rings.")

@@ -97,9 +97,10 @@ def get_padus_protected_areas_in_roi(latitude: Latitude, longitude: Longitude, b
     Returns protected-area designations and managing organizations from PAD-US.
     This is not a cadastral parcel or comprehensive land-ownership service.
     Records come from the PAD-US Combined layer, so a single area may appear
-    both as a fee record and as one or more designation records. Source-feature
-    acreage is the full mapped area of each intersecting source feature, may extend
-    beyond the ROI, and is not additive within or across categories.
+    both as a fee record and as one or more designation records. ROI acreage is
+    clipped and unioned within each owner type; source-feature acreage remains
+    the full mapped area and may extend beyond the ROI. Neither is additive
+    across overlapping owner types or PAD-US categories.
 
     Args:
         latitude: Latitude in decimal degrees (WGS84), valid range -90 to 90.

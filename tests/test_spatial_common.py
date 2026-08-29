@@ -119,6 +119,30 @@ def test_invalid_geometry_is_skipped_without_hiding_valid_geometry() -> None:
     assert result.warnings and "Line paths" in result.warnings[0]
 
 
+def test_zero_signed_area_self_crossing_ring_is_repaired() -> None:
+    bowtie = [[-0.1, -0.1], [0.1, 0.1], [-0.1, 0.1], [0.1, -0.1], [-0.1, -0.1]]
+
+    result = clipped_union_area_from_esri_geometries([_geometry(bowtie)], _geometry(ROI_RING))
+
+    assert result.status is SpatialAreaStatus.OK
+    assert result.complete is True
+    assert result.area_square_meters is not None and result.area_square_meters > 0
+
+
+def test_overlapping_holes_are_repaired_before_feature_union() -> None:
+    first_hole = [[-0.08, -0.08], [0.02, -0.08], [0.02, 0.02], [-0.08, 0.02], [-0.08, -0.08]]
+    second_hole = [[-0.02, -0.02], [0.08, -0.02], [0.08, 0.08], [-0.02, 0.08], [-0.02, -0.02]]
+
+    result = clipped_union_area_from_esri_geometries(
+        [_geometry(OUTER_RING, first_hole, second_hole)],
+        _geometry(ROI_RING),
+    )
+
+    assert result.status is SpatialAreaStatus.OK
+    assert result.complete is True
+    assert result.area_square_meters is not None and result.area_square_meters > 0
+
+
 def test_empty_input_has_distinct_status() -> None:
     result = clipped_union_area_from_esri_geometries([None], _geometry(ROI_RING))
 
