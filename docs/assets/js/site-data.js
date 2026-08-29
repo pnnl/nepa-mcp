@@ -10,20 +10,20 @@
 var SITE_DATA = {
   "generatedFrom": "pyproject.toml, nepa_mcp.registry, and each server's live MCP tools/list contract",
   "release": {
-    "version": "0.1.3",
+    "version": "0.1.4",
     "license": "BSD-3-Clause",
     "licenseName": "BSD 3-Clause",
     "description": "MCP servers for federal environmental data, regulatory research, and geospatial screening",
     "repository": "https://github.com/pnnl/nepa-mcp"
   },
   "counts": {
-    "servers": 20,
-    "tools": 47,
+    "servers": 21,
+    "tools": 50,
     "layers": 32,
-    "agencies": 12,
+    "agencies": 13,
     "profiles": 5,
-    "capabilities": 79,
-    "credentialFreeServers": 18
+    "capabilities": 82,
+    "credentialFreeServers": 19
   },
   "servers": [
     {
@@ -142,6 +142,14 @@ var SITE_DATA = {
       "accent": "sky",
       "credentials": [],
       "toolCount": 1
+    },
+    {
+      "name": "nrcs_soils",
+      "description": "USDA-NRCS SSURGO soil and farmland screening",
+      "agency": "USDA Natural Resources Conservation Service",
+      "accent": "emerald",
+      "credentials": [],
+      "toolCount": 3
     },
     {
       "name": "nrhp",
@@ -1594,6 +1602,115 @@ var SITE_DATA = {
           "required": false,
           "default": "25.0",
           "description": "Buffer distance in miles, valid range 0.1 to 100.0.",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "server": "nrcs_soils",
+      "name": "analyze_nrcs_ssurgo_soil_constraints",
+      "purpose": "Summarize NRCS SSURGO soil indicators relevant to early siting review.",
+      "parameters": [
+        {
+          "name": "latitude",
+          "type": "number",
+          "required": true,
+          "default": "",
+          "description": "Latitude in decimal degrees (WGS84), valid range -90 to 90.",
+          "choices": []
+        },
+        {
+          "name": "longitude",
+          "type": "number",
+          "required": true,
+          "default": "",
+          "description": "Longitude in decimal degrees (WGS84), valid range -180 to 180.",
+          "choices": []
+        },
+        {
+          "name": "buffer_miles",
+          "type": "number",
+          "required": false,
+          "default": "1.0",
+          "description": "Soil-screening buffer in miles, valid range 0.1 to 10.0.",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "server": "nrcs_soils",
+      "name": "get_nrcs_ssurgo_farmland_classification_in_roi",
+      "purpose": "Get exact NRCS SSURGO farmland classifications within a project-area buffer.",
+      "parameters": [
+        {
+          "name": "latitude",
+          "type": "number",
+          "required": true,
+          "default": "",
+          "description": "Latitude in decimal degrees (WGS84), valid range -90 to 90.",
+          "choices": []
+        },
+        {
+          "name": "longitude",
+          "type": "number",
+          "required": true,
+          "default": "",
+          "description": "Longitude in decimal degrees (WGS84), valid range -180 to 180.",
+          "choices": []
+        },
+        {
+          "name": "buffer_miles",
+          "type": "number",
+          "required": false,
+          "default": "1.0",
+          "description": "Soil-screening buffer in miles, valid range 0.1 to 10.0.",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "server": "nrcs_soils",
+      "name": "get_nrcs_ssurgo_mapunits_in_roi",
+      "purpose": "Get USDA-NRCS SSURGO soil map units intersecting a project-area buffer.",
+      "parameters": [
+        {
+          "name": "latitude",
+          "type": "number",
+          "required": true,
+          "default": "",
+          "description": "Latitude in decimal degrees (WGS84), valid range -90 to 90.",
+          "choices": []
+        },
+        {
+          "name": "longitude",
+          "type": "number",
+          "required": true,
+          "default": "",
+          "description": "Longitude in decimal degrees (WGS84), valid range -180 to 180.",
+          "choices": []
+        },
+        {
+          "name": "buffer_miles",
+          "type": "number",
+          "required": false,
+          "default": "1.0",
+          "description": "Soil-screening buffer in miles, valid range 0.1 to 10.0.",
+          "choices": []
+        },
+        {
+          "name": "max_results",
+          "type": "number",
+          "required": false,
+          "default": "50",
+          "description": "Maximum map-unit records to return, valid range 1 to 100 (default: 50).",
+          "choices": []
+        },
+        {
+          "name": "result_offset",
+          "type": "number",
+          "required": false,
+          "default": "0",
+          "description": "Zero-based offset into map units ordered by intersected ROI acreage, valid range 0 to 499.",
           "choices": []
         }
       ]

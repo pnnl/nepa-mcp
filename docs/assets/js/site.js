@@ -21,13 +21,13 @@ var FEATURE_CARDS = [
         icon: 'fa-shield-halved',
         color: 'teal',
         title: 'Environmental Screening',
-        description: 'Jurisdictional, habitat, water, flood, cultural, social, and economic context for a project area.'
+        description: 'Jurisdictional, habitat, soil, water, flood, cultural, social, and economic context for a project area.'
     },
     {
         icon: 'fa-database',
         color: 'emerald',
         title: 'Public Federal Data',
-        description: 'Up-to-date information from 12 federal agencies, read straight from their public services.'
+        description: 'Up-to-date information from 13 federal agencies, read straight from their public services.'
     },
     {
         icon: 'fa-gavel',
@@ -75,7 +75,7 @@ var CLIENT_CONFIGS = [
         command: 'nepa-mcp configure codex',
         path: '~/.codex/config.toml',
         scope: 'One global file, so any directory works. Start a new Codex task afterward.',
-        note: 'The Codex plugin below registers the same 20 servers and adds the screening skill. Use one or the other — do not run this command as well.'
+        note: 'The Codex plugin below registers the same 21 servers and adds the screening skill. Use one or the other — do not run this command as well.'
     }
 ];
 
@@ -226,6 +226,14 @@ var SERVER_COVERAGE = {
             ['Critical habitat', 'West Coast ESA designations'],
             ['Marine species', 'Habitat overlap with the project area'],
             ['Consultation context', 'Input for NOAA coordination']
+        ]
+    },
+    nrcs_soils: {
+        icon: 'fa-seedling',
+        items: [
+            ['Soil map units', 'Mapped soils and clipped site coverage'],
+            ['Siting indicators', 'Drainage, runoff, slopes, restrictions, and erosion'],
+            ['Farmland context', 'Prime and other farmland classifications']
         ]
     },
     nrhp: {

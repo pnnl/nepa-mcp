@@ -34,6 +34,7 @@ EXPECTED_SERVERS = {
     "map_composer",
     "nepa_assist",
     "noaa",
+    "nrcs_soils",
     "nrhp",
     "padus",
     "pcsrf",
@@ -59,7 +60,7 @@ def test_public_package_metadata_matches_the_approved_release_identity() -> None
     license_text = (ROOT / "LICENSE").read_text(encoding="utf-8")
     notice_text = (ROOT / "NOTICE").read_text(encoding="utf-8")
 
-    assert project["version"] == "0.1.3"
+    assert project["version"] == "0.1.4"
     assert project["description"] == (
         "MCP servers for federal environmental data, regulatory research, and geospatial screening"
     )
@@ -294,13 +295,16 @@ async def _aggregate_tool_names() -> set[str]:
 
 def test_aggregate_server_discovers_all_tools() -> None:
     tool_names = asyncio.run(_aggregate_tool_names())
-    assert len(tool_names) == 47
+    assert len(tool_names) == 50
     assert {
         "summarize_roi_buffer",
         "get_epa_acres_properties_in_roi",
         "get_ipac_resources_in_roi",
         "cfr_resolve_citation",
         "get_nrhp_properties_in_roi",
+        "get_nrcs_ssurgo_mapunits_in_roi",
+        "analyze_nrcs_ssurgo_soil_constraints",
+        "get_nrcs_ssurgo_farmland_classification_in_roi",
         "compose_environmental_map",
         "export_all_layers_geojson",
     } <= tool_names

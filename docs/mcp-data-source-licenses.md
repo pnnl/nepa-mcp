@@ -1,7 +1,7 @@
 # MCP Data Source Licenses
 
 This reference consolidates data-source license notes for the current flat
-20-server repository. It is a public-release aid, not legal advice. Verify final
+21-server repository. It is a public-release aid, not legal advice. Verify final
 license determinations before publishing or redistributing derived datasets.
 
 | Server | Agency / Publisher | Dataset / Service | Primary endpoint | Auth required | License / terms signal | Risk flag | Notes |
@@ -26,6 +26,7 @@ license determinations before publishing or redistributing derived datasets.
 | `map_composer` | Carto, USGS, Esri | Interactive basemap tiles and web-map assets | Runtime tile and CDN endpoints embedded by Folium | No | Provider-specific service and attribution terms apply | Medium | HTML maps require network access for basemap tiles and standard web-map assets; vector overlays are embedded locally. |
 | `nepa_assist` | EPA | NEPAssist environmental screening | `nepassisttool.epa.gov/nepassist/analysis.aspx` | No | EPA geospatial data generally public domain under 17 U.S.C. 105 unless otherwise specified | High | Access method is fragile because it relies on NEPAssist web endpoint behavior. |
 | `noaa` | NOAA Fisheries | West Coast Region ESA critical habitat | `maps.fisheries.noaa.gov/.../WCR_ch_dice/FeatureServer` | No | Federal agency data; NOAA Fisheries service terms should be verified | Medium | Current tool docs disclose West Coast Region scope. |
+| `nrcs_soils` | USDA-NRCS | Soil Survey Geographic Database (SSURGO) through Soil Data Access | `sdmdataaccess.sc.egov.usda.gov/Tabular/post.rest` | No | Federal soil-survey data; USDA-NRCS service and reuse terms should be verified | Medium | Map-unit and component data are generalized soil-survey screening information, not site-specific geotechnical, wetland, infiltration, or FPPA determinations. |
 | `nrhp` | National Park Service | National Register of Historic Places listed properties | `mapservices.nps.gov/.../cultural_resources/nrhp_locations/MapServer` | No | Federal agency public data signal; NPS service terms should be verified | Medium | Current service covers listed NRHP records, not all eligible cultural resources. |
 | `padus` | USGS / DOI | PAD-US 4.1 Combined protected-area records | `edits.nationalmap.gov/.../PAD-US/PAD_US_gaz_combined/MapServer` | No | Public domain signal from DOI / USGS public data policies | Low | PAD-US is protected-area screening data, not comprehensive cadastral parcel ownership; Combined-layer records may overlap. |
 | `pcsrf` | NOAA Fisheries | PCSRF project locations and funding | `services2.arcgis.com/C8EMgrsFcRFL6LrL/.../PCSRF_Projects_Display/FeatureServer` | No | Federal agency data; NOAA Fisheries service terms should be verified | Medium | Only `get_pcsrf_projects_in_roi` is PCSRF project data. |

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "nepa-mcp"
-version = "0.1.3"
+version = "0.1.4"
 description = "MCP servers for federal environmental data, regulatory research, and geospatial screening"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -95,6 +95,7 @@ include = [
     "/map_composer",
     "/nepa_assist",
     "/noaa",
+    "/nrcs_soils",
     "/nrhp",
     "/padus",
     "/pcsrf",
@@ -118,6 +119,7 @@ include = [
 "map_composer" = "nepa_mcp/_servers/map_composer"
 "nepa_assist" = "nepa_mcp/_servers/nepa_assist"
 "noaa" = "nepa_mcp/_servers/noaa"
+"nrcs_soils" = "nepa_mcp/_servers/nrcs_soils"
 "nrhp" = "nepa_mcp/_servers/nrhp"
 "padus" = "nepa_mcp/_servers/padus"
 "pcsrf" = "nepa_mcp/_servers/pcsrf"

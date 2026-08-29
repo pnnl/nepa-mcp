@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import pytest
 from pyproj import CRS, Geod
+from shapely import from_wkt
 from shapely.geometry import Polygon
 
 from nepa_mcp_common.spatial import (
@@ -9,6 +10,7 @@ from nepa_mcp_common.spatial import (
     SpatialAreaStatus,
     clipped_union_area_from_esri_geometries,
     convert_area,
+    esri_polygon_to_wgs84_wkt,
 )
 
 
@@ -174,3 +176,18 @@ def test_supplied_spatial_reference_without_crs_is_rejected() -> None:
 
     assert result.status is SpatialAreaStatus.INVALID_GEOMETRY
     assert "must include wkid" in result.warnings[0]
+
+
+def test_esri_polygon_to_wkt_preserves_shell_and_hole() -> None:
+    wkt = esri_polygon_to_wgs84_wkt(_geometry(OUTER_RING, HOLE_RING))
+
+    polygon = Polygon(OUTER_RING, [HOLE_RING])
+    assert wkt.startswith("POLYGON")
+    assert from_wkt(wkt).area == pytest.approx(polygon.area, rel=2e-6)
+
+
+def test_esri_polygon_to_wkt_rejects_antimeridian_wrap() -> None:
+    geometry = _geometry([[179.9, -0.1], [179.9, 0.1], [-179.9, 0.1], [-179.9, -0.1], [179.9, -0.1]])
+
+    with pytest.raises(ValueError, match="antimeridian"):
+        esri_polygon_to_wgs84_wkt(geometry)
