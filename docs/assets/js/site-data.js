@@ -10,25 +10,33 @@
 var SITE_DATA = {
   "generatedFrom": "pyproject.toml, nepa_mcp.registry, and each server's live MCP tools/list contract",
   "release": {
-    "version": "0.1.4",
+    "version": "0.1.5",
     "license": "BSD-3-Clause",
     "licenseName": "BSD 3-Clause",
     "description": "MCP servers for federal environmental data, regulatory research, and geospatial screening",
     "repository": "https://github.com/pnnl/nepa-mcp"
   },
   "counts": {
-    "servers": 21,
-    "tools": 50,
+    "servers": 22,
+    "tools": 53,
     "layers": 32,
     "agencies": 13,
     "profiles": 5,
-    "capabilities": 82,
-    "credentialFreeServers": 19
+    "capabilities": 85,
+    "credentialFreeServers": 20
   },
   "servers": [
     {
       "name": "blm",
       "description": "BLM land use plans, wilderness areas, and national monuments",
+      "agency": "Bureau of Land Management",
+      "accent": "amber",
+      "credentials": [],
+      "toolCount": 3
+    },
+    {
+      "name": "blm_mlrs",
+      "description": "BLM MLRS authorizations, mineral operations, and energy leases",
       "agency": "Bureau of Land Management",
       "accent": "amber",
       "credentials": [],
@@ -290,6 +298,263 @@ var SITE_DATA = {
           "required": false,
           "default": "25.0",
           "description": "Buffer distance in miles, valid range 0.1 to 100.0.",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "server": "blm_mlrs",
+      "name": "get_blm_mlrs_energy_leases_in_roi",
+      "purpose": "Screen BLM MLRS geothermal and oil-and-gas lease case records.",
+      "parameters": [
+        {
+          "name": "latitude",
+          "type": "number",
+          "required": true,
+          "default": "",
+          "description": "Latitude in decimal degrees (WGS84), valid range -90 to 90.",
+          "choices": []
+        },
+        {
+          "name": "longitude",
+          "type": "number",
+          "required": true,
+          "default": "",
+          "description": "Longitude in decimal degrees (WGS84), valid range -180 to 180.",
+          "choices": []
+        },
+        {
+          "name": "buffer_miles",
+          "type": "number",
+          "required": false,
+          "default": "25.0",
+          "description": "Buffer distance in miles, valid range 0.1 to 100.0.",
+          "choices": []
+        },
+        {
+          "name": "include_closed",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Include Closed lease dispositions in the default disposition set. Ignored when source_dispositions is supplied.",
+          "choices": []
+        },
+        {
+          "name": "source_dispositions",
+          "type": "array",
+          "required": false,
+          "default": "null",
+          "description": "Exact BLM source dispositions to include. When supplied, this overrides include_closed. Allowed values are Authorized, Pending, Interim, and Closed.",
+          "choices": []
+        },
+        {
+          "name": "lease_family",
+          "type": "string",
+          "required": false,
+          "default": "\"all\"",
+          "description": "Energy-lease source family to query.",
+          "choices": [
+            "all",
+            "geothermal",
+            "oil_and_gas"
+          ]
+        },
+        {
+          "name": "commodity_filter",
+          "type": "string",
+          "required": false,
+          "default": "null",
+          "description": "Case-insensitive text contained in the exact BLM source field.",
+          "choices": []
+        },
+        {
+          "name": "formation_filter",
+          "type": "string",
+          "required": false,
+          "default": "null",
+          "description": "Case-insensitive text contained in the exact BLM source field.",
+          "choices": []
+        },
+        {
+          "name": "max_results_per_source",
+          "type": "number",
+          "required": false,
+          "default": "25",
+          "description": "Maximum records returned from each source family, valid range 1 to 100.",
+          "choices": []
+        },
+        {
+          "name": "result_offset_per_source",
+          "type": "number",
+          "required": false,
+          "default": "0",
+          "description": "Zero-based offset applied independently to each source family, valid range 0 to 9999.",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "server": "blm_mlrs",
+      "name": "get_blm_mlrs_land_use_authorizations_in_roi",
+      "purpose": "Screen public BLM MLRS right-of-way, lease, permit, and easement case records.",
+      "parameters": [
+        {
+          "name": "latitude",
+          "type": "number",
+          "required": true,
+          "default": "",
+          "description": "Latitude in decimal degrees (WGS84), valid range -90 to 90.",
+          "choices": []
+        },
+        {
+          "name": "longitude",
+          "type": "number",
+          "required": true,
+          "default": "",
+          "description": "Longitude in decimal degrees (WGS84), valid range -180 to 180.",
+          "choices": []
+        },
+        {
+          "name": "buffer_miles",
+          "type": "number",
+          "required": false,
+          "default": "25.0",
+          "description": "Buffer distance in miles, valid range 0.1 to 100.0.",
+          "choices": []
+        },
+        {
+          "name": "include_closed",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Include Closed source dispositions in the default disposition set. Ignored when source_dispositions is supplied.",
+          "choices": []
+        },
+        {
+          "name": "source_dispositions",
+          "type": "array",
+          "required": false,
+          "default": "null",
+          "description": "Exact BLM source dispositions to include. When supplied, this overrides include_closed. Allowed values are Authorized, Pending, Interim, and Closed.",
+          "choices": []
+        },
+        {
+          "name": "authorization_family",
+          "type": "string",
+          "required": false,
+          "default": "\"all\"",
+          "description": "Authorization source family to query.",
+          "choices": [
+            "all",
+            "right_of_way",
+            "lease_permit_easement"
+          ]
+        },
+        {
+          "name": "product_category",
+          "type": "string",
+          "required": false,
+          "default": "\"all\"",
+          "description": "Research category matched against the exact BLM product text.",
+          "choices": [
+            "all",
+            "transmission",
+            "solar_wind",
+            "pipeline",
+            "road",
+            "communications",
+            "other"
+          ]
+        },
+        {
+          "name": "max_results_per_source",
+          "type": "number",
+          "required": false,
+          "default": "25",
+          "description": "Maximum records returned from each source family, valid range 1 to 100.",
+          "choices": []
+        },
+        {
+          "name": "result_offset_per_source",
+          "type": "number",
+          "required": false,
+          "default": "0",
+          "description": "Zero-based offset applied independently to each source family, valid range 0 to 9999.",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "server": "blm_mlrs",
+      "name": "get_blm_mlrs_locatable_operations_in_roi",
+      "purpose": "Screen BLM MLRS locatable-mineral plans of operations and notices.",
+      "parameters": [
+        {
+          "name": "latitude",
+          "type": "number",
+          "required": true,
+          "default": "",
+          "description": "Latitude in decimal degrees (WGS84), valid range -90 to 90.",
+          "choices": []
+        },
+        {
+          "name": "longitude",
+          "type": "number",
+          "required": true,
+          "default": "",
+          "description": "Longitude in decimal degrees (WGS84), valid range -180 to 180.",
+          "choices": []
+        },
+        {
+          "name": "buffer_miles",
+          "type": "number",
+          "required": false,
+          "default": "25.0",
+          "description": "Buffer distance in miles, valid range 0.1 to 100.0.",
+          "choices": []
+        },
+        {
+          "name": "source_dispositions",
+          "type": "array",
+          "required": false,
+          "default": "null",
+          "description": "Exact BLM source dispositions to include: Authorized and/or Pending.",
+          "choices": []
+        },
+        {
+          "name": "operation_family",
+          "type": "string",
+          "required": false,
+          "default": "\"all\"",
+          "description": "Locatable-operation source family to query.",
+          "choices": [
+            "all",
+            "plan_of_operations",
+            "notice"
+          ]
+        },
+        {
+          "name": "commodity_filter",
+          "type": "string",
+          "required": false,
+          "default": "null",
+          "description": "Case-insensitive text contained in the exact BLM source field.",
+          "choices": []
+        },
+        {
+          "name": "max_results_per_source",
+          "type": "number",
+          "required": false,
+          "default": "25",
+          "description": "Maximum records returned from each source family, valid range 1 to 100.",
+          "choices": []
+        },
+        {
+          "name": "result_offset_per_source",
+          "type": "number",
+          "required": false,
+          "default": "0",
+          "description": "Zero-based offset applied independently to each source family, valid range 0 to 9999.",
           "choices": []
         }
       ]
