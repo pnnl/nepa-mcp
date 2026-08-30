@@ -151,10 +151,114 @@ class ArcGISService:
         }
 
     @staticmethod
+    def query_object_ids(
+        service_url: str,
+        layer_id: int,
+        geometry: dict[str, Any] | None,
+        *,
+        where: str = "1=1",
+        timeout: float | tuple[float, float] = DEFAULT_TIMEOUT_SECONDS,
+        headers: dict[str, str] | None = None,
+        service_name: str | None = None,
+        simplify_geometry: bool = True,
+        simplification_tolerance: float | None = None,
+        geometry_type: str = "esriGeometryPolygon",
+        in_sr: int = 4326,
+        spatial_relation: str = "esriSpatialRelIntersects",
+        max_attempts: int = 3,
+    ) -> list[int]:
+        """Return the complete deterministic object-ID set for an ArcGIS query.
+
+        ArcGIS does not apply the layer feature-transfer limit to
+        ``returnIdsOnly`` responses.  Callers can therefore page the returned
+        IDs locally and request only a bounded ``objectIds`` slice.
+        """
+        import requests
+
+        if max_attempts <= 0:
+            raise ValueError("max_attempts must be greater than zero")
+
+        url = f"{service_url}/{layer_id}/query"
+        service_label = service_name or f"ArcGIS layer {service_url}/{layer_id}"
+        params: dict[str, Any] = {
+            "where": where,
+            "returnIdsOnly": True,
+            "returnGeometry": False,
+            "f": "json",
+        }
+        if geometry is not None:
+            query_geometry = (
+                ArcGISService.simplify_polygon_geometry(geometry, tolerance=simplification_tolerance)
+                if simplify_geometry
+                else geometry
+            )
+            params.update(
+                {
+                    "geometry": json.dumps(query_geometry),
+                    "geometryType": geometry_type,
+                    "inSR": in_sr,
+                    "spatialRel": spatial_relation,
+                }
+            )
+
+        for attempt in range(1, max_attempts + 1):
+            try:
+                response = requests.post(url, data=params, timeout=timeout, headers=headers)
+                response.raise_for_status()
+                payload = response.json()
+                break
+            except requests.RequestException as exc:
+                status_code = getattr(getattr(exc, "response", None), "status_code", None)
+                retriable = isinstance(exc, (requests.Timeout, requests.ConnectionError)) or status_code in {
+                    429,
+                    500,
+                    502,
+                    503,
+                    504,
+                }
+                if attempt >= max_attempts or not retriable:
+                    raise RuntimeError(f"{service_label} request failed: {exc}") from exc
+                time.sleep(0.25 * (2 ** (attempt - 1)))
+            except ValueError as exc:
+                raise RuntimeError(f"{service_label} returned invalid JSON") from exc
+
+        if not isinstance(payload, dict):
+            raise RuntimeError(f"{service_label} returned unexpected JSON type: {type(payload).__name__}")
+        if "error" in payload:
+            error = payload["error"]
+            if isinstance(error, dict):
+                message = error.get("message", "Unknown ArcGIS error")
+                details = error.get("details") or []
+                if isinstance(details, list) and details:
+                    message = f"{message}: {'; '.join(str(detail) for detail in details)}"
+            else:
+                message = str(error)
+            raise RuntimeError(f"{service_label} returned an error: {message}")
+
+        raw_ids = payload.get("objectIds")
+        if "objectIds" in payload and raw_ids is None:
+            return []
+        if not isinstance(raw_ids, list):
+            raise RuntimeError(f"{service_label} returned malformed object IDs")
+
+        object_ids: list[int] = []
+        for raw_id in raw_ids:
+            if isinstance(raw_id, bool):
+                raise RuntimeError(f"{service_label} returned malformed object IDs")
+            try:
+                object_id = int(raw_id)
+            except (TypeError, ValueError) as exc:
+                raise RuntimeError(f"{service_label} returned malformed object IDs") from exc
+            if isinstance(raw_id, float) and not raw_id.is_integer():
+                raise RuntimeError(f"{service_label} returned malformed object IDs")
+            object_ids.append(object_id)
+        return sorted(set(object_ids))
+
+    @staticmethod
     def query_features(
         service_url: str,
         layer_id: int,
-        geometry: dict[str, Any],
+        geometry: dict[str, Any] | None,
         *,
         out_fields: str,
         return_geometry: bool = False,
@@ -169,6 +273,7 @@ class ArcGISService:
         geometry_type: str = "esriGeometryPolygon",
         in_sr: int = 4326,
         spatial_relation: str = "esriSpatialRelIntersects",
+        result_offset: int = 0,
         extra_params: dict[str, Any] | None = None,
         max_attempts: int = 3,
     ) -> ArcGISFeatureQueryResult:
@@ -186,23 +291,30 @@ class ArcGISService:
             raise ValueError("max_features must be greater than zero")
         if max_attempts <= 0:
             raise ValueError("max_attempts must be greater than zero")
+        if result_offset < 0:
+            raise ValueError("result_offset must be zero or greater")
 
         url = f"{service_url}/{layer_id}/query"
         service_label = service_name or f"ArcGIS layer {service_url}/{layer_id}"
-        query_geometry = (
-            ArcGISService.simplify_polygon_geometry(geometry, tolerance=simplification_tolerance)
-            if simplify_geometry
-            else geometry
-        )
         base_params = {
-            "geometry": json.dumps(query_geometry),
-            "geometryType": geometry_type,
-            "inSR": in_sr,
-            "spatialRel": spatial_relation,
             "returnGeometry": return_geometry,
             "outFields": out_fields,
             "f": "json",
         }
+        if geometry is not None:
+            query_geometry = (
+                ArcGISService.simplify_polygon_geometry(geometry, tolerance=simplification_tolerance)
+                if simplify_geometry
+                else geometry
+            )
+            base_params.update(
+                {
+                    "geometry": json.dumps(query_geometry),
+                    "geometryType": geometry_type,
+                    "inSR": in_sr,
+                    "spatialRel": spatial_relation,
+                }
+            )
         if out_sr is not None:
             base_params["outSR"] = int(out_sr)
         if extra_params:
@@ -227,7 +339,7 @@ class ArcGISService:
 
         features: list[dict[str, Any]] = []
         warnings: list[str] = []
-        offset = 0
+        offset = int(result_offset)
         truncated = False
 
         while True:
