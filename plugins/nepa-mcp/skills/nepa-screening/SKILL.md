@@ -33,6 +33,11 @@ Before location-scoped calls, confirm or derive latitude, longitude, and buffer 
   `result_offset` instruction when the complete property list is needed.
 - Use `padus` for protected areas, ownership, management, and conservation status.
 - Use `blm` for BLM land use plans, wilderness areas, and national monuments.
+- Use `blm_mlrs` for BLM land-use authorization cases, locatable-mineral
+  operations, and geothermal or oil-and-gas leases. Preserve the source
+  disposition and treat mapped records as legal-description-derived screening
+  evidence, not surveyed footprints, title opinions, or proof that an
+  operation is active or authorized.
 - Use `usace` for Corps districts and wetland delineation regions.
 - Use `nrhp` for National Register of Historic Places properties.
 - Use `cfr` for current eCFR text, regulatory history, Federal Register citations, and executive orders.

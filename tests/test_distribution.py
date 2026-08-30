@@ -21,6 +21,7 @@ from nepa_mcp.registry import CREDENTIAL_VARIABLES, SERVER_SPECS, server_entrypo
 ROOT = Path(__file__).resolve().parents[1]
 EXPECTED_SERVERS = {
     "blm",
+    "blm_mlrs",
     "census",
     "cfr",
     "efh",
@@ -295,7 +296,7 @@ async def _aggregate_tool_names() -> set[str]:
 
 def test_aggregate_server_discovers_all_tools() -> None:
     tool_names = asyncio.run(_aggregate_tool_names())
-    assert len(tool_names) == 50
+    assert len(tool_names) == 53
     assert {
         "summarize_roi_buffer",
         "get_epa_acres_properties_in_roi",

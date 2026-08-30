@@ -31,8 +31,8 @@ toolkit. It gives AI agents structured access to federal environmental,
 regulatory, biological, cultural, socioeconomic, and jurisdictional data used
 in NEPA screening and permitting research.
 
-The current inventory includes 21 MCP servers, 50 MCP tools, and 32 GIS
-layers. Together, the tools and layers represent **82 environmental and
+The current inventory includes 22 MCP servers, 53 MCP tools, and 32 GIS
+layers. Together, the tools and layers represent **85 environmental and
 regulatory research capabilities**. These capabilities draw on public data
 from 13 federal agencies, along with interagency and nonfederal sources.
 
@@ -110,7 +110,7 @@ new task.
 
 ## Codex Plugin
 
-The Codex plugin registers all 21 servers and includes the `nepa-screening`
+The Codex plugin registers all 22 servers and includes the `nepa-screening`
 skill. If you use the plugin, do not also run `nepa-mcp configure codex`.
 
 Install and verify the Python runtime before adding the plugin:
@@ -120,7 +120,7 @@ pipx install nepa-mcp
 nepa-mcp doctor
 ```
 
-`doctor` should report `Installed servers: 20`. Then add the marketplace in
+`doctor` should report `Installed servers: 22`. Then add the marketplace in
 Codex Desktop:
 
 1. Open **Plugins** and select **Add plugin marketplace**.
@@ -165,7 +165,7 @@ complete 32-layer catalog, output behavior, provenance, and artifact storage.
 
 ## Credentials
 
-Credentials are not required to install NEPA MCP or use the other 18 servers.
+Credentials are not required to install NEPA MCP or use the other 20 servers.
 The Census and EPA AQS servers require credentials before they can return data:
 
 | Server | Environment variables |
@@ -192,6 +192,7 @@ Credentials are not copied into MCP client or plugin configuration, and
 | Server | Source agency / publisher | Purpose |
 |---|---|---|
 | `blm` | [Bureau of Land Management](https://www.blm.gov/) / [Department of the Interior](https://www.doi.gov/) | Approved land-use plans, wilderness areas, national monuments, and National Conservation Areas |
+| `blm_mlrs` | [Bureau of Land Management](https://www.blm.gov/) / [Mineral & Land Records System](https://mlrs.blm.gov/) | Land-use authorization cases, locatable-mineral operations, and geothermal and oil-and-gas leases |
 | `census` | [U.S. Census Bureau](https://www.census.gov/) | ACS 5-Year socioeconomic indicators for intersecting TIGERweb counties |
 | `cfr` | [Office of the Federal Register / National Archives](https://www.archives.gov/federal-register) and [U.S. Government Publishing Office](https://www.gpo.gov/) | eCFR and Federal Register records, including executive orders |
 | `efh` | [NOAA Fisheries](https://www.fisheries.noaa.gov/) | EFH Mapper data for EFH, HAPC, salmon, HMS, coastal pelagic species, and groundfish screening |

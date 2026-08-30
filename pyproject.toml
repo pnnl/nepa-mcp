@@ -82,6 +82,7 @@ include = [
     "/nepa_mcp",
     "/nepa_mcp_common",
     "/blm",
+    "/blm_mlrs",
     "/census",
     "/cfr",
     "/efh",
@@ -106,6 +107,7 @@ include = [
 
 [tool.hatch.build.targets.wheel.force-include]
 "blm" = "nepa_mcp/_servers/blm"
+"blm_mlrs" = "nepa_mcp/_servers/blm_mlrs"
 "census" = "nepa_mcp/_servers/census"
 "cfr" = "nepa_mcp/_servers/cfr"
 "efh" = "nepa_mcp/_servers/efh"

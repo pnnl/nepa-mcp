@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 EXPECTED_TOOL_COUNTS = {
     "blm": 3,
+    "blm_mlrs": 3,
     "census": 1,
     "cfr": 7,
     "efh": 4,
@@ -42,6 +43,11 @@ EXPECTED_TOOL_NAMES = {
         "get_blm_land_use_plans_in_roi",
         "get_blm_national_monuments_in_roi",
         "get_blm_wilderness_areas_in_roi",
+    },
+    "blm_mlrs": {
+        "get_blm_mlrs_energy_leases_in_roi",
+        "get_blm_mlrs_land_use_authorizations_in_roi",
+        "get_blm_mlrs_locatable_operations_in_roi",
     },
     "census": {"get_acs_socioeconomic_indicators_in_roi"},
     "cfr": {

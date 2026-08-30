@@ -94,7 +94,7 @@ the first production upload.
    nepa-mcp list-servers
    ```
 
-3. Start all 21 installed servers over MCP stdio and confirm all 50 tools.
+3. Start all 22 installed servers over MCP stdio and confirm all 53 tools.
 4. Run representative GIS and CFR live calls.
 5. Publish the matching stable GitHub release.
 6. Update the `github-pages` branch to the stable version and production

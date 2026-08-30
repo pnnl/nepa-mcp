@@ -23,6 +23,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 SERVER_NAMES = [
     "blm",
+    "blm_mlrs",
     "census",
     "cfr",
     "efh",
