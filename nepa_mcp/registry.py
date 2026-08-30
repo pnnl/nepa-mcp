@@ -15,6 +15,7 @@ class ServerSpec:
 
 SERVER_SPECS = (
     ServerSpec("blm", "BLM land use plans, wilderness areas, and national monuments"),
+    ServerSpec("blm_mlrs", "BLM MLRS authorizations, mineral operations, and energy leases"),
     ServerSpec("census", "Census ACS socioeconomic indicators", ("CENSUS_API_KEY",)),
     ServerSpec("cfr", "CFR, Federal Register, and executive-order lookup"),
     ServerSpec("efh", "NOAA Essential Fish Habitat and HAPC screening"),

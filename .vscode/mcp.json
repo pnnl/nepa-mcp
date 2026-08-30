@@ -11,6 +11,17 @@
         "PYTHONUNBUFFERED": "1"
       }
     },
+    "blm_mlrs": {
+      "type": "stdio",
+      "command": "nepa-mcp",
+      "args": [
+        "server",
+        "blm_mlrs"
+      ],
+      "env": {
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
     "census": {
       "type": "stdio",
       "command": "nepa-mcp",

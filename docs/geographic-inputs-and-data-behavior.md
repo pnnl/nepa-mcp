@@ -49,6 +49,11 @@ See the [Map Composer guide](map-composer.md) for profiles, the complete
   estimates multiply that acreage by NRCS component percentages; components
   are not spatially located within map units, so those estimates are not mapped
   subareas or parcel-specific measurements.
+- `blm_mlrs` intersects the ROI with BLM case geometries derived from legal
+  land descriptions and PLSS data. A case can be generalized to an aliquot,
+  section, or county, and some cases cannot be geocoded. Results therefore
+  identify research leads rather than surveyed footprints, title opinions,
+  permit determinations, or proof that an operation is active.
 
 ## Coverage and upstream failures
 

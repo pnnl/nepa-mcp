@@ -1,6 +1,6 @@
 # MCP Tool Catalog
 
-NEPA MCP provides 21 independent servers with 50 tools. Use this catalog to choose the smallest set of servers needed for a workflow.
+NEPA MCP provides 22 independent servers with 53 tools. Use this catalog to choose the smallest set of servers needed for a workflow.
 
 This file is generated from the server registry and each server's live MCP `tools/list` contract. Do not edit it manually. Regenerate it with `uv run python scripts/generate_tool_catalog.py`; add `--check` to verify it without writing.
 
@@ -9,6 +9,9 @@ This file is generated from the server registry and each server's live MCP `tool
 | `blm` | `get_blm_land_use_plans_in_roi` | Identify BLM approved land use plans intersecting the ROI. |
 | `blm` | `get_blm_national_monuments_in_roi` | Identify BLM National Monuments and NCAs intersecting the ROI. |
 | `blm` | `get_blm_wilderness_areas_in_roi` | Identify BLM designated wilderness areas intersecting the ROI. |
+| `blm_mlrs` | `get_blm_mlrs_energy_leases_in_roi` | Screen BLM MLRS geothermal and oil-and-gas lease case records. |
+| `blm_mlrs` | `get_blm_mlrs_land_use_authorizations_in_roi` | Screen public BLM MLRS right-of-way, lease, permit, and easement case records. |
+| `blm_mlrs` | `get_blm_mlrs_locatable_operations_in_roi` | Screen BLM MLRS locatable-mineral plans of operations and notices. |
 | `census` | `get_acs_socioeconomic_indicators_in_roi` | Query ACS socioeconomic indicators for counties within a region of interest. |
 | `cfr` | `cfr_browse_structure` | Browse the table of contents at any level of the CFR hierarchy. |
 | `cfr` | `cfr_compare_versions` | Diff a single CFR section between two dates, paragraph by paragraph. |

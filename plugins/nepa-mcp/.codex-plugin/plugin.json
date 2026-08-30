@@ -1,6 +1,6 @@
 {
   "name": "nepa-mcp",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Use local NEPA environmental screening, mapping, and research tools from Codex.",
   "author": {
     "name": "NEPA-MCP maintainers"
@@ -17,7 +17,7 @@
   "interface": {
     "displayName": "NEPA-MCP",
     "shortDescription": "Screen projects with federal environmental data",
-    "longDescription": "NEPA-MCP connects Codex to local tools for environmental screening, biological and cultural resources, jurisdiction, soils, flood risk, air quality, protected lands, and regulatory research.",
+    "longDescription": "NEPA-MCP connects Codex to local tools for environmental screening, biological and cultural resources, jurisdiction, soils, flood risk, air quality, public-land case research, protected lands, and regulatory research.",
     "developerName": "NEPA-MCP maintainers",
     "category": "Developer Tools",
     "capabilities": [
