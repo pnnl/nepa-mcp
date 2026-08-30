@@ -12,8 +12,8 @@ from nepa_mcp.aggregate import child_server_config
 from nepa_mcp.registry import SERVER_SPECS
 
 
-EXPECTED_SERVER_COUNT = 21
-EXPECTED_TOOL_COUNT = 50
+EXPECTED_SERVER_COUNT = 22
+EXPECTED_TOOL_COUNT = 53
 
 
 async def inspect_servers() -> tuple[int, int]:

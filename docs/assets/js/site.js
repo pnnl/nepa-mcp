@@ -75,7 +75,7 @@ var CLIENT_CONFIGS = [
         command: 'nepa-mcp configure codex',
         path: '~/.codex/config.toml',
         scope: 'One global file, so any directory works. Start a new Codex task afterward.',
-        note: 'The Codex plugin below registers the same 21 servers and adds the screening skill. Use one or the other — do not run this command as well.'
+        note: 'The Codex plugin below registers the same 22 servers and adds the screening skill. Use one or the other — do not run this command as well.'
     }
 ];
 
@@ -122,6 +122,14 @@ var SERVER_COVERAGE = {
             ['Land use plan conformance', 'Approved RMPs and plans in revision'],
             ['Wilderness Act areas', 'Designated wilderness and study areas'],
             ['National Monuments', 'Monuments and Conservation Areas']
+        ]
+    },
+    blm_mlrs: {
+        icon: 'fa-file-signature',
+        items: [
+            ['Land-use authorization cases', 'Rights-of-way, leases, permits, and easements'],
+            ['Locatable-mineral operations', 'Plans of operations and notices kept distinct'],
+            ['Energy lease interests', 'Geothermal and oil-and-gas lease screening']
         ]
     },
     census: {

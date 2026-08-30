@@ -3,6 +3,12 @@
 command = "nepa-mcp"
 args = ["server", "blm"]
 env = { PYTHONUNBUFFERED = "1" }
+
+[mcp_servers.blm_mlrs]
+command = "nepa-mcp"
+args = ["server", "blm_mlrs"]
+env = { PYTHONUNBUFFERED = "1" }
+
 [mcp_servers.census]
 command = "nepa-mcp"
 args = ["server", "census"]

@@ -30,6 +30,7 @@ from nepa_mcp.registry import SERVER_SPECS  # noqa: E402
 # Everything else on the site is derived from the live MCP contract below.
 SERVER_PRESENTATION: dict[str, dict[str, str]] = {
     "blm": {"agency": "Bureau of Land Management", "accent": "amber"},
+    "blm_mlrs": {"agency": "Bureau of Land Management", "accent": "amber"},
     "census": {"agency": "U.S. Census Bureau", "accent": "indigo"},
     "cfr": {"agency": "Federal Register / GPO", "accent": "slate"},
     "efh": {"agency": "NOAA Fisheries", "accent": "sky"},
@@ -58,8 +59,8 @@ FEDERAL_AGENCY_COUNT = 13
 
 # Verified invariants. The generator fails loudly rather than quietly shipping a
 # page whose headline numbers drifted away from the code.
-EXPECTED_SERVER_COUNT = 21
-EXPECTED_TOOL_COUNT = 50
+EXPECTED_SERVER_COUNT = 22
+EXPECTED_TOOL_COUNT = 53
 EXPECTED_LAYER_COUNT = 32
 EXPECTED_PROFILE_SIZES = {
     "screening": 12,
