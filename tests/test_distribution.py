@@ -61,7 +61,7 @@ def test_public_package_metadata_matches_the_approved_release_identity() -> None
     license_text = (ROOT / "LICENSE").read_text(encoding="utf-8")
     notice_text = (ROOT / "NOTICE").read_text(encoding="utf-8")
 
-    assert project["version"] == "0.1.4"
+    assert project["version"] == "0.1.5"
     assert project["description"] == (
         "MCP servers for federal environmental data, regulatory research, and geospatial screening"
     )

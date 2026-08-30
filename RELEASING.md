@@ -63,16 +63,16 @@ the first production upload.
 1. Create an annotated stable tag on the exact merge commit:
 
    ```bash
-   git tag -a v0.1.4 -m "NEPA MCP v0.1.4" <merge-commit>
-   git push origin v0.1.4
+   git tag -a v0.1.5 -m "NEPA MCP v0.1.5" <merge-commit>
+   git push origin v0.1.5
    ```
 
 2. Dispatch `Publish to PyPI` from that same tag. With the GitHub CLI:
 
    ```bash
    gh workflow run publish-pypi.yml \
-     --ref v0.1.4 \
-     -f tag=v0.1.4 \
+     --ref v0.1.5 \
+     -f tag=v0.1.5 \
      -f confirmation=publish
    ```
 
@@ -88,7 +88,7 @@ the first production upload.
 2. Clean-install the production package on Python 3.12 and 3.14:
 
    ```bash
-   pipx install nepa-mcp==0.1.4
+   pipx install nepa-mcp==0.1.5
    nepa-mcp --version
    nepa-mcp doctor
    nepa-mcp list-servers
