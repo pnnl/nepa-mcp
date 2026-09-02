@@ -313,6 +313,7 @@ LAYER_CONFIG = {
             ("NLCS ID", "nlcs_id"),
             ("Casefile", "casefile"),
             ("Recommendation", "recommendation"),
+            ("ROD Date", "rod_date"),
             ("Admin State", "admin_state"),
             ("WSA Type", "wsa_type"),
             ("Suitability", "suitability"),

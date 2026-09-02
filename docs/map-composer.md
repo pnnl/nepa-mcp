@@ -84,6 +84,13 @@ inventory, call `list_available_layers`.
 
 ## Output and provenance
 
+For the BLM Wilderness Study Areas layer, `ROD_DATE` is returned only when the
+source provides a usable date. The source default of `9999-09-09` is reported as
+unavailable rather than as a decision date. `CASEFILE_NO` values are preserved
+exactly as published; their formatting is not normalized, and they should be
+verified against the appropriate BLM case record before being used for a join
+or legal-status conclusion.
+
 Generated artifacts are written with private permissions to the operating
 system's per-user data directory under `nepa-mcp/artifacts/map_composer`.
 Operators can override that location with `NEPA_MCP_OUTPUT_DIR`; MCP callers

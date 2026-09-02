@@ -410,6 +410,7 @@ def test_wsa_uses_national_service_contract_and_preserves_output_schema(monkeypa
             "CASEFILE_NO": "NV-000-000",
             "WSA_RCMND": "Pending",
             "ADMIN_ST": "NV",
+            "ROD_DATE": 946684800000,
         },
         "geometry": {
             "rings": [
@@ -441,7 +442,7 @@ def test_wsa_uses_national_service_contract_and_preserves_output_schema(monkeypa
         "BLM_Natl_NLCS_Wilderness_Study_Areas_Polygons/FeatureServer/3"
     )
     assert captured["url"] == f"{national_layer_url}/query"
-    assert captured["params"]["outFields"] == "NLCS_NAME,NLCS_ID,CASEFILE_NO,WSA_RCMND,ADMIN_ST"
+    assert captured["params"]["outFields"] == "NLCS_NAME,NLCS_ID,CASEFILE_NO,WSA_RCMND,ADMIN_ST,ROD_DATE"
     assert server.LAYER_SOURCE_URLS["blm_wilderness_study_areas"] == national_layer_url
     assert result["status"] == "ok"
     assert result["features"][0]["properties"] == {
@@ -450,11 +451,62 @@ def test_wsa_uses_national_service_contract_and_preserves_output_schema(monkeypa
         "casefile": "NV-000-000",
         "recommendation": "Pending",
         "admin_state": "NV",
+        "rod_date": "2000-01-01",
         "wsa_type": None,
         "suitability": None,
         "wilderness_values": None,
         "layer": "blm_wilderness_study_areas",
     }
+
+
+@pytest.mark.parametrize(
+    ("source_value", "expected"),
+    [
+        (946684800000, "2000-01-01"),
+        (253392451200000, None),
+        (None, None),
+        ("not-a-date", None),
+    ],
+)
+def test_wsa_rod_date_handles_valid_sentinel_and_unusable_values(source_value, expected) -> None:
+    _, collector, _ = _load_map_modules()
+
+    assert collector._format_wsa_rod_date(source_value) == expected
+
+
+@pytest.mark.parametrize("casefile", ["NV-010-106", "NV060-541"])
+def test_wsa_preserves_source_casefile_format(monkeypatch, casefile: str) -> None:
+    _, collector, _ = _load_map_modules()
+    monkeypatch.setattr(
+        collector,
+        "_query_arcgis_features",
+        lambda *_args, **_kwargs: ArcGISFeatureQueryResult(
+            features=[
+                {
+                    "attributes": {
+                        "NLCS_NAME": "Example WSA",
+                        "CASEFILE_NO": casefile,
+                        "ROD_DATE": 253392451200000,
+                    },
+                    "geometry": {
+                        "rings": [[[0, 0], [0, 1], [1, 0], [0, 0]]],
+                    },
+                }
+            ],
+            warnings=[],
+        ),
+    )
+
+    result = collector.get_blm_wilderness_study_areas_geojson(
+        {
+            "rings": [[[0, 0], [0, 2], [2, 0], [0, 0]]],
+            "spatialReference": {"wkid": 4326},
+        }
+    )
+
+    properties = result["features"][0]["properties"]
+    assert properties["casefile"] == casefile
+    assert properties["rod_date"] is None
 
 
 def test_esri_multipart_polygon_preserves_disjoint_exteriors_and_holes() -> None:

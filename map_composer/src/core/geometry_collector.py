@@ -172,6 +172,20 @@ def _failed_feature_collection(message: str) -> Dict:
     }
 
 
+def _format_wsa_rod_date(value: Any) -> Optional[str]:
+    """Format an ArcGIS epoch-millisecond WSA ROD date when it is usable."""
+
+    if value in (None, "") or isinstance(value, bool):
+        return None
+    try:
+        parsed = datetime.fromtimestamp(float(value) / 1000, tz=timezone.utc)
+    except (TypeError, ValueError, OverflowError, OSError):
+        return None
+    if (parsed.year, parsed.month, parsed.day) == (9999, 9, 9):
+        return None
+    return parsed.date().isoformat()
+
+
 # Server-side geometry simplification tolerance in decimal degrees.
 # 0.002 ~= 200 m at mid-latitudes, finer than typical browser pixel
 # resolution for 25-100 mile ROI buffers. Reduces GRSG fetch from
@@ -1637,7 +1651,7 @@ def get_blm_wilderness_study_areas_geojson(buffer_geometry: Dict) -> Dict:
         "returnGeometry": True,
         "outSR": 4326,
         "maxAllowableOffset": DEFAULT_OUTPUT_OFFSET_DEG,
-        "outFields": "NLCS_NAME,NLCS_ID,CASEFILE_NO,WSA_RCMND,ADMIN_ST",
+        "outFields": "NLCS_NAME,NLCS_ID,CASEFILE_NO,WSA_RCMND,ADMIN_ST,ROD_DATE",
         "f": "json",
     }
 
@@ -1669,6 +1683,7 @@ def get_blm_wilderness_study_areas_geojson(buffer_geometry: Dict) -> Dict:
                             "casefile": attrs.get("CASEFILE_NO", ""),
                             "recommendation": attrs.get("WSA_RCMND", ""),
                             "admin_state": attrs.get("ADMIN_ST", ""),
+                            "rod_date": _format_wsa_rod_date(attrs.get("ROD_DATE")),
                             # The national public layer does not expose these
                             # fields. Retain the keys for output compatibility
                             # without manufacturing values.

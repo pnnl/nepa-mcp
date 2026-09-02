@@ -25,7 +25,7 @@ WSA_SERVICE_URL = (
     "BLM_Natl_NLCS_Wilderness_Study_Areas_Polygons/FeatureServer"
 )
 WSA_LAYER_ID = 3
-EXPECTED_FIELDS = {"NLCS_NAME", "NLCS_ID", "CASEFILE_NO", "WSA_RCMND", "ADMIN_ST"}
+EXPECTED_FIELDS = {"NLCS_NAME", "NLCS_ID", "CASEFILE_NO", "WSA_RCMND", "ADMIN_ST", "ROD_DATE"}
 
 
 def _get_json(url: str, params: dict[str, str]) -> dict:
@@ -59,3 +59,16 @@ def test_national_wsa_layer_contract_and_nevada_coverage() -> None:
         },
     )
     assert nevada.get("count", 0) > 0
+
+    latest_rod_date = _get_json(
+        f"{layer_url}/query",
+        {
+            "where": "ROD_DATE IS NOT NULL",
+            "outFields": "ROD_DATE",
+            "returnGeometry": "false",
+            "orderByFields": "ROD_DATE DESC",
+            "resultRecordCount": "1",
+            "f": "json",
+        },
+    )
+    assert latest_rod_date["features"][0]["attributes"]["ROD_DATE"] == 253392451200000
