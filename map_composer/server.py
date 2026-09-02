@@ -279,7 +279,7 @@ LAYER_SOURCE_URLS = {
     "blm_managed_lands": "https://edits.nationalmap.gov/arcgis/rest/services/PAD-US/PAD_US_4_1/MapServer",
     "blm_land_use_plans": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_Land_Use_Plans_Approved_2022/FeatureServer",
     "blm_plans_in_progress": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_Revision_Development_Land_Use_Plans/FeatureServer",
-    "blm_wilderness_study_areas": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/NLCS_Wilderness_Study_Areas/FeatureServer",
+    "blm_wilderness_study_areas": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_NLCS_Wilderness_Study_Areas_Polygons/FeatureServer/3",
     "blm_national_monuments": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_NLCS_National_Monuments_National_Conservation_Areas_Polygons/FeatureServer",
     "blm_rights_of_way": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/Rights_of_Way/FeatureServer",
     "grsg_habitat": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_WesternUS_GRSG_ROD_HabitatMgmtAreas_Feb_2026/FeatureServer",

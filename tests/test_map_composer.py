@@ -400,6 +400,63 @@ def test_drifted_service_contracts_are_current(monkeypatch) -> None:
     assert calls[2][1]["outFields"] == "INCIDENT,FIRE_YEAR_INT,FIRE_YEAR,FEATURE_CA,GIS_ACRES,AGENCY,SOURCE"
 
 
+def test_wsa_uses_national_service_contract_and_preserves_output_schema(monkeypatch) -> None:
+    server, collector, _ = _load_map_modules()
+    captured = {}
+    raw_feature = {
+        "attributes": {
+            "NLCS_NAME": "Example Nevada WSA",
+            "NLCS_ID": "NV-EXAMPLE",
+            "CASEFILE_NO": "NV-000-000",
+            "WSA_RCMND": "Pending",
+            "ADMIN_ST": "NV",
+        },
+        "geometry": {
+            "rings": [
+                [
+                    [-117.1, 39.0],
+                    [-117.0, 39.1],
+                    [-116.9, 39.0],
+                    [-117.1, 39.0],
+                ]
+            ]
+        },
+    }
+
+    def query(url, params, **kwargs):
+        captured.update(url=url, params=params, kwargs=kwargs)
+        return ArcGISFeatureQueryResult(features=[raw_feature], warnings=[])
+
+    monkeypatch.setattr(collector, "_query_arcgis_features", query)
+
+    result = collector.get_blm_wilderness_study_areas_geojson(
+        {
+            "rings": [[[-118, 38], [-116, 38], [-116, 40], [-118, 38]]],
+            "spatialReference": {"wkid": 4326},
+        }
+    )
+
+    national_layer_url = (
+        "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/"
+        "BLM_Natl_NLCS_Wilderness_Study_Areas_Polygons/FeatureServer/3"
+    )
+    assert captured["url"] == f"{national_layer_url}/query"
+    assert captured["params"]["outFields"] == "NLCS_NAME,NLCS_ID,CASEFILE_NO,WSA_RCMND,ADMIN_ST"
+    assert server.LAYER_SOURCE_URLS["blm_wilderness_study_areas"] == national_layer_url
+    assert result["status"] == "ok"
+    assert result["features"][0]["properties"] == {
+        "name": "Example Nevada WSA",
+        "nlcs_id": "NV-EXAMPLE",
+        "casefile": "NV-000-000",
+        "recommendation": "Pending",
+        "admin_state": "NV",
+        "wsa_type": None,
+        "suitability": None,
+        "wilderness_values": None,
+        "layer": "blm_wilderness_study_areas",
+    }
+
+
 def test_esri_multipart_polygon_preserves_disjoint_exteriors_and_holes() -> None:
     _, collector, _ = _load_map_modules()
     outer = [[0, 0], [0, 4], [4, 4], [4, 0], [0, 0]]

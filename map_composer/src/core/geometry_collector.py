@@ -1637,7 +1637,7 @@ def get_blm_wilderness_study_areas_geojson(buffer_geometry: Dict) -> Dict:
         "returnGeometry": True,
         "outSR": 4326,
         "maxAllowableOffset": DEFAULT_OUTPUT_OFFSET_DEG,
-        "outFields": "NLCS_NAME,NLCS_ID,CASEFILE_NO,WSA_RCMND,ADMIN_ST,WSA_TYPE,WSA_SUITABILITY,WSA_VALUES",
+        "outFields": "NLCS_NAME,NLCS_ID,CASEFILE_NO,WSA_RCMND,ADMIN_ST",
         "f": "json",
     }
 
@@ -1659,15 +1659,6 @@ def get_blm_wilderness_study_areas_geojson(buffer_geometry: Dict) -> Dict:
             if geom:
                 geojson_geom = esri_to_geojson_geometry(geom, "esriGeometryPolygon")
 
-                suitability_raw = attrs.get("WSA_SUITABILITY")
-                suitability = (
-                    "Suitable"
-                    if suitability_raw in (1, "1")
-                    else "Nonsuitable"
-                    if suitability_raw in (0, "0")
-                    else "Unknown"
-                )
-
                 features.append(
                     {
                         "type": "Feature",
@@ -1678,9 +1669,12 @@ def get_blm_wilderness_study_areas_geojson(buffer_geometry: Dict) -> Dict:
                             "casefile": attrs.get("CASEFILE_NO", ""),
                             "recommendation": attrs.get("WSA_RCMND", ""),
                             "admin_state": attrs.get("ADMIN_ST", ""),
-                            "wsa_type": attrs.get("WSA_TYPE", ""),
-                            "suitability": suitability,
-                            "wilderness_values": attrs.get("WSA_VALUES", ""),
+                            # The national public layer does not expose these
+                            # fields. Retain the keys for output compatibility
+                            # without manufacturing values.
+                            "wsa_type": None,
+                            "suitability": None,
+                            "wilderness_values": None,
                             "layer": "blm_wilderness_study_areas",
                         },
                     }
