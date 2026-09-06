@@ -27,7 +27,7 @@ var FEATURE_CARDS = [
         icon: 'fa-database',
         color: 'emerald',
         title: 'Public Federal Data',
-        description: 'Up-to-date information from 13 federal agencies, read straight from their public services.'
+        description: 'Up-to-date information from 14 federal agencies, read straight from their public services.'
     },
     {
         icon: 'fa-gavel',
@@ -258,6 +258,14 @@ var SERVER_COVERAGE = {
             ['Protected areas', 'PAD-US 4.1 owner and manager records'],
             ['Land ownership', 'Federal, state, local, and private'],
             ['Management context', 'Designations across the area']
+        ]
+    },
+    permitting_dashboard: {
+        icon: 'fa-calendar-check',
+        items: [
+            ['Project search', 'Dashboard-listed projects by location, sector, agency, or status'],
+            ['Review timetables', 'Agency-reported reviews, authorizations, and milestones'],
+            ['Milestone tracking', 'Upcoming, recently completed, and past-target dates']
         ]
     },
     pcsrf: {
@@ -707,7 +715,10 @@ function renderDocCards() {
  * @returns {HTMLElement}
  */
 function buildServerCard(server) {
-    var coverage = SERVER_COVERAGE[server.name] || { icon: 'fa-server', items: [] };
+    var coverage = SERVER_COVERAGE[server.name] || {
+        icon: 'fa-server',
+        items: [['Server capabilities', server.description]]
+    };
     var toolLabel = server.toolCount + (server.toolCount === 1 ? ' tool' : ' tools');
 
     var card = el('div', 'flip-card');
