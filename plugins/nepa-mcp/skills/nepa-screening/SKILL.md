@@ -42,6 +42,16 @@ Before location-scoped calls, confirm or derive latitude, longitude, and buffer 
 - Use `nrhp` for National Register of Historic Places properties.
 - Use `cfr` for current eCFR text, regulatory history, Federal Register citations, and executive orders.
 
+## Research tracked permitting projects
+
+Use `permitting_dashboard` to search dashboard-listed projects, retrieve a
+project timetable, or find upcoming, completed, and past-target milestones.
+These tools accept project/state filters rather than an ROI. Preserve separate
+project/action/milestone statuses, all source date fields, quality warnings, and
+the snapshot timestamp. Use the returned alternative date when present.
+Follow pagination with `snapshot_updated_at`; restart if the export changed.
+A completed tracked review is not proof that all permits are secured.
+
 ## Create map artifacts
 
 Use `map_composer` after establishing the project area when an interactive

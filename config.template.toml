@@ -89,6 +89,11 @@ command = "nepa-mcp"
 args = ["server", "padus"]
 env = { PYTHONUNBUFFERED = "1" }
 
+[mcp_servers.permitting_dashboard]
+command = "nepa-mcp"
+args = ["server", "permitting_dashboard"]
+env = { PYTHONUNBUFFERED = "1" }
+
 [mcp_servers.pcsrf]
 command = "nepa-mcp"
 args = ["server", "pcsrf"]

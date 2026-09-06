@@ -190,6 +190,16 @@
         "PYTHONUNBUFFERED": "1"
       }
     },
+    "permitting_dashboard": {
+      "command": "nepa-mcp",
+      "args": [
+        "server",
+        "permitting_dashboard"
+      ],
+      "env": {
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
     "tigerweb_counties": {
       "command": "nepa-mcp",
       "args": [

@@ -47,6 +47,7 @@ SERVER_PRESENTATION: dict[str, dict[str, str]] = {
     "nrcs_soils": {"agency": "USDA Natural Resources Conservation Service", "accent": "emerald"},
     "nrhp": {"agency": "National Park Service", "accent": "orange"},
     "padus": {"agency": "U.S. Geological Survey", "accent": "cyan"},
+    "permitting_dashboard": {"agency": "Federal Permitting Data Portal", "accent": "slate"},
     "pcsrf": {"agency": "NOAA Fisheries", "accent": "sky"},
     "tigerweb_counties": {"agency": "U.S. Census Bureau", "accent": "indigo"},
     "tribal": {"agency": "U.S. Census Bureau", "accent": "orange"},
@@ -59,8 +60,8 @@ FEDERAL_AGENCY_COUNT = 13
 
 # Verified invariants. The generator fails loudly rather than quietly shipping a
 # page whose headline numbers drifted away from the code.
-EXPECTED_SERVER_COUNT = 22
-EXPECTED_TOOL_COUNT = 53
+EXPECTED_SERVER_COUNT = 23
+EXPECTED_TOOL_COUNT = 56
 EXPECTED_LAYER_COUNT = 32
 EXPECTED_PROFILE_SIZES = {
     "screening": 12,
