@@ -25,8 +25,8 @@ from nepa_mcp.loader import load_server_module  # noqa: E402
 from nepa_mcp.registry import SERVER_SPECS  # noqa: E402
 
 
-# Presentation metadata for the site. Source agencies mirror the README's server
-# inventory table; accents key each server to a colour in the site stylesheet.
+# Presentation metadata for the site identifies upstream agencies and service
+# providers; accents key each server to a colour in the site stylesheet.
 # Everything else on the site is derived from the live MCP contract below.
 SERVER_PRESENTATION: dict[str, dict[str, str]] = {
     "blm": {"agency": "Bureau of Land Management", "accent": "amber"},
@@ -47,16 +47,36 @@ SERVER_PRESENTATION: dict[str, dict[str, str]] = {
     "nrcs_soils": {"agency": "USDA Natural Resources Conservation Service", "accent": "emerald"},
     "nrhp": {"agency": "National Park Service", "accent": "orange"},
     "padus": {"agency": "U.S. Geological Survey", "accent": "cyan"},
-    "permitting_dashboard": {"agency": "Federal Permitting Data Portal", "accent": "slate"},
+    "permitting_dashboard": {"agency": "U.S. DOT / Permitting Council", "accent": "slate"},
     "pcsrf": {"agency": "NOAA Fisheries", "accent": "sky"},
     "tigerweb_counties": {"agency": "U.S. Census Bureau", "accent": "indigo"},
     "tribal": {"agency": "U.S. Census Bureau", "accent": "orange"},
     "usace": {"agency": "U.S. Army Corps of Engineers", "accent": "stone"},
 }
 
-# Distinct source agencies and publishers named in the README's inventory. Kept
-# here so the site never has to hardcode a headline count in markup.
-FEDERAL_AGENCY_COUNT = 13
+# Count agencies and bureaus once, without counting their parent departments
+# again. NIFC and the Permitting Council are interagency sources; GBIF and Esri
+# are nonfederal. DOT's IPIC manages the dashboard for the Permitting Council:
+# https://www.transportation.gov/PermittingImprovementCenter
+# Dataset metadata separately identifies FPISC as publisher:
+# https://data.permits.performance.gov/api/views/mcm3-xbid.json
+FEDERAL_AGENCIES = (
+    "BLM",
+    "Census Bureau",
+    "DOT",
+    "EPA",
+    "FEMA",
+    "NARA",
+    "GPO",
+    "NOAA Fisheries",
+    "NPS",
+    "USACE",
+    "USFWS",
+    "USDA-NRCS",
+    "USFS",
+    "USGS",
+)
+FEDERAL_AGENCY_COUNT = len(FEDERAL_AGENCIES)
 
 # Verified invariants. The generator fails loudly rather than quietly shipping a
 # page whose headline numbers drifted away from the code.

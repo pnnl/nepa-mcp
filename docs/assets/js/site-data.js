@@ -20,7 +20,7 @@ var SITE_DATA = {
     "servers": 23,
     "tools": 56,
     "layers": 32,
-    "agencies": 13,
+    "agencies": 14,
     "profiles": 5,
     "capabilities": 88,
     "credentialFreeServers": 21
@@ -178,7 +178,7 @@ var SITE_DATA = {
     {
       "name": "permitting_dashboard",
       "description": "Federal permitting projects, review timetables, and milestones",
-      "agency": "Federal Permitting Data Portal",
+      "agency": "U.S. DOT / Permitting Council",
       "accent": "slate",
       "credentials": [],
       "toolCount": 3
