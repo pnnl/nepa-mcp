@@ -1,6 +1,6 @@
 <div align="center" style="text-align: center;">
 
-  <img src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.5/docs/assets/permitai-nepa-mcp-toolkit-tm.svg" alt="PermitAI — NEPA MCP Toolkit™" width="740">
+  <img src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.6/docs/assets/permitai-nepa-mcp-toolkit-tm.svg" alt="PermitAI — NEPA MCP Toolkit™" width="740">
   <br>
 
   <p>
@@ -9,10 +9,10 @@
 
   <p>
   Works with<br>
-  <a href="#configure-an-mcp-client"><img alt="Codex MCP client" src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.5/docs/assets/badges/codex-client-config.svg" height="20"></a>
-  <a href="#codex-plugin"><img alt="Codex plugin" src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.5/docs/assets/badges/codex-plugin.svg" height="20"></a>
+  <a href="#configure-an-mcp-client"><img alt="Codex MCP client" src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.6/docs/assets/badges/codex-client-config.svg" height="20"></a>
+  <a href="#codex-plugin"><img alt="Codex plugin" src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.6/docs/assets/badges/codex-plugin.svg" height="20"></a>
   <a href="#configure-an-mcp-client"><img alt="Claude Code client configuration" src="https://img.shields.io/badge/Claude_Code-MCP_Client-D97757?style=flat-square&amp;logo=anthropic&amp;logoColor=white" height="20"></a>
-  <a href="#configure-an-mcp-client"><img alt="VS Code client configuration" src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.5/docs/assets/badges/vscode-mcp-client.svg" height="20"></a>
+  <a href="#configure-an-mcp-client"><img alt="VS Code client configuration" src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.6/docs/assets/badges/vscode-mcp-client.svg" height="20"></a>
   </p>
 
   <p>
@@ -113,7 +113,7 @@ new task.
 
 ## Codex Plugin
 
-The Codex plugin registers all 22 servers and includes the `nepa-screening`
+The Codex plugin registers all 23 servers and includes the `nepa-screening`
 skill. If you use the plugin, do not also run `nepa-mcp configure codex`.
 
 Install and verify the Python runtime before adding the plugin:
@@ -123,18 +123,18 @@ pipx install nepa-mcp
 nepa-mcp doctor
 ```
 
-`doctor` should report `Installed servers: 22`. Then add the marketplace in
+`doctor` should report `Installed servers: 23`. Then add the marketplace in
 Codex Desktop:
 
 1. Open **Plugins** and select **Add plugin marketplace**.
-2. Enter `pnnl/nepa-mcp` for **Source** and `v0.1.5` for **Git ref**.
+2. Enter `pnnl/nepa-mcp` for **Source** and `v0.1.6` for **Git ref**.
 3. Leave **Sparse paths** blank, then select **Add marketplace**.
 4. Install **NEPA-MCP** from the **NEPA-MCP Local** marketplace.
 
 The equivalent Codex CLI commands are:
 
 ```bash
-codex plugin marketplace add pnnl/nepa-mcp --ref v0.1.5
+codex plugin marketplace add pnnl/nepa-mcp --ref v0.1.6
 codex plugin add nepa-mcp@nepa-mcp-local
 ```
 
@@ -155,7 +155,7 @@ partial, and failed layer counts so source coverage remains visible.
 
 <p align="center">
   <a href="https://github.com/pnnl/nepa-mcp/blob/main/docs/map-composer.md">
-    <img src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.5/docs/assets/map-composer-washington-dc-chesapeake.png" alt="Interactive Map Composer view of a 20-mile Chesapeake Bay watershed project area with 12 overlays visible" width="900">
+    <img src="https://raw.githubusercontent.com/pnnl/nepa-mcp/v0.1.6/docs/assets/map-composer-washington-dc-chesapeake.png" alt="Interactive Map Composer view of a 20-mile Chesapeake Bay watershed project area with 12 overlays visible" width="900">
   </a>
 </p>
 
@@ -343,7 +343,7 @@ or cite it as:
   year         = {2026},
   institution  = {Pacific Northwest National Laboratory},
   url          = {https://github.com/pnnl/nepa-mcp},
-  version      = {0.1.5},
+  version      = {0.1.6},
   license      = {BSD-3-Clause}
 }
 ```
