@@ -10,20 +10,20 @@
 var SITE_DATA = {
   "generatedFrom": "pyproject.toml, nepa_mcp.registry, and each server's live MCP tools/list contract",
   "release": {
-    "version": "0.1.5",
+    "version": "0.1.6",
     "license": "BSD-3-Clause",
     "licenseName": "BSD 3-Clause",
     "description": "MCP servers for federal environmental data, regulatory research, and geospatial screening",
     "repository": "https://github.com/pnnl/nepa-mcp"
   },
   "counts": {
-    "servers": 22,
-    "tools": 53,
+    "servers": 23,
+    "tools": 56,
     "layers": 32,
     "agencies": 13,
     "profiles": 5,
-    "capabilities": 85,
-    "credentialFreeServers": 20
+    "capabilities": 88,
+    "credentialFreeServers": 21
   },
   "servers": [
     {
@@ -174,6 +174,14 @@ var SITE_DATA = {
       "accent": "cyan",
       "credentials": [],
       "toolCount": 1
+    },
+    {
+      "name": "permitting_dashboard",
+      "description": "Federal permitting projects, review timetables, and milestones",
+      "agency": "Federal Permitting Data Portal",
+      "accent": "slate",
+      "credentials": [],
+      "toolCount": 3
     },
     {
       "name": "pcsrf",
@@ -2038,6 +2046,231 @@ var SITE_DATA = {
           "required": false,
           "default": "25.0",
           "description": "Buffer distance in miles, valid range 0.1 to 100.0.",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "server": "permitting_dashboard",
+      "name": "find_permitting_milestones",
+      "purpose": "Find upcoming, recently completed, or past-target incomplete permitting milestones.",
+      "parameters": [
+        {
+          "name": "mode",
+          "type": "string",
+          "required": false,
+          "default": "\"upcoming\"",
+          "description": "",
+          "choices": [
+            "upcoming",
+            "recently_completed",
+            "past_target"
+          ]
+        },
+        {
+          "name": "date_from",
+          "type": "string",
+          "required": false,
+          "default": "null",
+          "description": "Inclusive YYYY-MM-DD date, relative to UTC today.",
+          "choices": []
+        },
+        {
+          "name": "date_to",
+          "type": "string",
+          "required": false,
+          "default": "null",
+          "description": "Inclusive YYYY-MM-DD date, relative to UTC today.",
+          "choices": []
+        },
+        {
+          "name": "project_id",
+          "type": "string",
+          "required": false,
+          "default": "null",
+          "description": "",
+          "choices": []
+        },
+        {
+          "name": "states",
+          "type": "array",
+          "required": false,
+          "default": "null",
+          "description": "US state/territory postal codes; primary project location only.",
+          "choices": []
+        },
+        {
+          "name": "sector",
+          "type": "string",
+          "required": false,
+          "default": "null",
+          "description": "Case-insensitive substring; no SQL LIKE wildcards.",
+          "choices": []
+        },
+        {
+          "name": "agency",
+          "type": "string",
+          "required": false,
+          "default": "null",
+          "description": "Case-insensitive substring; no SQL LIKE wildcards.",
+          "choices": []
+        },
+        {
+          "name": "action_type",
+          "type": "string",
+          "required": false,
+          "default": "null",
+          "description": "Case-insensitive substring; no SQL LIKE wildcards.",
+          "choices": []
+        },
+        {
+          "name": "project_status",
+          "type": "string",
+          "required": false,
+          "default": "null",
+          "description": "",
+          "choices": []
+        },
+        {
+          "name": "max_results",
+          "type": "number",
+          "required": false,
+          "default": "25",
+          "description": "",
+          "choices": []
+        },
+        {
+          "name": "result_offset",
+          "type": "number",
+          "required": false,
+          "default": "0",
+          "description": "",
+          "choices": []
+        },
+        {
+          "name": "snapshot_updated_at",
+          "type": "number",
+          "required": false,
+          "default": "null",
+          "description": "For subsequent pages, pass source.snapshot_updated_at from the first page; a changed snapshot requires restarting.",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "server": "permitting_dashboard",
+      "name": "get_project_permitting_timetable",
+      "purpose": "Retrieve a project's tracked reviews, responsible agencies, milestones, and permitting dates.",
+      "parameters": [
+        {
+          "name": "project_id",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "Exact project ID returned by search.",
+          "choices": []
+        },
+        {
+          "name": "max_results",
+          "type": "number",
+          "required": false,
+          "default": "500",
+          "description": "",
+          "choices": []
+        },
+        {
+          "name": "result_offset",
+          "type": "number",
+          "required": false,
+          "default": "0",
+          "description": "",
+          "choices": []
+        },
+        {
+          "name": "snapshot_updated_at",
+          "type": "number",
+          "required": false,
+          "default": "null",
+          "description": "For subsequent pages, pass source.snapshot_updated_at from the first page; a changed snapshot requires restarting.",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "server": "permitting_dashboard",
+      "name": "search_permitting_projects",
+      "purpose": "Find projects on the federal Permitting Dashboard by name, location, sector, agency, or status.",
+      "parameters": [
+        {
+          "name": "query",
+          "type": "string",
+          "required": false,
+          "default": "null",
+          "description": "Case-insensitive substring; no SQL LIKE wildcards.",
+          "choices": []
+        },
+        {
+          "name": "states",
+          "type": "array",
+          "required": false,
+          "default": "null",
+          "description": "US state/territory postal codes; primary project location only.",
+          "choices": []
+        },
+        {
+          "name": "sector",
+          "type": "string",
+          "required": false,
+          "default": "null",
+          "description": "Case-insensitive substring; no SQL LIKE wildcards.",
+          "choices": []
+        },
+        {
+          "name": "lead_agency",
+          "type": "string",
+          "required": false,
+          "default": "null",
+          "description": "Case-insensitive substring; no SQL LIKE wildcards.",
+          "choices": []
+        },
+        {
+          "name": "category",
+          "type": "string",
+          "required": false,
+          "default": "null",
+          "description": "Case-insensitive substring; no SQL LIKE wildcards.",
+          "choices": []
+        },
+        {
+          "name": "project_status",
+          "type": "string",
+          "required": false,
+          "default": "null",
+          "description": "",
+          "choices": []
+        },
+        {
+          "name": "max_results",
+          "type": "number",
+          "required": false,
+          "default": "25",
+          "description": "",
+          "choices": []
+        },
+        {
+          "name": "result_offset",
+          "type": "number",
+          "required": false,
+          "default": "0",
+          "description": "",
+          "choices": []
+        },
+        {
+          "name": "snapshot_updated_at",
+          "type": "number",
+          "required": false,
+          "default": "null",
+          "description": "For subsequent pages, pass source.snapshot_updated_at from the first page; a changed snapshot requires restarting.",
           "choices": []
         }
       ]

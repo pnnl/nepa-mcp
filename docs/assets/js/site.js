@@ -75,7 +75,7 @@ var CLIENT_CONFIGS = [
         command: 'nepa-mcp configure codex',
         path: '~/.codex/config.toml',
         scope: 'One global file, so any directory works. Start a new Codex task afterward.',
-        note: 'The Codex plugin below registers the same 22 servers and adds the screening skill. Use one or the other — do not run this command as well.'
+        note: 'The Codex plugin below registers the same 23 servers and adds the screening skill. Use one or the other — do not run this command as well.'
     }
 ];
 
