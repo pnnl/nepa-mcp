@@ -36,6 +36,7 @@ SERVER_SPECS = (
     ServerSpec("nrcs_soils", "USDA-NRCS SSURGO soil and farmland screening"),
     ServerSpec("nrhp", "National Register of Historic Places properties"),
     ServerSpec("padus", "PAD-US protected areas and land management"),
+    ServerSpec("permitting_dashboard", "Federal permitting projects, review timetables, and milestones"),
     ServerSpec("pcsrf", "NOAA species, habitat, and recovery-program datasets"),
     ServerSpec("tigerweb_counties", "Census TIGERweb county intersections"),
     ServerSpec("tribal", "Census AIANNHA tribal lands"),

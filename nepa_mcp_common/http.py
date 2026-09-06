@@ -78,3 +78,31 @@ def post_json(
         raise UpstreamServiceError(f"{service_name} returned an error: {data['error']}")
 
     return data
+
+
+def get_json_rows(
+    url: str,
+    *,
+    params: dict[str, Any] | None = None,
+    timeout: float | tuple[float, float] = DEFAULT_TIMEOUT_SECONDS,
+    service_name: str = "upstream service",
+) -> list[dict[str, Any]]:
+    """GET a JSON array of records, retaining the object helpers' error contract.
+
+    Public tabular APIs such as Socrata return arrays rather than objects.
+    An error object or malformed row must not become a successful empty list.
+    """
+    try:
+        response = requests.get(url, params=params, timeout=timeout)
+        response.raise_for_status()
+    except requests.RequestException as exc:
+        raise UpstreamServiceError(f"{service_name} request failed: {exc}") from exc
+    try:
+        data = response.json()
+    except ValueError as exc:
+        raise UpstreamServiceError(f"{service_name} returned invalid JSON") from exc
+    if isinstance(data, dict) and ("error" in data or "message" in data):
+        raise UpstreamServiceError(f"{service_name} returned an error: {data.get('message') or data['error']}")
+    if not isinstance(data, list) or any(not isinstance(row, dict) for row in data):
+        raise UpstreamServiceError(f"{service_name} returned unexpected JSON rows")
+    return data

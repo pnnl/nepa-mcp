@@ -1,7 +1,7 @@
 # MCP Data Source Licenses
 
 This reference consolidates data-source license notes for the current flat
-21-server repository. It is a public-release aid, not legal advice. Verify final
+23-server repository. It is a public-release aid, not legal advice. Verify final
 license determinations before publishing or redistributing derived datasets.
 
 | Server | Agency / Publisher | Dataset / Service | Primary endpoint | Auth required | License / terms signal | Risk flag | Notes |
@@ -32,6 +32,7 @@ license determinations before publishing or redistributing derived datasets.
 | `padus` | USGS / DOI | PAD-US 4.1 Combined protected-area records | `edits.nationalmap.gov/.../PAD-US/PAD_US_gaz_combined/MapServer` | No | Public domain signal from DOI / USGS public data policies | Low | PAD-US is protected-area screening data, not comprehensive cadastral parcel ownership; Combined-layer records may overlap. |
 | `pcsrf` | NOAA Fisheries | PCSRF project locations and funding | `services2.arcgis.com/C8EMgrsFcRFL6LrL/.../PCSRF_Projects_Display/FeatureServer` | No | Federal agency data; NOAA Fisheries service terms should be verified | Medium | Only `get_pcsrf_projects_in_roi` is PCSRF project data. |
 | `pcsrf` | NOAA Fisheries | NOAA all-species ranges, 2021-09-04 critical habitat snapshot, Atlantic salmon EFH/HAPC | `services2.arcgis.com/C8EMgrsFcRFL6LrL/.../FeatureServer` | No | Federal agency data; NOAA Fisheries service terms should be verified | Medium | These are NOAA datasets exposed by the PCSRF server for now; tool names disclose actual provenance. |
+| `permitting_dashboard` | FPISC / Federal Permitting Data Portal | Permitting Dashboard Full Dataset (mcm3-xbid) | `data.permits.performance.gov/resource/mcm3-xbid.json` | No | Official dataset metadata identifies public access and federal-agency reporting; preserve attribution and verify reuse terms | Medium | Dashboard-listed projects only; reported schedules and outcomes are not comprehensive permits or construction approval. Preserve source dates, alternative dates, and freshness. |
 | `tigerweb_counties` | U.S. Census Bureau | TIGERweb county boundaries | `tigerweb.geo.census.gov/.../tigerWMS_Current/MapServer/82/query` | No | Census API terms with attribution requirements | Medium | Attribution language from Census API terms should be preserved in downstream products. |
 | `tribal` | U.S. Census Bureau | AIANNHA tribal geography layers | `tigerweb.geo.census.gov/.../AIANNHA/MapServer` | No | Census API terms with attribution requirements | Medium | These are Census geography records for screening and do not replace consultation obligations. |
 | `usace` | USACE | Regulatory boundaries, wetland regions, wetland subregions | `services7.arcgis.com/n1YM8pTrFmm7L4hs/.../FeatureServer` | No | USACE public-information disclaimer permits distribution/copying | Low | Contact the relevant district for permit decisions; tools are screening aids. |

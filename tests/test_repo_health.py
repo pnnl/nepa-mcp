@@ -39,6 +39,7 @@ SERVER_NAMES = [
     "nrcs_soils",
     "nrhp",
     "padus",
+    "permitting_dashboard",
     "pcsrf",
     "tigerweb_counties",
     "tribal",
