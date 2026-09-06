@@ -99,6 +99,7 @@ include = [
     "/nrcs_soils",
     "/nrhp",
     "/padus",
+    "/permitting_dashboard",
     "/pcsrf",
     "/tigerweb_counties",
     "/tribal",
@@ -124,6 +125,7 @@ include = [
 "nrcs_soils" = "nepa_mcp/_servers/nrcs_soils"
 "nrhp" = "nepa_mcp/_servers/nrhp"
 "padus" = "nepa_mcp/_servers/padus"
+"permitting_dashboard" = "nepa_mcp/_servers/permitting_dashboard"
 "pcsrf" = "nepa_mcp/_servers/pcsrf"
 "tigerweb_counties" = "nepa_mcp/_servers/tigerweb_counties"
 "tribal" = "nepa_mcp/_servers/tribal"

@@ -7,7 +7,7 @@ from typing import Any
 import pytest
 import requests
 
-from nepa_mcp_common.http import UpstreamServiceError, post_json
+from nepa_mcp_common.http import UpstreamServiceError, get_json_rows, post_json
 
 
 class _Response:
@@ -71,3 +71,39 @@ def test_post_json_wraps_request_errors(monkeypatch):
 
     with pytest.raises(UpstreamServiceError, match="Example request failed"):
         post_json("https://example.test/query", json_body={}, service_name="Example")
+
+
+@pytest.mark.parametrize("payload", [[], [{"id": "1", "missing": None, "complete": False}]])
+def test_get_json_rows_preserves_arrays_and_values(monkeypatch, payload):
+    monkeypatch.setattr(requests, "get", lambda *_a, **_k: _Response(payload))
+    assert get_json_rows("https://example.test/rows") == payload
+
+
+@pytest.mark.parametrize(
+    "response",
+    [
+        _Response(json_error=True),
+        _Response({}),
+        _Response({"error": True, "message": "invalid query"}),
+        _Response([None]),
+        _Response(["row"]),
+        _Response("html"),
+    ],
+)
+def test_get_json_rows_rejects_errors_and_malformed_payloads(monkeypatch, response):
+    monkeypatch.setattr(requests, "get", lambda *_a, **_k: response)
+    with pytest.raises(UpstreamServiceError):
+        get_json_rows("https://example.test/rows")
+
+
+@pytest.mark.parametrize(
+    "error",
+    [requests.Timeout("timeout"), requests.HTTPError("429 rate limited"), requests.HTTPError("503 unavailable")],
+)
+def test_get_json_rows_wraps_transport_failures(monkeypatch, error):
+    def fail(*_a, **_k):
+        raise error
+
+    monkeypatch.setattr(requests, "get", fail)
+    with pytest.raises(UpstreamServiceError, match="request failed"):
+        get_json_rows("https://example.test/rows")

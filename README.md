@@ -31,8 +31,8 @@ toolkit. It gives AI agents structured access to federal environmental,
 regulatory, biological, cultural, socioeconomic, and jurisdictional data used
 in NEPA screening and permitting research.
 
-The current inventory includes 22 MCP servers, 53 MCP tools, and 32 GIS
-layers. Together, the tools and layers represent **85 environmental and
+The current inventory includes 23 MCP servers, 56 MCP tools, and 32 GIS
+layers. Together, the tools and layers represent **88 environmental and
 regulatory research capabilities**. These capabilities draw on public data
 from 13 federal agencies, along with interagency and nonfederal sources.
 
@@ -48,6 +48,9 @@ export.
 > determinations, replace consultation with agencies or Tribes, or guarantee
 > that an upstream dataset is complete or current. Confirm material findings
 > against authoritative records and current requirements.
+
+The Permitting Dashboard server adds project search, tracked review timetables,
+and milestone searches through the public data API, with no API key required.
 
 ## Quick Start
 
@@ -209,6 +212,7 @@ Credentials are not copied into MCP client or plugin configuration, and
 | `nrcs_soils` | [USDA Natural Resources Conservation Service](https://www.nrcs.usda.gov/) | SSURGO soil map units, siting-related soil indicators, and farmland classifications |
 | `nrhp` | [National Park Service](https://www.nps.gov/) / [Department of the Interior](https://www.doi.gov/) | National Register-listed property locations |
 | `padus` | [U.S. Geological Survey](https://www.usgs.gov/) / [Department of the Interior](https://www.doi.gov/) | PAD-US 4.1 protected-area owner and manager attributes for screening |
+| `permitting_dashboard` | [Federal Permitting Data Portal](https://data.permits.performance.gov/) | Project search, agency review timetables, and upcoming, completed, or past-target milestones |
 | `pcsrf` | [NOAA Fisheries](https://www.fisheries.noaa.gov/) | PCSRF projects plus species ranges, a 2021 critical-habitat snapshot, and Atlantic salmon EFH/HAPC |
 | `tigerweb_counties` | [U.S. Census Bureau](https://www.census.gov/) | TIGERweb county-boundary intersections |
 | `tribal` | [U.S. Census Bureau](https://www.census.gov/) | TIGERweb AIANNHA geographic areas for tribal-consultation screening |
