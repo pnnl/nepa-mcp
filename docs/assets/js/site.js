@@ -1,9 +1,9 @@
 /**
  * NEPA MCP Toolkit - site behavior
  *
- * Every count and label rendered here comes from SITE_DATA, which is generated
- * from the server registry and each server's live MCP tools/list contract. See
- * scripts/generate_site_data.py.
+ * Inventory identifiers, agencies and counts come from generated SITE_DATA.
+ * Card titles and review-facing copy are curated below. See
+ * scripts/generate_site_data.py for the underlying server/tool contracts.
  */
 
 'use strict';
@@ -111,12 +111,12 @@ var DOC_CARDS = [
 ];
 
 /**
- * What each server contributes to a review, keyed by registry name. Titles and
- * agencies come from SITE_DATA; this adds the review-facing coverage shown on
- * the back of each flip card.
+ * Readable card titles and review coverage, keyed by exact registry name.
+ * Agency attribution and inventory identifiers remain in SITE_DATA.
  */
 var SERVER_COVERAGE = {
     blm: {
+        title: 'BLM Land Use & Conservation',
         icon: 'fa-mountain',
         items: [
             ['Land use plan conformance', 'Approved RMPs and plans in revision'],
@@ -125,6 +125,7 @@ var SERVER_COVERAGE = {
         ]
     },
     blm_mlrs: {
+        title: 'BLM Land & Mineral Records',
         icon: 'fa-file-signature',
         items: [
             ['Land-use authorization cases', 'Rights-of-way, leases, permits, and easements'],
@@ -133,6 +134,7 @@ var SERVER_COVERAGE = {
         ]
     },
     census: {
+        title: 'Census Socioeconomic Data',
         icon: 'fa-users',
         items: [
             ['Socioeconomic baseline', 'ACS 5-Year indicators by county'],
@@ -141,6 +143,7 @@ var SERVER_COVERAGE = {
         ]
     },
     cfr: {
+        title: 'Federal Regulatory Research',
         icon: 'fa-gavel',
         items: [
             ['Federal regulations', 'Verbatim CFR text at any depth'],
@@ -149,6 +152,7 @@ var SERVER_COVERAGE = {
         ]
     },
     efh: {
+        title: 'Essential Fish Habitat',
         icon: 'fa-fish',
         items: [
             ['Essential Fish Habitat', 'EFH areas and HAPC designations'],
@@ -157,6 +161,7 @@ var SERVER_COVERAGE = {
         ]
     },
     epa_acres: {
+        title: 'EPA Brownfields',
         icon: 'fa-industry',
         items: [
             ['Brownfields grant properties', 'Identifiable EPA ACRES records near the project area'],
@@ -165,6 +170,7 @@ var SERVER_COVERAGE = {
         ]
     },
     epa_aqs: {
+        title: 'EPA Air Quality',
         icon: 'fa-wind',
         items: [
             ['Air quality baseline', 'Monitor readings for criteria pollutants'],
@@ -173,6 +179,7 @@ var SERVER_COVERAGE = {
         ]
     },
     esa_ranges: {
+        title: 'NOAA ESA Species Ranges',
         icon: 'fa-water',
         items: [
             ['ESA-listed ranges', 'Salmon and steelhead by HUC-12'],
@@ -181,6 +188,7 @@ var SERVER_COVERAGE = {
         ]
     },
     fema_nfhl: {
+        title: 'FEMA Flood Hazards',
         icon: 'fa-house-flood-water',
         items: [
             ['Flood hazard zones', 'National Flood Hazard Layer zones'],
@@ -189,6 +197,7 @@ var SERVER_COVERAGE = {
         ]
     },
     gbif: {
+        title: 'GBIF Species Occurrences',
         icon: 'fa-binoculars',
         items: [
             ['Species occurrences', 'Georeferenced observation records'],
@@ -197,6 +206,7 @@ var SERVER_COVERAGE = {
         ]
     },
     gis: {
+        title: 'Project Area Geometry',
         icon: 'fa-draw-polygon',
         items: [
             ['Project area buffer', 'Region of interest from a coordinate'],
@@ -205,6 +215,7 @@ var SERVER_COVERAGE = {
         ]
     },
     ipac: {
+        title: 'IPaC Species & Habitat',
         icon: 'fa-dove',
         items: [
             ['ESA species', 'Listed species and critical habitat'],
@@ -213,6 +224,7 @@ var SERVER_COVERAGE = {
         ]
     },
     map_composer: {
+        title: 'Map Composer',
         icon: 'fa-layer-group',
         items: [
             ['Interactive maps', '32 overlays with independent controls'],
@@ -221,6 +233,7 @@ var SERVER_COVERAGE = {
         ]
     },
     nepa_assist: {
+        title: 'EPA Environmental Screening',
         icon: 'fa-leaf',
         items: [
             ['Multi-category screening', 'Aggregated NEPAssist indicators'],
@@ -229,6 +242,7 @@ var SERVER_COVERAGE = {
         ]
     },
     noaa: {
+        title: 'NOAA Critical Habitat',
         icon: 'fa-fish-fins',
         items: [
             ['Critical habitat', 'West Coast ESA designations'],
@@ -237,6 +251,7 @@ var SERVER_COVERAGE = {
         ]
     },
     nrcs_soils: {
+        title: 'Soil Survey & Farmland',
         icon: 'fa-seedling',
         items: [
             ['Soil map units', 'Mapped soils and clipped site coverage'],
@@ -245,6 +260,7 @@ var SERVER_COVERAGE = {
         ]
     },
     nrhp: {
+        title: 'Historic Places',
         icon: 'fa-landmark-dome',
         items: [
             ['Historic properties', 'National Register listed locations'],
@@ -253,6 +269,7 @@ var SERVER_COVERAGE = {
         ]
     },
     padus: {
+        title: 'Protected Areas',
         icon: 'fa-tree',
         items: [
             ['Protected areas', 'PAD-US 4.1 owner and manager records'],
@@ -261,6 +278,7 @@ var SERVER_COVERAGE = {
         ]
     },
     permitting_dashboard: {
+        title: 'Federal Permitting Dashboard',
         icon: 'fa-calendar-check',
         items: [
             ['Project search', 'Dashboard-listed projects by location, sector, agency, or status'],
@@ -269,6 +287,7 @@ var SERVER_COVERAGE = {
         ]
     },
     pcsrf: {
+        title: 'NOAA Species & Recovery',
         icon: 'fa-otter',
         items: [
             ['Species ranges', 'NOAA range records for the area'],
@@ -277,6 +296,7 @@ var SERVER_COVERAGE = {
         ]
     },
     tigerweb_counties: {
+        title: 'County Boundaries',
         icon: 'fa-map-location-dot',
         items: [
             ['County jurisdiction', 'Counties intersecting the area'],
@@ -285,6 +305,7 @@ var SERVER_COVERAGE = {
         ]
     },
     tribal: {
+        title: 'Tribal Lands',
         icon: 'fa-landmark',
         items: [
             ['Tribal lands', 'AIANNHA geographic areas'],
@@ -293,6 +314,7 @@ var SERVER_COVERAGE = {
         ]
     },
     usace: {
+        title: 'USACE Regulatory Regions',
         icon: 'fa-water',
         items: [
             ['Section 404 jurisdiction', 'Regulatory district for permitting'],
@@ -720,17 +742,24 @@ function buildServerCard(server) {
         items: [['Server capabilities', server.description]]
     };
     var toolLabel = server.toolCount + (server.toolCount === 1 ? ' tool' : ' tools');
+    var displayName = coverage.title || server.name.split('_').map(function (word) {
+        return word.charAt(0).toUpperCase() + word.slice(1);
+    }).join(' ');
+    var cardLabel = displayName;
 
     var card = el('div', 'flip-card');
     card.tabIndex = 0;
+    card.dataset.server = server.name;
     card.setAttribute('role', 'button');
-    card.setAttribute('aria-label', server.name + ' server — activate to see what it covers');
+    card.setAttribute('aria-label', cardLabel + ': show coverage');
+    card.setAttribute('aria-pressed', 'false');
 
     var inner = el('div', 'flip-card-inner');
 
     /* Front */
     var front = el('div', 'flip-card-front');
-    var frontCard = el('div', 'premium-card rounded-2xl p-6 shadow-md');
+    front.setAttribute('aria-hidden', 'false');
+    var frontCard = el('div', 'premium-card server-card-front rounded-2xl p-6 shadow-md');
 
     var iconWrap = el('div', 'w-14 h-14 bg-teal-50 rounded-xl flex items-center justify-center mb-4');
     var icon = el('i', 'fas ' + coverage.icon + ' text-teal-700 text-2xl');
@@ -738,11 +767,11 @@ function buildServerCard(server) {
     iconWrap.appendChild(icon);
     frontCard.appendChild(iconWrap);
 
-    frontCard.appendChild(el('h3', 'text-lg font-semibold text-ink mb-1', server.name));
+    frontCard.appendChild(el('h3', 'server-card-title text-ink', displayName));
     frontCard.appendChild(el('p', 'text-xs text-slate-500 mb-3', server.agency));
     frontCard.appendChild(el('p', 'text-slate-600 text-sm leading-relaxed mb-4', server.description));
 
-    var meta = el('div', 'flex items-center gap-2 flex-wrap text-xs');
+    var meta = el('div', 'server-card-meta flex items-center gap-2 flex-wrap text-xs');
     meta.appendChild(el('span', 'bg-teal-100 text-teal-800 px-3 py-1.5 rounded-full font-medium', toolLabel));
     if (server.credentials.length) {
         meta.appendChild(el('span', 'credential-pill credential-pill-optional', 'optional key'));
@@ -760,6 +789,7 @@ function buildServerCard(server) {
 
     /* Back */
     var back = el('div', 'flip-card-back');
+    back.setAttribute('aria-hidden', 'true');
     var backCard = el('div', 'premium-card rounded-2xl p-6 shadow-md');
     backCard.appendChild(el('h3', 'text-base font-semibold text-teal-800 mb-4', 'What it covers'));
 
@@ -786,7 +816,11 @@ function buildServerCard(server) {
 
     onActivate(card, function () {
         card.classList.toggle('flipped');
-        card.setAttribute('aria-pressed', card.classList.contains('flipped') ? 'true' : 'false');
+        var flipped = card.classList.contains('flipped');
+        card.setAttribute('aria-pressed', String(flipped));
+        card.setAttribute('aria-label', cardLabel + (flipped ? ': return to server details' : ': show coverage'));
+        front.setAttribute('aria-hidden', String(flipped));
+        back.setAttribute('aria-hidden', String(!flipped));
     });
 
     return card;
@@ -840,6 +874,7 @@ function renderServerCards() {
             var card = buildServerCard(server).cloneNode(true);
             card.removeAttribute('role');
             card.removeAttribute('aria-label');
+            card.removeAttribute('aria-pressed');
             card.setAttribute('aria-hidden', 'true');
             card.tabIndex = -1;
             peek.appendChild(card);

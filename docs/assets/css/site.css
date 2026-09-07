@@ -137,12 +137,15 @@ body {
    ============================================ */
 
 .flip-card {
+    display: grid;
     perspective: 1000px;
     cursor: pointer;
     min-height: 306px;
 }
 
 .flip-card-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
     position: relative;
     width: 100%;
     min-height: 306px;
@@ -156,7 +159,11 @@ body {
 
 .flip-card-front,
 .flip-card-back {
-    position: absolute;
+    /* Both faces contribute to height, so longer readable names cannot collide
+       with the following row. The shared grid cell keeps the flip in place. */
+    grid-area: 1 / 1;
+    position: relative;
+    min-width: 0;
     width: 100%;
     min-height: 306px;
     backface-visibility: hidden;
@@ -171,15 +178,38 @@ body {
     height: 100%;
     min-height: 306px;
     position: relative;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .flip-card:not(.flipped):hover .premium-card {
-    transform: translateY(-8px);
-    border-color: rgba(var(--brand-primary-rgb), 0.3);
+    transform: translateY(-2px);
+}
+
+.flip-card:hover .premium-card {
+    border-color: rgba(var(--brand-primary-rgb), 0.24);
     box-shadow:
-        0 20px 60px rgba(15, 23, 42, 0.12),
-        0 0 0 1px rgba(var(--brand-primary-rgb), 0.15);
+        0 8px 24px rgba(15, 23, 42, 0.08),
+        0 0 0 1px rgba(var(--brand-primary-rgb), 0.08);
+}
+
+.server-card-front {
+    display: flex;
+    flex-direction: column;
+}
+
+.server-card-title {
+    margin: 0 0 .3rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.4;
+    text-wrap: pretty;
+}
+
+.server-card-meta { margin-top: auto; }
+
+.server-card-front .flip-hint-front {
+    position: static;
+    margin: 1rem 0 0;
 }
 
 .flip-card.flipped .premium-card {
