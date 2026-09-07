@@ -131,7 +131,8 @@
     <!-- ?v= is a cache buster. GitHub Pages serves these assets with a long
          max-age, so a returning visitor keeps the old CSS and JS until the URL
          changes. Bump the value whenever site.css or site.js changes. -->
-    <link rel="stylesheet" href="assets/css/site.css?v=33">
+    <link rel="stylesheet" href="assets/css/site.css?v=35">
+    <link rel="stylesheet" href="assets/css/agency-sources.css?v=3">
 </head>
 <body class="bg-slate-50 text-slate-900 antialiased">
 
@@ -764,6 +765,18 @@
 
     <div class="section-divider mx-auto max-w-3xl"></div>
 
+    <!-- Source agencies and their datasets. -->
+    <section id="sources" class="agency-sources" aria-labelledby="agency-sources-title">
+        <div class="agency-sources-inner">
+            <h2 id="agency-sources-title">Selected public data sources</h2>
+            <div id="agency-frame" class="agency-frame" aria-label="Source agencies and their datasets" aria-live="off"></div>
+            <p id="agency-fallback" class="agency-fallback"><a href="https://github.com/pnnl/nepa-mcp/blob/main/docs/mcp-data-source-licenses.md">Explore the toolkit's data sources and subsources →</a></p>
+            <div id="agency-controls" class="agency-controls" role="group" aria-label="Agency animation controls" hidden>
+                <button id="agency-pause" type="button" aria-label="Pause agency animation" title="Pause animation" aria-controls="agency-frame"></button>
+            </div>
+        </div>
+    </section>
+
     <!-- Server inventory -->
     <section id="servers" class="py-16 lg:py-24 px-6 bg-slate-50">
         <div class="container mx-auto max-w-7xl">
@@ -1029,6 +1042,7 @@
     </footer>
 
     <script src="assets/js/site-data.js?v=19"></script>
-    <script src="assets/js/site.js?v=27"></script>
+    <script src="assets/js/site.js?v=29"></script>
+    <script src="assets/js/agency-sources.js?v=3"></script>
 </body>
 </html>
