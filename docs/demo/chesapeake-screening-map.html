@@ -49,7 +49,13 @@
 <script>
             var map = L.map("map", { center: [38.8, -76.3], crs: L.CRS.EPSG3857, zoom: 8, zoomControl: true, preferCanvas: false, scrollWheelZoom: false });
             L.control.scale().addTo(map);
-            var tile_layer = L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", { minZoom: 0, maxZoom: 20, attribution: "CartoDB", subdomains: "abcd", opacity: 1 });
+            var tile_url = "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
+            // Only send the public demo key from the production website.
+            // Local previews use anonymous CARTO tiles, which carry its key notice.
+            if (window.location.hostname === "pnnl.github.io") {
+                tile_url += "?key=cb1_3izd_1_482b10f859f6445c9127adfe";
+            }
+            var tile_layer = L.tileLayer(tile_url, { minZoom: 0, maxZoom: 20, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attributions">CARTO</a>', subdomains: "abcd", opacity: 1 });
             tile_layer.addTo(map);
 
     function createPopup(title, color, rows) {
