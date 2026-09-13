@@ -3243,3 +3243,123 @@ section {
         display: block !important;
     }
 }
+
+/* ============================================
+   Footer team disclosure
+   Collapsed, the line reads "Maintained by <name>" with a small "+N"
+   superscript as the only cue; a whispered hint appears on hover. Opening
+   reveals every contributor with photo and affiliation.
+   ============================================ */
+.team-summary {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    list-style: none;
+    font-size: 0.875rem;
+    color: #cbd5e1;
+    border-radius: 0.375rem;
+}
+
+.team-summary::-webkit-details-marker {
+    display: none;
+}
+
+.team-summary:focus-visible {
+    outline: 2px solid #2dd4bf;
+    outline-offset: 4px;
+}
+
+.team-name {
+    color: #fff;
+    font-weight: 500;
+    text-decoration: underline dotted rgba(94, 234, 212, 0);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    transition: text-decoration-color 0.25s ease;
+}
+
+.team-summary:hover .team-name,
+.team-summary:focus-visible .team-name {
+    text-decoration-color: rgba(94, 234, 212, 0.7);
+}
+
+/* The "+N" breathes slowly so the eye finds it; it settles once opened. */
+.team-count {
+    margin-left: 0.15rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    line-height: 0;
+    vertical-align: super;
+    color: #5eead4;
+    animation: teamBreathe 3.2s ease-in-out infinite;
+}
+
+.team-summary:hover .team-count,
+.team-summary:focus-visible .team-count {
+    animation-play-state: paused;
+    opacity: 1;
+    text-shadow: 0 0 10px rgba(94, 234, 212, 0.55);
+}
+
+.team[open] .team-count {
+    animation: none;
+    color: #64748b;
+    text-shadow: none;
+}
+
+@keyframes teamBreathe {
+    0%, 100% { opacity: 0.55; text-shadow: 0 0 0 rgba(94, 234, 212, 0); }
+    50% { opacity: 1; text-shadow: 0 0 10px rgba(94, 234, 212, 0.55); }
+}
+
+/* Out of the text flow so it never changes how the line wraps. */
+.team-hint {
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    margin-left: 0.5rem;
+    white-space: nowrap;
+    font-size: 0.6875rem;
+    color: #64748b;
+    opacity: 0;
+    transform: translate(-4px, -50%);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    pointer-events: none;
+}
+
+.team-summary:hover .team-hint,
+.team-summary:focus-visible .team-hint {
+    opacity: 1;
+    transform: translate(0, -50%);
+}
+
+/* No hover on touch devices, so no hint; the superscript carries the cue. */
+@media (hover: none) {
+    .team-hint {
+        display: none;
+    }
+}
+
+.team-hint::after {
+    content: 'meet the team \2192';
+}
+
+.team[open] .team-hint::after {
+    content: 'hide';
+}
+
+.team-panel {
+    animation: credOpen 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .team-count,
+    .team-panel {
+        animation: none;
+    }
+
+    .team-name,
+    .team-hint {
+        transition: none;
+    }
+}

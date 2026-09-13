@@ -37,6 +37,7 @@ handoffs/
 
 # Local outputs
 output/
+/outputs/
 tmp/
 docs/expansion.html
 

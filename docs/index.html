@@ -131,7 +131,7 @@
     <!-- ?v= is a cache buster. GitHub Pages serves these assets with a long
          max-age, so a returning visitor keeps the old CSS and JS until the URL
          changes. Bump the value whenever site.css or site.js changes. -->
-    <link rel="stylesheet" href="assets/css/site.css?v=35">
+    <link rel="stylesheet" href="assets/css/site.css?v=36">
     <link rel="stylesheet" href="assets/css/agency-sources.css?v=3">
 </head>
 <body class="bg-slate-50 text-slate-900 antialiased">
@@ -1015,7 +1015,45 @@
                 </div>
 
                 <div class="text-center space-y-2">
-                    <p class="text-slate-300 text-sm"><span>Maintained by <a href="https://sarthakchat.github.io/" target="_blank" rel="noopener noreferrer" class="underline-offset-2 decoration-slate-500 hover:text-white hover:underline transition-colors">Sarthak Chaturvedi</a></span><span class="hidden sm:inline" aria-hidden="true"> · </span><span class="block sm:inline">Contributor: Renuka Chintalapati</span></p>
+                    <!-- Contributors. Collapsed, the line names the maintainer and first contributor, with a small
+                         "+2" superscript as the only cue; opening reveals everyone with photo and affiliation.
+                         Styles: .team-* in site.css. Keep the "+2" in sync with the number of unnamed cards. -->
+                    <details id="contributors" class="team max-w-4xl mx-auto pb-3">
+                        <summary class="team-summary">
+                            <span><span>Maintained by <span class="team-name">Sarthak Chaturvedi</span></span><span class="hidden sm:inline" aria-hidden="true"> · </span><span class="block sm:inline">Contributor: <span class="team-name">Renuka Chintalapati</span><sup class="team-count">+2<span class="sr-only"> more contributors. Select to show the whole team.</span></sup></span></span>
+                            <span class="team-hint" aria-hidden="true"></span>
+                        </summary>
+                        <div class="team-panel mt-4 w-fit mx-auto rounded-xl border border-teal-900/60 bg-slate-950/30 p-5 grid grid-cols-1 sm:grid-cols-[repeat(2,auto)] lg:grid-cols-[repeat(4,auto)] gap-x-8 gap-y-4 text-left">
+                            <div class="flex items-center gap-3">
+                                <img src="assets/images/contributors/sarthak-chaturvedi.png" alt="" width="128" height="128" class="w-12 h-12 rounded-full object-cover ring-2 ring-teal-800/60 shrink-0" loading="lazy">
+                                <div>
+                                    <p class="text-white text-sm font-medium leading-tight whitespace-nowrap"><a href="https://sarthakchat.github.io/" target="_blank" rel="noopener noreferrer" class="hover:underline underline-offset-2 decoration-slate-500">Sarthak Chaturvedi</a></p>
+                                    <p class="text-xs text-slate-400 mt-0.5"><span class="text-slate-300">Maintainer</span> · PNNL</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <img src="assets/images/contributors/renuka-chintalapati.png" alt="" width="128" height="128" class="w-12 h-12 rounded-full object-cover ring-2 ring-teal-800/60 shrink-0" loading="lazy">
+                                <div>
+                                    <p class="text-white text-sm font-medium leading-tight whitespace-nowrap">Renuka Chintalapati</p>
+                                    <p class="text-xs text-slate-400 mt-0.5"><span class="text-slate-300">Contributor</span> · PNNL</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <img src="assets/images/contributors/pranava-raparla.png" alt="" width="128" height="128" class="w-12 h-12 rounded-full object-cover ring-2 ring-teal-800/60 shrink-0" loading="lazy">
+                                <div>
+                                    <p class="text-white text-sm font-medium leading-tight whitespace-nowrap">Pranava Raparla</p>
+                                    <p class="text-xs text-slate-400 mt-0.5"><span class="text-slate-300">Contributor</span> · US DOE</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <img src="assets/images/contributors/adler-archer.png" alt="" width="128" height="128" class="w-12 h-12 rounded-full object-cover ring-2 ring-teal-800/60 shrink-0" loading="lazy">
+                                <div>
+                                    <p class="text-white text-sm font-medium leading-tight whitespace-nowrap">Adler Archer</p>
+                                    <p class="text-xs text-slate-400 mt-0.5"><span class="text-slate-300">Contributor</span> · US DOE</p>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
                     <details id="citation" class="max-w-3xl mx-auto pt-1 text-xs text-slate-400">
                         <summary class="inline-block cursor-pointer underline decoration-slate-600 hover:decoration-slate-300">Cite this work</summary>
                         <div class="mt-4 rounded-xl border border-teal-900/60 bg-slate-950/30 p-5 text-left shadow-inner">
