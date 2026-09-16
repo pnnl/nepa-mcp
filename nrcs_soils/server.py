@@ -109,6 +109,10 @@ def get_nrcs_ssurgo_mapunits_in_roi_tool(
 ) -> str:
     """Get USDA-NRCS SSURGO soil map units intersecting a project-area buffer.
 
+    Includes component-weighted hydric percentages, nonhydric and unknown shares,
+    and source component ratings. Hydric soils are a wetland-screening indicator;
+    component shares do not locate wetlands within the project footprint.
+
     Returns clipped acreage, ROI percentage, map-unit identity, farmland class,
     survey area, and survey version. This is soil-survey screening, not a
     geotechnical investigation or wetland delineation.

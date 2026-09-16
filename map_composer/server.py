@@ -6,6 +6,7 @@ Generates interactive HTML maps with toggleable layers from multiple data source
 
 from __future__ import annotations
 
+import copy
 import os
 from datetime import datetime, timezone
 from pathlib import Path
@@ -20,6 +21,7 @@ from nepa_mcp_common.arcgis import ArcGISService
 from nepa_mcp_common.validation import validate_coordinates
 from src.core.geometry_collector import DEFAULT_LAYERS, LAYER_PROFILES, NHD_BASE_URL, collect_all_layers
 from src.core.map_renderer import export_combined_geojson, render_environmental_map
+from src.core.land_layers import LAND_SOURCES
 
 # Authoritative metadata for every layer in DEFAULT_LAYERS. Single source of
 # truth consumed by list_available_layers() below and by the Map Composer
@@ -160,7 +162,7 @@ LAYER_METADATA: dict[str, dict[str, str]] = {
     },
     "blm_managed_lands": {
         "category": "Federal Lands (BLM)",
-        "title": "BLM Surface Management",
+        "title": "BLM-Managed Protected Lands (PAD-US Fee)",
         "source": "USGS Protected Areas Database (PAD-US 4.1), filtered to BLM",
         "geometry": "Polygon",
         "review_use": "Identifies mapped BLM-managed lands",
@@ -279,7 +281,7 @@ LAYER_SOURCE_URLS = {
     "blm_managed_lands": "https://edits.nationalmap.gov/arcgis/rest/services/PAD-US/PAD_US_4_1/MapServer",
     "blm_land_use_plans": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_Land_Use_Plans_Approved_2022/FeatureServer",
     "blm_plans_in_progress": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_Revision_Development_Land_Use_Plans/FeatureServer",
-    "blm_wilderness_study_areas": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/NLCS_Wilderness_Study_Areas/FeatureServer",
+    "blm_wilderness_study_areas": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_NLCS_Wilderness_Study_Areas_Polygons/FeatureServer/3",
     "blm_national_monuments": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_NLCS_National_Monuments_National_Conservation_Areas_Polygons/FeatureServer",
     "blm_rights_of_way": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/Rights_of_Way/FeatureServer",
     "grsg_habitat": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_WesternUS_GRSG_ROD_HabitatMgmtAreas_Feb_2026/FeatureServer",
@@ -290,6 +292,8 @@ LAYER_SOURCE_URLS = {
     "lwcf_lands": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_Land_and_Water_Conservation_Fund_LWCF_Polygons/FeatureServer",
     "eis_boundaries": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_WesternUS_EIS_Boundaries/FeatureServer",
 }
+
+LAYER_SOURCE_URLS.update(LAND_SOURCES)
 
 ARTIFACT_TOOL_ANNOTATIONS = {
     "title": "Create environmental map artifact",
@@ -331,7 +335,7 @@ BufferMiles = Annotated[
     ),
 ]
 MapProfile = Annotated[
-    Literal["screening", "biological", "water", "lands", "full"],
+    Literal["screening", "biological", "water", "lands", "geothermal", "full"],
     Field(
         description=(
             "Named layer profile. The default full profile requests all 32 layers; "
@@ -342,6 +346,13 @@ MapProfile = Annotated[
 LayerSelection = Annotated[
     list[str] | None,
     Field(description="Optional explicit Map Composer layer IDs; overrides profile when provided."),
+]
+ProjectGeometry = Annotated[
+    dict | None,
+    Field(
+        description="Optional WGS84 GeoJSON Polygon/MultiPolygon footprint inside the search buffer, at most 10000 vertices. "
+        "Land-designation relations use this footprint; otherwise they refer only to the project point."
+    ),
 ]
 MapTitle = Annotated[
     str | None,
@@ -437,6 +448,8 @@ def _collection_metadata(
         "retrieved_at": datetime.now(timezone.utc).isoformat(),
         "profile": profile,
         "selected_layers": selected_layers,
+        "project_geometry": copy.deepcopy(collection.project_geometry),
+        "relation_target": "project_footprint" if collection.project_geometry is not None else "project_point",
         "roi": {
             "latitude": latitude,
             "longitude": longitude,
@@ -458,6 +471,8 @@ def _summary_lines(collection) -> list[str]:
         line = f"- {layer_id}: {status['feature_count']} features ({status['status']})"
         lines.append(line)
         lines.extend(f"  Warning: {warning}" for warning in status.get("warnings", []))
+        if status.get("screening_note"):
+            lines.append("  " + status["screening_note"])
     return lines
 
 
@@ -497,17 +512,22 @@ def compose_environmental_map(
         bool,
         Field(description="Enrich county popups with recent GBIF species occurrence data."),
     ] = False,
+    project_geometry: ProjectGeometry = None,
 ) -> str:
     """Create an interactive environmental screening map as a local HTML artifact."""
 
     latitude, longitude, buffer_miles = validate_coordinates(latitude, longitude, buffer_miles)
     selected_layers = _resolve_layers(profile, layers)
+    land_options = {}
+    if project_geometry is not None:
+        land_options["project_geometry"] = project_geometry
     collection = collect_all_layers(
         latitude,
         longitude,
         buffer_miles,
         selected_layers,
         include_species_data,
+        **land_options,
     )
     metadata = _collection_metadata(
         collection=collection,
@@ -569,17 +589,22 @@ def export_all_layers_geojson(
         bool,
         Field(description="Enrich county properties with recent GBIF species occurrence data."),
     ] = False,
+    project_geometry: ProjectGeometry = None,
 ) -> str:
     """Export selected environmental map layers as one provenance-rich GeoJSON artifact."""
 
     latitude, longitude, buffer_miles = validate_coordinates(latitude, longitude, buffer_miles)
     selected_layers = _resolve_layers(profile, layers)
+    land_options = {}
+    if project_geometry is not None:
+        land_options["project_geometry"] = project_geometry
     collection = collect_all_layers(
         latitude,
         longitude,
         buffer_miles,
         selected_layers,
         include_species_data,
+        **land_options,
     )
     metadata = _collection_metadata(
         collection=collection,

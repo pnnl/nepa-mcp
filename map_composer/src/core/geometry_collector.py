@@ -5,8 +5,10 @@ This module collects complete GeoJSON geometries (polygons, lines, points)
 for use in multi-layer environmental mapping.
 """
 
+import copy
 import json
 import logging
+import math
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -15,6 +17,7 @@ from typing import Any, Dict, List, Optional
 from shapely.geometry import shape, Point as ShapelyPoint
 
 from nepa_mcp_common.arcgis import ArcGISFeatureQueryResult, ArcGISService
+from nepa_mcp_common.land_status import designation_details
 from src.core.constants import (
     TRIBAL_LAYERS,
     TIGERWEB_AIANNHA_URL,
@@ -65,6 +68,7 @@ class CollectionResult:
 
     layers: Dict[str, Dict]
     statuses: Dict[str, Dict[str, Any]]
+    project_geometry: Optional[Dict] = None
 
     @property
     def warnings(self) -> List[str]:
@@ -170,6 +174,20 @@ def _failed_feature_collection(message: str) -> Dict:
         "status": "failed",
         "warnings": [message],
     }
+
+
+def _format_wsa_rod_date(value: Any) -> Optional[str]:
+    """Format an ArcGIS epoch-millisecond WSA ROD date when it is usable."""
+
+    if value in (None, "") or isinstance(value, bool):
+        return None
+    try:
+        parsed = datetime.fromtimestamp(float(value) / 1000, tz=timezone.utc)
+    except (TypeError, ValueError, OverflowError, OSError):
+        return None
+    if (parsed.year, parsed.month, parsed.day) == (9999, 9, 9):
+        return None
+    return parsed.date().isoformat()
 
 
 # Server-side geometry simplification tolerance in decimal degrees.
@@ -370,6 +388,29 @@ LAYER_PROFILES = {
         "lwcf_lands",
         "eis_boundaries",
     ],
+    "geothermal": [
+        "roi",
+        "counties",
+        "tribal_lands",
+        "blm_managed_lands",
+        "federal_lands",
+        "usfs_forests",
+        "blm_land_use_plans",
+        "blm_plans_in_progress",
+        "blm_wilderness_study_areas",
+        "blm_national_monuments",
+        "blm_rights_of_way",
+        "critical_habitat",
+        "wildlife_refuges",
+        "grsg_habitat",
+        "sagebrush_focal_areas",
+        "wild_horse_hma",
+        "usace_districts",
+        "wetland_regions",
+        "nhd_perennial_streams",
+        "nhd_infrastructure",
+        "eis_boundaries",
+    ],
     "full": DEFAULT_LAYERS,
 }
 
@@ -388,32 +429,53 @@ def esri_to_geojson_geometry(esri_geometry: Dict, geometry_type: str) -> Optiona
         geometry_type: ESRI type (esriGeometryPoint, esriGeometryPolygon, esriGeometryPolyline)
 
     Returns:
-        GeoJSON geometry object or None if conversion fails
+        GeoJSON geometry object or None if conversion fails. Polygon conversion
+        is all-or-nothing: an unusable ring invalidates the entire feature so
+        downstream completeness accounting cannot mistake a lost hole or part
+        for a complete boundary.
     """
+    if not isinstance(esri_geometry, dict):
+        return None
+
     if geometry_type == "esriGeometryPoint":
         return {"type": "Point", "coordinates": [esri_geometry.get("x"), esri_geometry.get("y")]}
 
     elif geometry_type == "esriGeometryPolygon":
         rings = esri_geometry.get("rings", [])
-        if not rings:
+        if not isinstance(rings, list) or not rings:
             return None
 
         closed_rings = []
         ring_polygons = []
         for ring in rings:
             if not isinstance(ring, list) or len(ring) < 3:
-                continue
+                return None
+            for vertex in ring:
+                if (
+                    not isinstance(vertex, (list, tuple))
+                    or len(vertex) not in (2, 3)
+                    or any(
+                        isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value)
+                        for value in vertex
+                    )
+                ):
+                    return None
             closed_ring = list(ring)
             if closed_ring[0] != closed_ring[-1]:
                 closed_ring.append(closed_ring[0])
             if len(closed_ring) < 4:
-                continue
+                return None
             try:
                 ring_polygon = shape({"type": "Polygon", "coordinates": [closed_ring]})
             except Exception:
-                continue
-            if ring_polygon.is_empty or ring_polygon.area == 0:
-                continue
+                return None
+            if (
+                ring_polygon.is_empty
+                or not ring_polygon.is_valid
+                or not math.isfinite(ring_polygon.area)
+                or ring_polygon.area == 0
+            ):
+                return None
             closed_rings.append(closed_ring)
             ring_polygons.append(ring_polygon)
 
@@ -425,11 +487,10 @@ def esri_to_geojson_geometry(esri_geometry: Dict, geometry_type: str) -> Optiona
         # hole; that preserves disjoint exterior parts as a MultiPolygon.
         parents: List[Optional[int]] = []
         for index, polygon in enumerate(ring_polygons):
-            point = polygon.representative_point()
             containers = [
                 candidate_index
                 for candidate_index, candidate in enumerate(ring_polygons)
-                if candidate_index != index and candidate.area > polygon.area and candidate.contains(point)
+                if candidate_index != index and candidate.area > polygon.area and candidate.covers(polygon)
             ]
             parents.append(
                 min(containers, key=lambda candidate_index: ring_polygons[candidate_index].area, default=None)
@@ -459,9 +520,18 @@ def esri_to_geojson_geometry(esri_geometry: Dict, geometry_type: str) -> Optiona
 
         if not polygons:
             return None
-        if len(polygons) == 1:
-            return {"type": "Polygon", "coordinates": polygons[0]}
-        return {"type": "MultiPolygon", "coordinates": polygons}
+        geometry = (
+            {"type": "Polygon", "coordinates": polygons[0]}
+            if len(polygons) == 1
+            else {"type": "MultiPolygon", "coordinates": polygons}
+        )
+        # Individually valid rings can still form invalid overlapping parts or
+        # holes. Do not repair them or silently change the mapped boundary.
+        try:
+            polygon = shape(geometry)
+            return geometry if polygon.is_valid and not polygon.is_empty else None
+        except Exception:
+            return None
 
     elif geometry_type == "esriGeometryPolyline":
         paths = esri_geometry.get("paths", [])
@@ -1349,8 +1419,8 @@ def get_blm_managed_lands_geojson(buffer_geometry: Dict) -> Dict:
     Get BLM-managed land boundaries as GeoJSON via PAD-US.
 
     Queries USGS Protected Areas Database (PAD-US 4.1) filtered to
-    BLM-managed lands. Provides national coverage of BLM surface
-    management boundaries.
+    BLM-managed protected lands. This is ownership/management screening
+    context, not comprehensive cadastral boundaries or mineral ownership.
 
     Args:
         buffer_geometry: ESRI JSON polygon geometry (ROI buffer)
@@ -1626,18 +1696,15 @@ def get_blm_wilderness_study_areas_geojson(buffer_geometry: Dict) -> Dict:
     Returns:
         GeoJSON FeatureCollection with WSA boundary polygons
     """
-    simplified_geom = ArcGISService.simplify_polygon_geometry(buffer_geometry)
-
     url = f"{BLM_WSA_URL}/{BLM_WSA_LAYER_ID}/query"
     params = {
-        "geometry": json.dumps(simplified_geom),
+        "geometry": json.dumps(buffer_geometry),
         "geometryType": "esriGeometryPolygon",
         "inSR": 4326,
         "spatialRel": "esriSpatialRelIntersects",
         "returnGeometry": True,
         "outSR": 4326,
-        "maxAllowableOffset": DEFAULT_OUTPUT_OFFSET_DEG,
-        "outFields": "NLCS_NAME,NLCS_ID,CASEFILE_NO,WSA_RCMND,ADMIN_ST,WSA_TYPE,WSA_SUITABILITY,WSA_VALUES",
+        "outFields": "NLCS_NAME,NLCS_ID,CASEFILE_NO,WSA_RCMND,ADMIN_ST,ROD_DATE",
         "f": "json",
     }
 
@@ -1645,46 +1712,39 @@ def get_blm_wilderness_study_areas_geojson(buffer_geometry: Dict) -> Dict:
         query_result = _query_arcgis_features(url, params, timeout=30, max_features=4500)
 
         features = []
-        seen_wsas = set()
 
         for feature in query_result.features:
             attrs = feature.get("attributes", {})
             geom = feature.get("geometry")
 
             wsa_name = attrs.get("NLCS_NAME", "Unknown")
-            if wsa_name in seen_wsas:
-                continue
-            seen_wsas.add(wsa_name)
 
-            if geom:
-                geojson_geom = esri_to_geojson_geometry(geom, "esriGeometryPolygon")
-
-                suitability_raw = attrs.get("WSA_SUITABILITY")
-                suitability = (
-                    "Suitable"
-                    if suitability_raw in (1, "1")
-                    else "Nonsuitable"
-                    if suitability_raw in (0, "0")
-                    else "Unknown"
-                )
-
-                features.append(
-                    {
-                        "type": "Feature",
-                        "geometry": geojson_geom,
-                        "properties": {
-                            "name": wsa_name,
-                            "nlcs_id": attrs.get("NLCS_ID", ""),
-                            "casefile": attrs.get("CASEFILE_NO", ""),
-                            "recommendation": attrs.get("WSA_RCMND", ""),
-                            "admin_state": attrs.get("ADMIN_ST", ""),
-                            "wsa_type": attrs.get("WSA_TYPE", ""),
-                            "suitability": suitability,
-                            "wilderness_values": attrs.get("WSA_VALUES", ""),
-                            "layer": "blm_wilderness_study_areas",
-                        },
-                    }
-                )
+            geojson_geom = esri_to_geojson_geometry(geom, "esriGeometryPolygon") if isinstance(geom, dict) else None
+            # Include missing geometry so _feature_collection records the loss
+            # and marks the result partial instead of silently reporting no hit.
+            features.append(
+                {
+                    "type": "Feature",
+                    "geometry": geojson_geom,
+                    "properties": {
+                        "name": wsa_name,
+                        "nlcs_id": attrs.get("NLCS_ID", ""),
+                        "casefile": attrs.get("CASEFILE_NO", ""),
+                        "recommendation": attrs.get("WSA_RCMND", ""),
+                        "admin_state": attrs.get("ADMIN_ST", ""),
+                        "rod_date": _format_wsa_rod_date(attrs.get("ROD_DATE")),
+                        "rod_date_raw": attrs.get("ROD_DATE"),
+                        "source_url": url.removesuffix("/query"),
+                        # The national public layer does not expose these
+                        # fields. Retain the keys for output compatibility
+                        # without manufacturing values.
+                        "wsa_type": None,
+                        "suitability": None,
+                        "wilderness_values": None,
+                        "layer": "blm_wilderness_study_areas",
+                    },
+                }
+            )
 
         return _feature_collection(features, query_result)
 
@@ -1702,17 +1762,14 @@ def get_blm_national_monuments_geojson(buffer_geometry: Dict) -> Dict:
     Returns:
         GeoJSON FeatureCollection with NM/NCA boundary polygons
     """
-    simplified_geom = ArcGISService.simplify_polygon_geometry(buffer_geometry)
-
     url = f"{BLM_NATIONAL_MONUMENTS_URL}/{BLM_NATIONAL_MONUMENTS_LAYER_ID}/query"
     params = {
-        "geometry": json.dumps(simplified_geom),
+        "geometry": json.dumps(buffer_geometry),
         "geometryType": "esriGeometryPolygon",
         "inSR": 4326,
         "spatialRel": "esriSpatialRelIntersects",
         "returnGeometry": True,
         "outSR": 4326,
-        "maxAllowableOffset": DEFAULT_OUTPUT_OFFSET_DEG,
         "outFields": "NCA_NAME,sma_code,STATE_ADMN,STATE_GEOG,Label,NLCS_ID",
         "f": "json",
     }
@@ -1721,34 +1778,33 @@ def get_blm_national_monuments_geojson(buffer_geometry: Dict) -> Dict:
         query_result = _query_arcgis_features(url, params, timeout=30)
 
         features = []
-        seen_monuments = set()
 
         for feature in query_result.features:
             attrs = feature.get("attributes", {})
             geom = feature.get("geometry")
 
             monument_name = attrs.get("NCA_NAME", "Unknown")
-            if monument_name in seen_monuments:
-                continue
-            seen_monuments.add(monument_name)
 
-            if geom:
-                geojson_geom = esri_to_geojson_geometry(geom, "esriGeometryPolygon")
-                features.append(
-                    {
-                        "type": "Feature",
-                        "geometry": geojson_geom,
-                        "properties": {
-                            "name": monument_name,
-                            "designation": attrs.get("Label", ""),
-                            "sma_code": attrs.get("sma_code", ""),
-                            "admin_state": attrs.get("STATE_ADMN", ""),
-                            "geographic_state": attrs.get("STATE_GEOG", ""),
-                            "nlcs_id": attrs.get("NLCS_ID", ""),
-                            "layer": "blm_national_monuments",
-                        },
-                    }
-                )
+            geojson_geom = esri_to_geojson_geometry(geom, "esriGeometryPolygon") if isinstance(geom, dict) else None
+            # Preserve missing-geometry accounting for both the bundled layer
+            # and the distinct NCA layer that filters this collection.
+            features.append(
+                {
+                    "type": "Feature",
+                    "geometry": geojson_geom,
+                    "properties": {
+                        "name": monument_name,
+                        "designation": attrs.get("Label", ""),
+                        "sma_code": attrs.get("sma_code", ""),
+                        **designation_details(attrs),
+                        "source_url": url.removesuffix("/query"),
+                        "admin_state": attrs.get("STATE_ADMN", ""),
+                        "geographic_state": attrs.get("STATE_GEOG", ""),
+                        "nlcs_id": attrs.get("NLCS_ID", ""),
+                        "layer": "blm_national_monuments",
+                    },
+                }
+            )
 
         return _feature_collection(features, query_result)
 
@@ -2445,6 +2501,7 @@ def collect_all_layers(
     buffer_miles: float,
     layers: Optional[List[str]] = None,
     include_species_data: bool = False,
+    project_geometry: Optional[Dict] = None,
 ) -> CollectionResult:
     """
     Collect all environmental data layers as GeoJSON.
@@ -2460,7 +2517,18 @@ def collect_all_layers(
         CollectionResult containing GeoJSON layers and explicit availability
         status for every requested layer.
     """
+    from src.core.land_layers import (
+        annotate_land_relations,
+        validate_project_geometry,
+    )
+
+    project_geometry = copy.deepcopy(project_geometry)
+    project_shape = validate_project_geometry(project_geometry) if project_geometry is not None else None
     buffer_geometry = ArcGISService.create_roi_buffer(latitude, longitude, buffer_miles)
+    if project_shape is not None:
+        roi_shape = shape(esri_to_geojson_geometry(buffer_geometry, "esriGeometryPolygon"))
+        if not roi_shape.covers(project_shape):
+            raise ValueError("project_geometry must be contained in the search buffer; enlarge buffer_miles")
 
     if layers is None:
         layers = DEFAULT_LAYERS
@@ -2575,6 +2643,16 @@ def collect_all_layers(
         if layer_name in completed:
             result[layer_name] = completed[layer_name]
 
+    annotate_land_relations(result, statuses, longitude, latitude, project_shape)
+    if project_geometry is not None and "roi" in result:
+        result["roi"]["features"].append(
+            {
+                "type": "Feature",
+                "geometry": copy.deepcopy(project_geometry),
+                "properties": {"type": "Project Footprint", "name": "Project Footprint", "layer": "roi"},
+            }
+        )
+        statuses["roi"]["feature_count"] = len(result["roi"]["features"])
     ordered_statuses = {layer_name: statuses[layer_name] for layer_name in layers if layer_name in statuses}
     logger.info("Finished Map Composer collection for %s requested layers", len(layers))
-    return CollectionResult(layers=result, statuses=ordered_statuses)
+    return CollectionResult(layers=result, statuses=ordered_statuses, project_geometry=project_geometry)

@@ -15,6 +15,7 @@ from collections import Counter
 from typing import Dict
 
 from nepa_mcp_common.arcgis import ArcGISService
+from nepa_mcp_common.land_status import BLM_DESIGNATION_GUIDANCE, padus_conflict
 
 # PADUS 4.1 MapServer endpoints (National Map)
 PADUS_BASE_URL = "https://edits.nationalmap.gov/arcgis/rest/services/PAD-US/PAD_US_gaz_combined/MapServer"
@@ -106,6 +107,7 @@ def get_padus_in_roi(lat: float, lon: float, buffer_miles: float = 25.0) -> Dict
             "date_established": attrs.get("Date_Est", ""),
         }
         records.append(record)
+        record.update(padus_conflict(attrs))
 
     records_sorted = sorted(records, key=lambda x: (x["owner_type"], x["owner_name"], x["unit_name"]))
 
@@ -114,7 +116,14 @@ def get_padus_in_roi(lat: float, lon: float, buffer_miles: float = 25.0) -> Dict
         "buffer_miles": buffer_miles,
         "total_records": len(records_sorted),
         "records": records_sorted,
-        "warnings": result.warnings,
+        "warnings": list(result.warnings)
+        + [
+            f"{record['unit_name']}: {record['designation_conflict']}. "
+            f"{record['conflict_explanation']} {record['conflict_authority']}"
+            for record in records_sorted
+            if record.get("designation_conflict")
+        ],
+        "designation_guidance": BLM_DESIGNATION_GUIDANCE,
     }
 
 
@@ -185,6 +194,7 @@ def format_padus_summary(padus_data: Dict) -> str:
         [
             "",
             "Data Source: USGS Protected Areas Database (PAD-US) v4.1",
+            BLM_DESIGNATION_GUIDANCE,
             "Note: PAD-US is protected-area screening data, not comprehensive cadastral land ownership.",
             "Note: Source-feature acreage is the full mapped area of each intersecting source feature and may "
             "extend beyond the ROI.",

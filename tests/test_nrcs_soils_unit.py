@@ -60,10 +60,20 @@ def _mapunit_payload():
 def _constraint_payload():
     return {
         "Table": [
-            ["mukey", "cokey", "compname", "comppct_r", "majcompflag", "hydgrp", "drainagecl", "slope_r"],
-            ["1001", "2001", "Alpha", "80", "Yes", "B", "Well drained", "5"],
-            ["1001", "2002", "Wet inclusion", "20", "No", "D", "Poorly drained", "2"],
-            ["1002", "2003", "Beta", "100", "Yes", "C", "Moderately well drained", "12"],
+            [
+                "mukey",
+                "cokey",
+                "compname",
+                "comppct_r",
+                "majcompflag",
+                "hydgrp",
+                "drainagecl",
+                "slope_r",
+                "hydricrating",
+            ],
+            ["1001", "2001", "Alpha", "80", "Yes", "B", "Well drained", "5", "No"],
+            ["1001", "2002", "Wet inclusion", "20", "No", "D", "Poorly drained", "2", "Yes"],
+            ["1002", "2003", "Beta", "100", "Yes", "C", "Moderately well drained", "12", "No"],
         ],
         "Table1": [
             ["cokey", "reskind", "resdept_l", "resdept_r", "resdept_h"],
@@ -117,12 +127,23 @@ def test_mapunits_have_clipped_areas_and_source_versions(monkeypatch):
     assert result["mapunits"][0]["roi_percentage"] == pytest.approx(60.0)
     assert result["mapunits"][0]["survey_area_symbol"] == "CA001"
     assert result["data_unavailable"] is False
+    hydric = result["mapunits"][0]["hydric"]
+    assert hydric["hydric_percentage"] == 20
+    assert hydric["unknown_percentage"] == 0
+    assert hydric["rating_class"] == "1–32% hydric"
+    text = api.format_soil_mapunits_summary(result)
+    assert "Wet inclusion: Yes (20%; cokey 2002)" in text
 
 
 def test_farmland_summary_preserves_exact_classes(monkeypatch):
     api = _load_api()
     _install_success(api, monkeypatch)
 
+    def mapunit_query_only(query):
+        assert "FROM mupolygon AS mp" in query, "Farmland classification should not query components"
+        return _mapunit_payload()
+
+    monkeypatch.setattr(api, "_post_sda_query", mapunit_query_only)
     result = api.get_farmland_classification_in_roi(37.727, -121.616)
     text = api.format_farmland_classification_summary(result)
 
@@ -152,6 +173,8 @@ def test_constraint_summary_keeps_component_and_horizon_context(monkeypatch):
     assert "Potential Siting Attention Indicators (not suitability ratings)" in text
     assert "No composite constructability or suitability score is produced" in text
     assert "Paralithic bedrock at 80 cm" in text
+    assert result["mapunits"][0]["hydric"]["hydric_percentage"] == 20
+    assert "Hydric components: 20%" in text
 
 
 def test_mapunit_formatter_pages_bounded_details(monkeypatch):

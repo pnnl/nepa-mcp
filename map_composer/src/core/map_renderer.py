@@ -263,7 +263,7 @@ LAYER_CONFIG = {
     },
     "blm_managed_lands": {
         "name": "BLM Managed Lands",
-        "description": "BLM surface management boundaries (via PAD-US)",
+        "description": "BLM-managed protected lands (PAD-US Fee; not cadastral or mineral ownership)",
         "color": "#D97706",  # Amber (federal land management)
         "popup_fields": [
             ("Unit Name", "name"),
@@ -313,6 +313,7 @@ LAYER_CONFIG = {
             ("NLCS ID", "nlcs_id"),
             ("Casefile", "casefile"),
             ("Recommendation", "recommendation"),
+            ("ROD Date", "rod_date"),
             ("Admin State", "admin_state"),
             ("WSA Type", "wsa_type"),
             ("Suitability", "suitability"),
@@ -420,6 +421,27 @@ LAYER_CONFIG = {
         ],
     },
 }
+
+LAND_BOUNDARY_LAYERS = {
+    "blm_wilderness_study_areas",
+    "blm_national_monuments",
+}
+for layer_id in LAND_BOUNDARY_LAYERS:
+    LAYER_CONFIG[layer_id]["popup_fields"].extend(
+        [
+            ("Designation Type", "designation_type"),
+            ("Classification Basis", "classification_basis"),
+            ("Relationship Target", "relation_target"),
+            ("Mapped Relationship", "project_relation"),
+            ("Leasing Rule", "geothermal_leasing_rule"),
+            ("Rule Authority", "leasing_authority"),
+            ("Classification Authority", "classification_authority"),
+            ("Screening Note", "screening_note"),
+            ("Boundary Note", "boundary_note"),
+            ("Source", "source_url"),
+            ("Retrieved", "retrieved_at"),
+        ]
+    )
 
 # Layer rendering order (bottom to top)
 LAYER_ORDER = [
@@ -679,7 +701,8 @@ def simplify_geojson(geojson_data: Dict, tolerance: float = 0.001) -> Dict:
 
     Args:
         geojson_data: GeoJSON FeatureCollection
-        tolerance: Simplification tolerance in degrees (default 0.001 ~ 100m)
+        tolerance: Simplification tolerance in degrees (default 0.001 ~ 100m).
+            Zero disables simplification and preserves the original coordinates.
 
     Returns:
         Simplified GeoJSON FeatureCollection
@@ -697,11 +720,14 @@ def simplify_geojson(geojson_data: Dict, tolerance: float = 0.001) -> Dict:
             continue
         try:
             geom = shape(geometry)
-            simplified_geom = geom.simplify(tolerance, preserve_topology=True)
+            # Even simplify(0) drops collinear vertices. Exact project and land
+            # boundaries must bypass simplification and coordinate rewriting.
+            simplified_geom = geom if tolerance == 0 else geom.simplify(tolerance, preserve_topology=True)
             if simplified_geom.is_empty:
                 logger.warning("Skipping map feature whose simplified geometry is empty")
                 continue
-            feature["geometry"] = mapping(simplified_geom)
+            if tolerance != 0:
+                feature["geometry"] = mapping(simplified_geom)
             simplified_features.append(feature)
         except Exception as exc:
             logger.warning("Could not simplify map feature: %s", exc)
@@ -760,7 +786,8 @@ def add_geojson_layer(
         logger.info("No features in %s; skipping map layer", layer_name)
         return
 
-    geojson_data = simplify_geojson(geojson_data, tolerance=0.001)
+    preserve_boundary = layer_type == "roi" or layer_type in LAND_BOUNDARY_LAYERS
+    geojson_data = simplify_geojson(geojson_data, tolerance=0 if preserve_boundary else 0.001)
     if not geojson_data.get("features"):
         logger.info("No valid geometries in %s; skipping map layer", layer_name)
         return
@@ -959,6 +986,12 @@ def render_environmental_map(
 
     if source_attribution:
         source_items = "".join(f"<li>{_html_escape(str(source))}</li>" for source in source_attribution)
+        notes = []
+        for layer_id, status in (layer_statuses or {}).items():
+            notes.extend(f"{layer_id}: {warning}" for warning in status.get("warnings", []))
+            if status.get("screening_note"):
+                notes.append(status["screening_note"])
+        note_items = "".join(f"<li>{_html_escape(str(note))}</li>" for note in dict.fromkeys(notes))
         attribution_html = f"""
         <details style="
             position: fixed;
@@ -976,6 +1009,7 @@ def render_environmental_map(
             <summary style="cursor: pointer; font-weight: 600;">Data sources and limitations</summary>
             <ul style="margin: 6px 0 4px 18px; padding: 0;">{source_items}</ul>
             <p style="margin: 6px 0 0;">Screening information; confirm material findings against current authoritative records.</p>
+            <ul style="margin: 6px 0 4px 18px; padding: 0; max-height: 220px; overflow-y: auto;">{note_items}</ul>
         </details>
         """
         m.get_root().html.add_child(folium.Element(attribution_html))

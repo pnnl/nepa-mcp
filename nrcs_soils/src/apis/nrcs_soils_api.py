@@ -145,7 +145,7 @@ def _constraint_queries(mapunit_keys: list[str]) -> tuple[str, str, str]:
     component_keys = f"SELECT cokey FROM component WHERE mukey IN ({key_list})"
     component_query = f"""
 SELECT TOP {MAX_COMPONENT_ROWS + 1}
-    mukey, cokey, compname, comppct_r, majcompflag, hydgrp, drainagecl, slope_r
+    mukey, cokey, compname, comppct_r, majcompflag, hydgrp, drainagecl, slope_r, hydricrating
 FROM component
 WHERE mukey IN ({key_list})
 ORDER BY mukey, comppct_r DESC, cokey
@@ -185,7 +185,9 @@ def _unavailable_result(lat: float, lon: float, buffer_miles: float, message: st
     }
 
 
-def get_soil_mapunits_in_roi(lat: float, lon: float, buffer_miles: float = 1.0) -> dict[str, Any]:
+def get_soil_mapunits_in_roi(
+    lat: float, lon: float, buffer_miles: float = 1.0, *, include_hydric: bool = True
+) -> dict[str, Any]:
     """Return SSURGO map units and clipped acreage inside a point-buffer ROI."""
     lat, lon, buffer_miles = validate_coordinates(lat, lon, buffer_miles, max_distance_miles=10.0)
 
@@ -267,7 +269,7 @@ def get_soil_mapunits_in_roi(lat: float, lon: float, buffer_miles: float = 1.0) 
         )
 
     complete = not truncated and not skipped
-    return {
+    result = {
         "center": {"latitude": lat, "longitude": lon},
         "buffer_miles": buffer_miles,
         "retrieved_at": _utc_now(),
@@ -285,6 +287,19 @@ def get_soil_mapunits_in_roi(lat: float, lon: float, buffer_miles: float = 1.0) 
         "skipped_records": skipped,
         "data_unavailable": False,
     }
+    if include_hydric and mapunits:
+        try:
+            query = _constraint_queries([unit["mukey"] for unit in mapunits])[0]
+            components, detail_warnings, partial = _parse_constraint_rows(_post_sda_query(query), {}, {})
+            result["warnings"].extend(detail_warnings)
+            result["partial"] = result["partial"] or partial
+            _attach_hydric_ratings(result, components, partial=partial)
+        except (UpstreamServiceError, ValueError) as exc:
+            logger.warning("SSURGO hydric component query failed: %s", exc)
+            result["partial"] = True
+            result["warnings"].append("Hydric ratings unavailable; map-unit properties remain usable.")
+            _attach_hydric_ratings(result, [], partial=True)
+    return result
 
 
 def _parse_constraint_rows(
@@ -369,6 +384,7 @@ def _parse_constraint_rows(
                 "component_percentage": component_pct,
                 "major_component": _coerce_text(row.get("majcompflag")).casefold() == "yes",
                 "hydrologic_group": _coerce_text(row.get("hydgrp"), default="Not rated"),
+                "hydric_rating": _coerce_text(row.get("hydricrating"), default="Not rated"),
                 "drainage_class": _coerce_text(row.get("drainagecl"), default="Not rated"),
                 "representative_slope_pct": _coerce_float(row.get("slope_r")),
                 "restrictions": restrictions_by_component.get(cokey, []),
@@ -382,6 +398,70 @@ def _parse_constraint_rows(
             "the constraint summary is partial."
         )
     return components, warnings, bool(truncated_tables or skipped)
+
+
+def _attach_hydric_ratings(result: dict[str, Any], components: list[dict[str, Any]], *, partial: bool) -> None:
+    """Sum published component shares without normalizing away unknown soil coverage."""
+    by_unit: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for component in components:
+        by_unit[component["mukey"]].append(component)
+    for unit in result["mapunits"]:
+        rows = by_unit[unit["mukey"]]
+        shares = {"yes": 0.0, "no": 0.0, "unknown": 0.0}
+        invalid = partial or not rows
+        seen = set()
+        for row in rows:
+            if row["cokey"] in seen:
+                invalid = True
+                continue
+            seen.add(row["cokey"])
+            pct = _coerce_float(row.get("component_percentage"))
+            if pct is None or not 0 <= pct <= 100:
+                invalid = True
+                continue
+            rating = row["hydric_rating"].casefold()
+            shares[rating if rating in ("yes", "no") else "unknown"] += pct
+        total = sum(shares.values())
+        invalid = invalid or total > 100.000001
+        unknown = min(100.0, shares["unknown"] + max(0.0, 100.0 - total))
+        pct = None if invalid else shares["yes"]
+        complete = pct is not None and unknown == 0
+        rating_class = "Incomplete or unavailable"
+        if complete:
+            rating_class = (
+                "100% hydric"
+                if pct == 100
+                else "66–99% hydric"
+                if pct >= 66
+                else "33–65% hydric"
+                if pct >= 33
+                else "1–32% hydric"
+                if pct >= 1
+                else "<1% hydric"
+            )
+        unit["hydric"] = {
+            "hydric_percentage": pct,
+            "nonhydric_percentage": None if invalid else shares["no"],
+            "unknown_percentage": None if invalid else unknown,
+            "reported_component_percentage": total,
+            "rating_complete": complete,
+            "rating_class": rating_class,
+            "components": [
+                {key: row.get(key) for key in ("cokey", "name", "component_percentage", "hydric_rating")}
+                for row in rows
+            ],
+        }
+
+
+def _hydric_text(unit: dict[str, Any]) -> str:
+    rating = unit.get("hydric", {})
+    pct = rating.get("hydric_percentage")
+    if pct is None:
+        return "Hydric rating: unavailable or incomplete component percentages (not a nonhydric finding)"
+    return (
+        f"Hydric components: {pct:g}% of map unit; nonhydric {rating['nonhydric_percentage']:g}%; "
+        f"unknown/not rated {rating['unknown_percentage']:g}%; {rating['rating_class']}"
+    )
 
 
 def _weighted_distribution(
@@ -402,7 +482,7 @@ def _weighted_distribution(
 
 def summarize_soil_constraints_for_siting(lat: float, lon: float, buffer_miles: float = 1.0) -> dict[str, Any]:
     """Combine map-unit, component, restriction, and horizon indicators for siting."""
-    result = get_soil_mapunits_in_roi(lat, lon, buffer_miles)
+    result = get_soil_mapunits_in_roi(lat, lon, buffer_miles, include_hydric=False)
     if result.get("data_unavailable") or not result["mapunits"]:
         result["components"] = []
         result["indicators"] = {}
@@ -432,6 +512,7 @@ def summarize_soil_constraints_for_siting(lat: float, lon: float, buffer_miles: 
     result["warnings"].extend(warnings)
     result["partial"] = result["partial"] or partial
     result["components"] = components
+    _attach_hydric_ratings(result, components, partial=partial)
 
     mapunits_by_key = {item["mukey"]: item for item in result["mapunits"]}
     slopes = [
@@ -486,7 +567,7 @@ def summarize_soil_constraints_for_siting(lat: float, lon: float, buffer_miles: 
 
 def get_farmland_classification_in_roi(lat: float, lon: float, buffer_miles: float = 1.0) -> dict[str, Any]:
     """Return exact SSURGO farmland classes summarized by clipped map-unit acreage."""
-    result = get_soil_mapunits_in_roi(lat, lon, buffer_miles)
+    result = get_soil_mapunits_in_roi(lat, lon, buffer_miles, include_hydric=False)
     classifications: dict[str, dict[str, Any]] = {}
     for mapunit in result["mapunits"]:
         classification = mapunit["farmland_classification"]
@@ -574,9 +655,19 @@ def format_soil_mapunits_summary(data: dict[str, Any], *, max_results: int = 50,
                     f"- **{mapunit['symbol']} — {mapunit['name']}** (`mukey` {mapunit['mukey']})",
                     f"  - ROI intersection: {mapunit['area_acres']:,.2f} acres ({mapunit['roi_percentage']:.2f}%)",
                     f"  - Farmland classification: {mapunit['farmland_classification']}",
+                    f"  - {_hydric_text(mapunit)}",
                     f"  - Survey area/version: {mapunit['survey_area_symbol']} / {mapunit['survey_version_date']}",
                 ]
             )
+            components = mapunit.get("hydric", {}).get("components", [])
+            for component in components[:10]:
+                pct = component.get("component_percentage")
+                share = f"{pct:g}%" if pct is not None else "percentage unknown"
+                lines.append(
+                    f"    - {component['name']}: {component['hydric_rating']} ({share}; cokey {component['cokey']})"
+                )
+            if len(components) > 10:
+                lines.append(f"    - {len(components) - 10} additional component ratings omitted from this summary.")
         if end < total or data.get("truncated"):
             lines.append(f"Additional map units are not shown. Request a later result_offset up to {MAX_MAPUNITS - 1}.")
     else:
@@ -699,6 +790,7 @@ def format_soil_constraints_summary(data: dict[str, Any]) -> str:
             f"- **{mapunit['symbol']} — {mapunit['name']}**: {mapunit['area_acres']:,.2f} ROI acres; "
             f"farmland class: {mapunit['farmland_classification']}"
         )
+        lines.append(f"  - {_hydric_text(mapunit)}")
         components = components_by_mapunit.get(mapunit["mukey"], [])
         if not components:
             lines.append("  - No major-component attributes were returned.")
@@ -713,6 +805,7 @@ def format_soil_constraints_summary(data: dict[str, Any]) -> str:
             )
             detail += (
                 f"; HSG {component['hydrologic_group']}; drainage {component['drainage_class']}"
+                f"; hydric rating {component['hydric_rating']}"
                 f"; representative slope {slope:g}%"
                 if slope is not None
                 else f"; HSG {component['hydrologic_group']}; drainage {component['drainage_class']}; slope not rated"

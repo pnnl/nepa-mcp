@@ -63,9 +63,10 @@ BLM_PLANS_IN_PROGRESS_LAYER_ID = 0
 
 # BLM Wilderness Study Areas (NLCS)
 BLM_WSA_URL = (
-    "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/NLCS_Wilderness_Study_Areas/FeatureServer"
+    "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/"
+    "BLM_Natl_NLCS_Wilderness_Study_Areas_Polygons/FeatureServer"
 )
-BLM_WSA_LAYER_ID = 279
+BLM_WSA_LAYER_ID = 3
 
 # BLM Rights of Way - NSO Restriction Areas
 BLM_ROW_URL = "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/Rights_of_Way/FeatureServer"

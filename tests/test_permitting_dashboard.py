@@ -3,7 +3,7 @@
 import asyncio
 import copy
 import sys
-from datetime import date
+from datetime import UTC, date, datetime
 
 import pytest
 from fastmcp import Client
@@ -87,6 +87,16 @@ def api(monkeypatch):
     module = sys.modules[server.search_permitting_projects.__module__]
     monkeypatch.setattr(module, "_metadata", lambda: STAMP)
     monkeypatch.setattr(module, "_today", lambda: date(2026, 9, 6))
+
+    # Freeze the freshness clock as well as the milestone date. Otherwise the
+    # fixed September 5 fixture becomes stale after seven wall-clock days.
+    class FixtureDateTime(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            instant = datetime(2026, 9, 6, 12, tzinfo=UTC)
+            return instant.astimezone(tz) if tz is not None else instant.replace(tzinfo=None)
+
+    monkeypatch.setattr(module, "datetime", FixtureDateTime)
     # A forgotten mock must fail immediately rather than use the network.
     monkeypatch.setattr(module, "get_json_rows", lambda *_a, **_k: pytest.fail("Unexpected network query"))
     return module
@@ -101,6 +111,14 @@ def install_rows(api, monkeypatch, rows):
 
     monkeypatch.setattr(api, "get_json_rows", query)
     return calls
+
+
+def test_old_metadata_still_produces_freshness_warning(api, monkeypatch):
+    install_rows(api, monkeypatch, [])
+    monkeypatch.setattr(api, "_metadata", lambda: STAMP - 8 * 86400)
+    result = api.search_permitting_projects()
+    assert result["status"] == "partial"
+    assert any("more than seven days old" in warning for warning in result["warnings"])
 
 
 def test_timetable_preserves_review_grain_and_source_values(api, monkeypatch):
