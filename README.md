@@ -149,8 +149,8 @@ provides 32 selectable overlays assembled at request time from Census, USFWS,
 USACE, USGS, BLM, USFS, NPS, and NIFC public GIS services.
 
 The result is intentionally interactive rather than a fixed stack: start with
-one of five profiles, then toggle returned layers to preserve visual clarity
-for the question at hand. Every map reports requested, rendered, empty,
+one of six profiles, including geothermal, then toggle returned layers to
+preserve visual clarity for the question at hand. Every map reports requested, rendered, empty,
 partial, and failed layer counts so source coverage remains visible.
 
 <p align="center">

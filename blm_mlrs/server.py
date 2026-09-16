@@ -253,6 +253,10 @@ def get_blm_mlrs_energy_leases_in_roi_tool(
     A lease record is a mineral-interest indicator, not approval for drilling,
     exploration, utilization, production, or other ground disturbance. Source
     families, dispositions, commodities, and formations can be filtered.
+    Defaults include Authorized, Pending, and Interim; Closed is opt-in.
+    Spatial records are not case-management determinations. Closed records or
+    no Authorized matches do not establish that land is clear of valid existing
+    rights. Case names and expiration dates may be unreported by the source.
     """
     lat, lon, distance = _validate_geo_inputs(latitude, longitude, buffer_miles)
     limit, offset = _validate_pagination(max_results_per_source, result_offset_per_source)

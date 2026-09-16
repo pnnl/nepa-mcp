@@ -81,6 +81,7 @@ def test_layer_metadata_profiles_and_sources_are_consistent() -> None:
         "biological",
         "water",
         "lands",
+        "geothermal",
         "full",
     }
     assert collector.LAYER_PROFILES["full"] == collector.DEFAULT_LAYERS
@@ -452,6 +453,8 @@ def test_wsa_uses_national_service_contract_and_preserves_output_schema(monkeypa
         "recommendation": "Pending",
         "admin_state": "NV",
         "rod_date": "2000-01-01",
+        "rod_date_raw": 946684800000,
+        "source_url": national_layer_url,
         "wsa_type": None,
         "suitability": None,
         "wilderness_values": None,

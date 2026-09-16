@@ -172,6 +172,7 @@ _DATE_FIELDS = {
 
 _FIELD_MAP = {
     "CSE_NR": "case_serial_number",
+    "CSE_NAME": "case_name",
     "LEG_CSE_NR": "legacy_case_serial_number",
     "BLM_PROD": "product",
     "CSE_TYPE_NR": "product_code",
@@ -840,6 +841,8 @@ def _parse_record(attributes: dict[str, Any], source: SourceSpec) -> dict[str, A
         "source_endpoint": source.layer_url,
     }
     for source_field, output_field in _FIELD_MAP.items():
+        if source_field == "CSE_NAME" and source_field not in source.fields:
+            continue
         if source_field not in attributes:
             continue
         value = attributes.get(source_field)
@@ -857,6 +860,10 @@ def _parse_record(attributes: dict[str, Any], source: SourceSpec) -> dict[str, A
         if quality:
             date_quality[output_field] = quality
     record["date_quality"] = date_quality
+    if source.record_role == "mineral_lease":
+        record.setdefault("case_name", None)
+        record.setdefault("expiration_date", None)
+        record.setdefault("source_disposition", None)
 
     quality_code, quality_group = _normalize_geometry_quality(attributes.get("QLTY"))
     record["geometry_quality_code"] = quality_code
@@ -1077,6 +1084,9 @@ def _format_result(result: dict[str, Any], title: str) -> str:
         "---",
         "",
         f"**Screening boundary:** {result.get('screening_boundary')}",
+        "Spatial case records are not a determination of current case-management status or valid existing rights. "
+        "Closed records, missing dates, or no matching Authorized records do not establish that land is clear "
+        "of existing rights or available for leasing.",
         (
             "BLM notes that MLRS geometries are derived from legal land descriptions and PLSS data; some records "
             "cannot be geocoded, and mapped records may be generalized to aliquot, section, or county level."
@@ -1102,6 +1112,12 @@ def _format_record(record: dict[str, Any]) -> str:
         line += f" — {headline}"
 
     details = []
+    if record.get("record_role") == "mineral_lease":
+        details.append(f"case name {record.get('case_name') or 'not reported by source'}")
+        if not record.get("expiration_date"):
+            details.append("expiration date not reported by source")
+        if not record.get("source_disposition"):
+            details.append("source disposition not reported")
     legacy = record.get("legacy_case_serial_number")
     if legacy and legacy != serial:
         details.append(f"legacy serial {legacy}")

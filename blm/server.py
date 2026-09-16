@@ -11,7 +11,7 @@ Provides access to:
 import logging
 import sys
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Literal
 
 # Add the server directory to path for local imports
 SERVER_DIR = Path(__file__).resolve().parent
@@ -147,13 +147,22 @@ def get_blm_wilderness_areas_in_roi_tool(
 
 @mcp.tool(name="get_blm_national_monuments_in_roi", annotations=READ_ONLY_TOOL_ANNOTATIONS, timeout=60.0)
 def get_blm_national_monuments_in_roi_tool(
-    latitude: Latitude, longitude: Longitude, buffer_miles: BufferMiles = 25.0
+    latitude: Latitude,
+    longitude: Longitude,
+    buffer_miles: BufferMiles = 25.0,
+    designation_type: Annotated[
+        Literal["all", "national_conservation_area", "national_monument"],
+        Field(description="Filter the shared BLM service; all retains unclassified and other designations."),
+    ] = "all",
 ) -> str:
     """Identify BLM National Monuments and NCAs intersecting the ROI.
 
     Returns National Monuments and National Conservation Areas (NCAs).
     These special designations have management restrictions and may trigger
     BLM Extraordinary Circumstances screening.
+
+    Select national_conservation_area for a distinct NCA result. Missing source
+    codes remain unclassified unless a cited identifier match establishes type.
 
     Args:
         latitude: Latitude in decimal degrees (WGS84), valid range -90 to 90.
@@ -165,7 +174,7 @@ def get_blm_national_monuments_in_roi_tool(
     """
     latitude, longitude, buffer_miles = _validate_geo_inputs(latitude, longitude, buffer_miles)
     logger.info("Querying BLM national monuments for (%s, %s) with buffer %s mi", latitude, longitude, buffer_miles)
-    result = get_blm_national_monuments_in_roi(latitude, longitude, buffer_miles)
+    result = get_blm_national_monuments_in_roi(latitude, longitude, buffer_miles, designation_type=designation_type)
     return format_blm_monuments_summary(result)
 
 

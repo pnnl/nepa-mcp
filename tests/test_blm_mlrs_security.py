@@ -59,7 +59,7 @@ def test_only_fixed_public_blm_endpoints_are_present():
     assert "http://" not in constants
     for forbidden in ("API_KEY", "PASSWORD", "SECRET", "TOKEN"):
         assert forbidden not in constants
-    for restricted_field in ("CUST_NM_SEC", "SF_ID", "CSE_META", "CSE_NAME"):
+    for restricted_field in ("CUST_NM_SEC", "SF_ID", "CSE_META"):
         assert restricted_field not in constants
 
 

@@ -13,6 +13,7 @@ import logging
 from typing import Dict, List
 
 from nepa_mcp_common.arcgis import ArcGISService
+from nepa_mcp_common.land_status import designation_details
 from src.core.constants import (
     BLM_LAND_USE_PLANS_URL,
     BLM_LAND_USE_PLANS_LAYER_ID,
@@ -295,7 +296,9 @@ def format_blm_wilderness_summary(data: Dict) -> str:
 # =============================================================================
 
 
-def get_blm_national_monuments_in_roi(lat: float, lon: float, buffer_miles: float = 25.0) -> Dict:
+def get_blm_national_monuments_in_roi(
+    lat: float, lon: float, buffer_miles: float = 25.0, *, designation_type: str = "all"
+) -> Dict:
     """
     Return BLM National Monuments and NCAs intersecting the ROI.
 
@@ -307,14 +310,27 @@ def get_blm_national_monuments_in_roi(lat: float, lon: float, buffer_miles: floa
     Returns:
         Dictionary with monuments/NCAs and metadata.
     """
+    if designation_type not in ("all", "national_conservation_area", "national_monument"):
+        raise ValueError("Unsupported designation_type")
     buffer_geom = ArcGISService.create_roi_buffer(lat, lon, buffer_miles)
     monuments, warnings = _query_blm_national_monuments(buffer_geom)
+    if designation_type != "all":
+        unknown = sum(item["designation_type"] == "unclassified" for item in monuments)
+        if unknown:
+            warnings = list(warnings) + [
+                f"{unknown} unclassified source records excluded; classification is incomplete."
+            ]
+        monuments = [item for item in monuments if item["designation_type"] == designation_type]
 
     return {
         "center": {"latitude": lat, "longitude": lon},
         "buffer_miles": buffer_miles,
         "total": len(monuments),
         "national_monuments": monuments,
+        "designation_filter": designation_type,
+        "national_conservation_areas": [
+            item for item in monuments if item["designation_type"] == "national_conservation_area"
+        ],
         "warnings": warnings,
     }
 
@@ -356,6 +372,7 @@ def _query_blm_national_monuments(buffer_geometry: Dict) -> tuple[List[Dict], Li
                     "admin_state": attrs.get("STATE_ADMN", ""),
                     "geographic_state": attrs.get("STATE_GEOG", ""),
                     "sma_code": attrs.get("sma_code", ""),
+                    **designation_details(attrs),
                     "area_sq_mi": round(area_sq_mi, 2) if area_sq_mi else None,
                 }
             )
@@ -398,6 +415,10 @@ def format_blm_monuments_summary(data: Dict) -> str:
             size = f"{mon['area_sq_mi']:.2f} sq mi" if mon.get("area_sq_mi") else "Area N/A"
             state_info = mon.get("admin_state") or mon.get("geographic_state") or "N/A"
             lines.append(f"- {mon['name']} ({state_info})")
+            lines.append(f"  Designation: {mon.get('designation_type', 'unclassified')}")
+            if mon.get("classification_authority"):
+                lines.append(f"  Authority: {mon['classification_authority']}")
+                lines.append(f"  {mon['geothermal_leasing_rule']}")
             lines.append(f"  {size}")
             if mon.get("nlcs_id"):
                 lines.append(f"  NLCS ID: {mon['nlcs_id']}")
@@ -412,5 +433,6 @@ def format_blm_monuments_summary(data: Dict) -> str:
     lines.append("NEPA Compliance: National Monuments and NCAs have management restrictions.")
     lines.append("Review applicable proclamations and management plans for permitted activities.")
     lines.append("These areas may trigger BLM Extraordinary Circumstances screening.")
+    lines.append("Buffer intersection does not establish footprint containment; no protective buffer is inferred.")
 
     return "\n".join(lines)
