@@ -359,13 +359,13 @@ body {
     background: linear-gradient(to bottom, rgba(248, 250, 252, 0), rgba(248, 250, 252, 0.97));
 }
 
-/* Clear the sticky header when jumping to an anchor. Narrow viewports add a
-   second nav row, so they need more room. */
+/* Below the xl header breakpoint, allow for both nav rows and a horizontal
+   scrollbar when the browser reserves space for one. */
 section {
-    scroll-margin-top: 132px;
+    scroll-margin-top: 164px;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1280px) {
     section {
         scroll-margin-top: 92px;
     }
@@ -432,9 +432,8 @@ section {
     display: grid;
     grid-template-columns: 2.5rem 1fr;
     column-gap: 1.35rem;
-    /* Clears the sticky header when a link jumps straight to a step. The header
-       is 126px tall while it carries its second link row, 81px after that. */
-    scroll-margin-top: 145px;
+    /* Clear both nav rows, including a horizontal scrollbar if present. */
+    scroll-margin-top: 164px;
 }
 
 .step-marker {
@@ -1323,7 +1322,7 @@ section {
     }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1280px) {
     .step-row {
         scroll-margin-top: 110px;
     }
@@ -2934,6 +2933,92 @@ section {
 }
 
 /* ============================================
+   Work with us: the header call to action
+
+   The outreach sheet is the one header item that asks something of the
+   visitor rather than showing them something, so it takes the lockup's ink
+   rather than the teal the content pills use, with the leaf's amber on the
+   glyph. On its own page it fills in teal, the same "you are here" the vision
+   pill uses.
+   ============================================ */
+
+.invite-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.45rem 0.95rem;
+    border-radius: 9999px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    white-space: nowrap;
+    color: #fff;
+    background: var(--brand-ink);
+    border: 1px solid var(--brand-ink);
+    box-shadow: 0 8px 16px -12px rgba(var(--brand-ink-rgb), 1);
+    transition:
+        background 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.invite-pill i {
+    font-size: 0.75rem;
+    color: var(--brand-accent);
+}
+
+.invite-pill:hover {
+    color: #fff;
+    background: #1f2630;
+    border-color: #1f2630;
+    box-shadow: 0 12px 20px -12px rgba(var(--brand-ink-rgb), 1);
+    transform: translateY(-1px);
+}
+
+.invite-pill.is-current {
+    background: linear-gradient(135deg, var(--brand-primary-darkest) 0%, var(--brand-primary) 100%);
+    border-color: transparent;
+    box-shadow: 0 6px 16px -10px rgba(var(--brand-primary-rgb), 1);
+}
+
+.invite-pill.is-current i {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.invite-pill.is-current:hover {
+    background: linear-gradient(135deg, var(--brand-primary-darker) 0%, var(--brand-primary) 100%);
+    border-color: transparent;
+}
+
+/* The narrow-viewport link row, where it sits as a chip among the others. */
+.invite-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #fff;
+    background: var(--brand-ink);
+    border: 1px solid var(--brand-ink);
+}
+
+.invite-chip i {
+    font-size: 0.625rem;
+    color: var(--brand-accent);
+}
+
+.invite-chip.is-current {
+    background: linear-gradient(135deg, var(--brand-primary-darkest) 0%, var(--brand-primary) 100%);
+    border-color: transparent;
+}
+
+.invite-chip.is-current i {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+/* ============================================
    Vision disclosure
 
    One card on the index that opens to the two vision sheets. Their own titles do
@@ -3182,6 +3267,7 @@ section {
     .mcp-client-item:hover,
     .prompt-card:hover,
     .nav-vision:hover,
+    .invite-pill:hover,
     .vision-disclose:hover,
     .show-more:hover {
         transform: none !important;
@@ -3333,8 +3419,9 @@ section {
     transform: translate(0, -50%);
 }
 
-/* No hover on touch devices, so no hint; the superscript carries the cue. */
-@media (hover: none) {
+/* Touch and narrow viewports use the superscript cue; the floating hint has
+   no room beside the maintainer line on a small screen. */
+@media (hover: none), (max-width: 639px) {
     .team-hint {
         display: none;
     }
