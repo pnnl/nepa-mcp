@@ -1,0 +1,1952 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y5M8MW8HSM"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-Y5M8MW8HSM');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work with us | NEPA MCP Toolkit</title>
+    <meta name="description" content="Help connect the public data behind energy infrastructure reviews. Use the NEPA MCP Toolkit on real projects, add your agency's system as a server, or help build the community.">
+    <meta name="author" content="Sarthak Chaturvedi">
+    <meta name="keywords" content="NEPA, environmental review, Model Context Protocol, open source, federal data, agency systems, AI-ready data, contribute, hackathon, policy research, PNNL, PermitAI">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://pnnl.github.io/nepa-mcp/work-with-us.html">
+    <link rel="author" href="https://sarthakchat.github.io/">
+
+    <meta property="og:title" content="Work with us | NEPA MCP Toolkit">
+    <meta property="og:description" content="Help connect the public data behind energy infrastructure reviews. Use the toolkit on real projects, add your agency's system as a server, or help build the community.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="NEPA MCP Toolkit">
+    <meta property="og:url" content="https://pnnl.github.io/nepa-mcp/work-with-us.html">
+    <meta property="og:image" content="https://pnnl.github.io/nepa-mcp/assets/images/map-composer-chesapeake-1400.webp">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebPage",
+          "@id": "https://pnnl.github.io/nepa-mcp/work-with-us.html#webpage",
+          "url": "https://pnnl.github.io/nepa-mcp/work-with-us.html",
+          "name": "Work with us",
+          "description": "How to use the NEPA MCP Toolkit on real projects, add an agency system as a new server, or help build the community around it.",
+          "isPartOf": { "@id": "https://pnnl.github.io/nepa-mcp/#website" },
+          "about": { "@id": "https://pnnl.github.io/nepa-mcp/#software" },
+          "author": { "@id": "https://sarthakchat.github.io/#sarthak-chaturvedi" },
+          "publisher": { "@id": "https://www.pnnl.gov/#organization" }
+        },
+        {
+          "@type": "SoftwareSourceCode",
+          "@id": "https://pnnl.github.io/nepa-mcp/#software",
+          "name": "PermitAI NEPA MCP Toolkit",
+          "url": "https://pnnl.github.io/nepa-mcp/",
+          "codeRepository": "https://github.com/pnnl/nepa-mcp",
+          "maintainer": { "@id": "https://sarthakchat.github.io/#sarthak-chaturvedi" }
+        },
+        {
+          "@type": "Person",
+          "@id": "https://sarthakchat.github.io/#sarthak-chaturvedi",
+          "name": "Sarthak Chaturvedi",
+          "url": "https://sarthakchat.github.io/",
+          "sameAs": ["https://github.com/sarthakchat"]
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://www.pnnl.gov/#organization",
+          "name": "Pacific Northwest National Laboratory",
+          "url": "https://www.pnnl.gov/"
+        }
+      ]
+    }
+    </script>
+
+    <link rel="icon" type="image/svg+xml" sizes="any" href="https://pnnl.github.io/nepa-mcp/assets/images/logos/nepa-mcp-plugin.svg">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?v=3.4.17"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="assets/css/site.css?v=38">
+    <link rel="stylesheet" href="assets/css/agency-sources.css?v=3">
+
+<style>
+/* ============================================================
+   Work with us: the outreach sheet
+   Palette and type come from site.css. What lives here is the one composed
+   object on the page, the evidence chain, and the typographic sections
+   around it.
+   ============================================================ */
+
+.hero-lede {
+    max-width: 38rem;
+}
+
+/* The inventory line under the lede, small: the homepage already carries
+   these numbers at full size. Counts are filled from SITE_DATA when it
+   loads, so the markup carries today's numbers as a fallback. */
+.hero-counts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.25rem 1.1rem;
+    margin-top: 1.1rem;
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+.hero-counts b {
+    font-weight: 600;
+    color: #64748b;
+    font-variant-numeric: tabular-nums;
+}
+
+.hero-ways {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem 0.9rem;
+    margin-top: 1.4rem;
+    font-size: 0.875rem;
+    color: #cbd5e1;
+}
+
+.hero-ways a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 600;
+    color: var(--brand-primary-dark);
+    text-decoration: underline;
+    text-decoration-color: rgba(var(--brand-primary-rgb), 0.3);
+    text-underline-offset: 3px;
+    transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+.hero-ways a:hover {
+    color: var(--brand-primary-darkest);
+    text-decoration-color: currentColor;
+}
+
+.hero-ways a i {
+    font-size: 0.75rem;
+    opacity: 0.8;
+}
+
+/* ---------- the chain ----------
+   One project area on the left and one question per server on the right.
+   Rows are plain text on the plate; the wires, measured from the rows, do
+   the connecting, and a dot marks each end. The pin is the only bounded
+   shape, because it is the only thing here that is an area. */
+.chain-body {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 13rem) minmax(0, 1fr);
+    column-gap: 4.5rem;
+    padding: 1.5rem 1.75rem 1.6rem;
+}
+
+.chain-wires {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+}
+
+.wire {
+    fill: none;
+    stroke: rgba(var(--brand-ink-rgb), 0.2);
+    stroke-width: 1;
+    stroke-linecap: round;
+}
+
+.wire-dot {
+    fill: rgba(var(--brand-ink-rgb), 0.35);
+}
+
+/* Thirteen wires leave the pin from one point; the origin is drawn as one node
+   so the convergence reads as intended rather than as a smudge. */
+.wire-dot-origin {
+    fill: rgba(var(--brand-ink-rgb), 0.55);
+}
+
+.chain-col {
+    min-width: 0;
+}
+
+.chain-col-title {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    margin-bottom: 0.9rem;
+}
+
+.chain-col-loc {
+    display: flex;
+    flex-direction: column;
+}
+
+.chain-pin-slot {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.chain-pin {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.1rem;
+    width: 100%;
+    max-width: 11rem;
+}
+
+/* The map tile: a plate, faint relief, the amber radius, and the pin. The
+   amber is the site's accent and is reserved here for the area itself. */
+.pin-map {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-bottom: 0.6rem;
+}
+
+.pin-map-plate {
+    fill: #f8fafc;
+    stroke: rgba(var(--brand-ink-rgb), 0.09);
+}
+
+.pin-map-relief path {
+    fill: none;
+    stroke: rgba(var(--brand-ink-rgb), 0.08);
+    stroke-width: 1.2;
+    stroke-linecap: round;
+}
+
+.pin-map-radius {
+    fill: rgba(249, 184, 0, 0.07);
+    stroke: #d99e00;
+    stroke-width: 1.25;
+    stroke-dasharray: 3 4;
+}
+
+.pin-map-ray {
+    stroke: #c98f00;
+    stroke-width: 1;
+    stroke-dasharray: 2 3;
+}
+
+.pin-map-label {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    fill: #a37200;
+    letter-spacing: 0.02em;
+}
+
+.pin-map-pin {
+    fill: #c98f00;
+}
+
+.pin-map-pin-eye {
+    fill: #fff;
+}
+
+.chain-pin-coords {
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--brand-ink);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.chain-pin-sub {
+    font-size: 0.75rem;
+    color: #6b7684;
+}
+
+.chain-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+}
+
+/* A row is the question, then the server that answers it and the public
+   system behind that server, on one line. Where subgrid is available the
+   sources share one column just past the longest question, so a short
+   question does not leave its source stranded at the far edge. */
+.chain-q {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 1.5rem;
+    align-items: baseline;
+    padding: 0.42rem 0 0.42rem 0.9rem;
+}
+
+@supports (grid-template-columns: subgrid) {
+    /* Sources keep their natural width; when the row is too tight it is
+       the question, in the larger serif, that wraps. */
+    .chain-list {
+        grid-template-columns: minmax(0, max-content) max-content;
+        column-gap: 1.5rem;
+    }
+
+    .chain-q {
+        grid-column: 1 / -1;
+        grid-template-columns: subgrid;
+    }
+}
+
+.chain-q-text {
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 1.0625rem;
+    line-height: 1.3;
+    color: #3f4a58;
+}
+
+/* The MCP mark, then the public system's name: the name a reviewer trusts,
+   flagged as one server of the toolkit. */
+.chain-q-src {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #475569;
+    white-space: nowrap;
+}
+
+.mcp-mark {
+    width: 0.95rem;
+    height: 0.95rem;
+    border-radius: 0.22rem;
+    flex: none;
+}
+
+/* Rows are buttons. Hover and focus lift the type to ink; the active row
+   and its wire take the brand colour while its source is open below. */
+.chain-q {
+    cursor: pointer;
+    border-radius: 0.5rem;
+    outline: none;
+    transition: background 0.2s ease;
+}
+
+.chain-q:hover .chain-q-text,
+.chain-q:focus-visible .chain-q-text {
+    color: var(--brand-ink);
+}
+
+.chain-q:focus-visible {
+    box-shadow: 0 0 0 2px rgba(var(--brand-primary-rgb), 0.35);
+}
+
+.chain-q.is-active .chain-q-text {
+    color: var(--brand-ink);
+}
+
+.chain-q.is-active .chain-q-src {
+    color: var(--brand-primary-darker);
+}
+
+.wire.lit {
+    stroke: var(--brand-primary);
+    stroke-width: 1.5;
+}
+
+.wire-dot.lit {
+    fill: var(--brand-primary);
+}
+
+/* ---------- the source viewer ----------
+   Collapsed to zero height until a row is chosen; opens by growing its one
+   grid row, so nothing jumps. */
+.chain-source {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chain-source.is-open {
+    grid-template-rows: 1fr;
+}
+
+.chain-source-inner {
+    position: relative;
+    min-height: 0;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    column-gap: 2rem;
+    align-items: start;
+    padding: 0 1.75rem;
+    border-top: 1px solid transparent;
+    opacity: 0;
+    transition: opacity 0.35s ease 0.1s, padding 0.5s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s ease;
+}
+
+.chain-source.is-open .chain-source-inner {
+    padding: 1.5rem 1.75rem 1.6rem;
+    border-top-color: #f1f5f9;
+    opacity: 1;
+}
+
+/* The portal in a quiet browser frame. */
+.src-shot {
+    margin: 0;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background: #f8fafc;
+    box-shadow:
+        0 0 0 1px rgba(var(--brand-ink-rgb), 0.09),
+        0 24px 50px -36px rgba(var(--brand-ink-rgb), 0.45);
+}
+
+.src-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.5rem 0.75rem;
+    background: #f1f5f9;
+    border-bottom: 1px solid rgba(var(--brand-ink-rgb), 0.07);
+}
+
+.src-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background: rgba(var(--brand-ink-rgb), 0.12);
+}
+
+.src-url {
+    margin-left: 0.5rem;
+    flex: 1;
+    padding: 0.15rem 0.6rem;
+    border-radius: 0.35rem;
+    background: #fff;
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.6875rem;
+    color: #64748b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.src-shot img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    object-position: top;
+    background: #fff;
+}
+
+.src-meta {
+    padding-top: 0.25rem;
+    padding-right: 2.5rem;
+}
+
+.src-kicker {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #94a3b8;
+}
+
+.src-name {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin-top: 0.6rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--brand-ink);
+}
+
+.src-name .mcp-mark {
+    width: 1.15rem;
+    height: 1.15rem;
+}
+
+.src-agency {
+    margin-top: 0.35rem;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: #52606d;
+}
+
+.src-open {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: 1.35rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--brand-primary-dark);
+    text-decoration: underline;
+    text-decoration-color: rgba(var(--brand-primary-rgb), 0.3);
+    text-underline-offset: 3px;
+    transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+.src-open:hover {
+    color: var(--brand-primary-darkest);
+    text-decoration-color: currentColor;
+}
+
+.src-open i {
+    font-size: 0.6875rem;
+    opacity: 0.7;
+}
+
+.src-close {
+    position: absolute;
+    top: 1.35rem;
+    right: 1.5rem;
+    display: grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border: 0;
+    border-radius: 9999px;
+    background: transparent;
+    color: #94a3b8;
+    font-size: 0.8125rem;
+    cursor: pointer;
+    transition: color 0.2s ease, background 0.2s ease;
+}
+
+.src-close:hover {
+    color: var(--brand-ink);
+    background: rgba(var(--brand-ink-rgb), 0.06);
+}
+
+@media (max-width: 767px) {
+    .chain-source-inner {
+        grid-template-columns: minmax(0, 1fr);
+        row-gap: 1.1rem;
+        padding: 0 1.1rem;
+    }
+
+    .chain-source.is-open .chain-source-inner {
+        padding: 1.25rem 1.1rem 1.3rem;
+    }
+
+    .src-meta {
+        padding-right: 0;
+    }
+
+    .src-close {
+        top: 0.9rem;
+        right: 0.9rem;
+    }
+}
+
+/* --- assembly: fade and draw; nothing moves -------------------------------
+   Gated on .is-armed, which the script adds only when it will run the
+   sequence, so a reduced-motion or script-less visit gets the finished
+   drawing with nothing withheld. */
+.chain.is-armed .chain-pin,
+.chain.is-armed .chain-q {
+    opacity: 0;
+    transition: opacity 0.5s ease-out;
+}
+
+.chain.is-armed .chain-q-src {
+    opacity: 0;
+    transition: opacity 0.45s ease-out;
+}
+
+.chain.is-armed .wire-dot {
+    opacity: 0;
+    transition: opacity 0.35s ease-out;
+}
+
+.chain.is-armed .wire {
+    stroke-dasharray: var(--len) var(--len);
+    stroke-dashoffset: var(--len);
+    transition: stroke-dashoffset 0.62s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chain.is-armed.is-played .chain-pin,
+.chain.is-armed.is-played .chain-q,
+.chain.is-armed.is-played .chain-q-src,
+.chain.is-armed.is-played .wire-dot {
+    opacity: 1;
+}
+
+.chain.is-armed.is-played .wire {
+    stroke-dashoffset: 0;
+}
+
+.chain.is-resetting,
+.chain.is-resetting * {
+    transition: none !important;
+}
+
+.chain-replay {
+    display: none;
+}
+
+.chain.is-armed .chain-replay {
+    display: inline-flex;
+}
+
+.chain-replay-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 0;
+    background: none;
+    color: #94a3b8;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.chain-replay-btn:hover {
+    color: var(--brand-primary-dark);
+}
+
+.chain-replay-btn.is-spinning i {
+    animation: replaySpin 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pull-quote {
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: clamp(1.45rem, 2.4vw, 1.9rem);
+    line-height: 1.35;
+    color: var(--brand-ink);
+    text-wrap: balance;
+}
+
+.pull-quote em {
+    font-style: normal;
+    color: var(--brand-primary-darker);
+    box-shadow: inset 0 -0.42em 0 rgba(var(--brand-primary-rgb), 0.12);
+}
+
+/* Narrow viewports stack the two columns and drop the wires; the columns
+   keep their order, so the reading is the same. */
+@media (max-width: 767px) {
+    .chain-body {
+        grid-template-columns: minmax(0, 1fr);
+        row-gap: 1.35rem;
+        padding: 1.25rem 1.1rem 1.3rem;
+    }
+
+    .chain-wires {
+        display: none;
+    }
+
+    .chain-col + .chain-col {
+        position: relative;
+        padding-top: 1.1rem;
+    }
+
+    .chain-col + .chain-col::before {
+        content: '\f063';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        position: absolute;
+        top: -0.45rem;
+        left: 0.1rem;
+        font-size: 0.7rem;
+        color: #a8b3c2;
+    }
+
+    .chain-pin-slot {
+        flex: none;
+    }
+
+    .chain-pin {
+        display: grid;
+        grid-template-columns: 6.5rem minmax(0, 1fr);
+        column-gap: 1rem;
+        align-items: center;
+        max-width: none;
+    }
+
+    .pin-map {
+        grid-row: 1 / span 2;
+        margin-bottom: 0;
+    }
+
+    .chain-pin-coords {
+        align-self: end;
+    }
+
+    .chain-pin-sub {
+        align-self: start;
+    }
+
+    .chain-list,
+    .chain-q {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .chain-q {
+        row-gap: 0.1rem;
+        padding-left: 0;
+    }
+
+    .chain-q-src {
+        white-space: normal;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    .chain-body {
+        grid-template-columns: minmax(0, 11rem) minmax(0, 1fr);
+        column-gap: 2.5rem;
+    }
+
+    .chain-list,
+    .chain-q {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .chain-q {
+        row-gap: 0.1rem;
+    }
+
+    .chain-q-text {
+        font-size: 0.9375rem;
+    }
+}
+
+/* ---------- two ways in: the fork ----------
+   One plate split down the middle. The dark half is the door this page is
+   about; the light half is the door most visitors want. A small "or" sits on
+   the seam. Each half is a single link, so there is nothing to work out. */
+.fork {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-radius: 1rem;
+    overflow: hidden;
+    border: 1px solid rgba(226, 232, 240, 0.95);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),
+        0 30px 60px -44px rgba(var(--brand-ink-rgb), 0.45);
+    scroll-margin-top: 110px;
+}
+
+.fork-side {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 1.9rem 2rem 1.75rem;
+    background: #fff;
+    color: inherit;
+    text-decoration: none;
+    transition: background 0.3s ease;
+}
+
+.fork-side + .fork-side {
+    border-left: 1px solid rgba(var(--brand-ink-rgb), 0.08);
+}
+
+.fork-side:hover {
+    background: #f8fafc;
+}
+
+.fork-icon {
+    display: grid;
+    place-items: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 0.7rem;
+    font-size: 0.9375rem;
+    color: var(--brand-primary-dark);
+    background: rgba(var(--brand-primary-rgb), 0.07);
+    box-shadow: inset 0 0 0 1px rgba(var(--brand-primary-rgb), 0.3);
+    margin-bottom: 1rem;
+}
+
+.fork-kicker {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--brand-primary-dark);
+}
+
+/* The visitor's own sentence, in the serif the questions use. */
+.fork-title {
+    display: block;
+    margin-top: 0.4rem;
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 1.5rem;
+    line-height: 1.25;
+    color: var(--brand-ink);
+    text-wrap: balance;
+}
+
+.fork-line {
+    display: block;
+    margin-top: 0.65rem;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: #52606d;
+    max-width: 30rem;
+}
+
+.fork-go {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: 1.4rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--brand-primary-dark);
+}
+
+.fork-go i {
+    font-size: 0.75rem;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fork-side:hover .fork-go i {
+    transform: translateX(3px);
+}
+
+.fork-or {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 9999px;
+    background: #fff;
+    border: 1px solid rgba(var(--brand-ink-rgb), 0.1);
+    box-shadow: 0 6px 14px -8px rgba(var(--brand-ink-rgb), 0.5);
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-style: italic;
+    font-size: 0.9375rem;
+    color: #64748b;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* The dark half, in the surface the homepage uses for the one alternative it
+   wants noticed. */
+.fork-side-dark {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+}
+
+.fork-side-dark:hover {
+    background: linear-gradient(135deg, #223047 0%, #111a2e 100%);
+}
+
+.fork-side-dark .fork-icon {
+    color: #5eead4;
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 0 0 1px rgba(94, 234, 212, 0.28);
+}
+
+.fork-side-dark .fork-kicker,
+.fork-side-dark .fork-go {
+    color: #5eead4;
+}
+
+.fork-side-dark .fork-title {
+    color: #fff;
+}
+
+.fork-side-dark .fork-line {
+    color: #b6c2d0;
+}
+
+@media (max-width: 767px) {
+    .fork {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .fork-side + .fork-side {
+        border-left: 0;
+        border-top: 1px solid rgba(var(--brand-ink-rgb), 0.08);
+    }
+
+    .fork-side {
+        padding: 1.5rem 1.35rem 1.4rem;
+    }
+
+    .fork-title {
+        font-size: 1.3rem;
+    }
+}
+
+/* ---------- what is represented ---------- */
+.rep {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2rem 2.5rem;
+    margin: 0;
+}
+
+.rep dt {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--brand-ink);
+}
+
+.rep dt i {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.6rem;
+    font-size: 0.8125rem;
+    color: var(--brand-primary-dark);
+    background: rgba(var(--brand-primary-rgb), 0.09);
+}
+
+.rep dd {
+    margin: 0.75rem 0 0;
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: #52606d;
+}
+
+@media (max-width: 767px) {
+    .rep {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1.6rem;
+    }
+}
+
+/* The agency reel on this page sits inside the same tinted band as the
+   representation list, so its own white padding is trimmed. */
+.rep-sources {
+    border-bottom: 0;
+    background: transparent;
+    padding-top: 0.5rem;
+}
+
+/* ---------- come work with us ----------
+   Three cards in the homepage's idiom: white plate, hairline border, a teal
+   hairline on the top edge for reading direction, an outlined icon tile, a
+   faint numeral, and one action with a quiet alternative. */
+/* The band: the quick-start section's own surface, a soft brand wash at the
+   top over a faint dot field that fades before it reaches the edges. */
+.work-section {
+    position: relative;
+    background:
+        radial-gradient(1100px 420px at 50% -40px, rgba(var(--brand-primary-rgb), 0.08), transparent 68%),
+        linear-gradient(to bottom, #fff 0%, #f6f8fa 42%, #fff 100%);
+}
+
+.work-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(var(--brand-ink-rgb), 0.13) 1px, transparent 1px);
+    background-size: 22px 22px;
+    -webkit-mask-image: radial-gradient(760px 340px at 50% 8%, #000, transparent 70%);
+    mask-image: radial-gradient(760px 340px at 50% 8%, #000, transparent 70%);
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.work-sub {
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-style: italic;
+    font-size: 1.25rem;
+    color: #64748b;
+}
+
+/* One serif line to close the sheet, in the pull quote's voice. */
+.work-close {
+    margin-top: 2.75rem;
+    text-align: center;
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 1.25rem;
+    color: #64748b;
+}
+
+.asks {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+}
+
+.ask-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 1.75rem 1.6rem 1.55rem;
+    border-radius: 1rem;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 255, 255, 0.9) 100%);
+    backdrop-filter: blur(18px);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),
+        0 2px 6px -3px rgba(var(--brand-ink-rgb), 0.08),
+        0 30px 60px -44px rgba(var(--brand-ink-rgb), 0.35);
+    transition:
+        transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.4s ease,
+        border-color 0.4s ease;
+}
+
+.ask-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 18%;
+    right: 18%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(var(--brand-primary-rgb), 0.55), transparent);
+}
+
+.ask-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(var(--brand-primary-rgb), 0.3);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),
+        0 20px 50px -30px rgba(var(--brand-ink-rgb), 0.3),
+        0 0 0 1px rgba(var(--brand-primary-rgb), 0.12);
+}
+
+.ask-num {
+    position: absolute;
+    top: 1.05rem;
+    right: 1.3rem;
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 2.4rem;
+    line-height: 1;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: rgba(var(--brand-ink-rgb), 0.07);
+}
+
+.ask-icon {
+    display: grid;
+    place-items: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 0.75rem;
+    font-size: 1rem;
+    color: var(--brand-primary-dark);
+    background: rgba(var(--brand-primary-rgb), 0.07);
+    box-shadow: inset 0 0 0 1px rgba(var(--brand-primary-rgb), 0.3);
+    margin-bottom: 1.1rem;
+}
+
+.ask-card h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--brand-ink);
+}
+
+.ask-card p {
+    flex: 1;
+    margin-top: 0.45rem;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: #52606d;
+}
+
+.ask-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.35rem 0.75rem;
+    margin-top: 1.35rem;
+    padding-top: 1.1rem;
+    border-top: 1px solid rgba(var(--brand-ink-rgb), 0.07);
+}
+
+.ask-go {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--brand-primary-dark);
+    transition: color 0.2s ease;
+}
+
+.ask-go i {
+    font-size: 0.75rem;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ask-go:hover {
+    color: var(--brand-primary-darkest);
+}
+
+.ask-go:hover i {
+    transform: translateX(3px);
+}
+
+.ask-alt {
+    font-size: 0.8125rem;
+    color: #64748b;
+    text-decoration: underline;
+    text-decoration-color: rgba(var(--brand-ink-rgb), 0.18);
+    text-underline-offset: 3px;
+    transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+.ask-alt:hover {
+    color: var(--brand-ink);
+    text-decoration-color: currentColor;
+}
+
+@media (max-width: 1023px) {
+    .asks {
+        grid-template-columns: minmax(0, 1fr);
+        max-width: 34rem;
+        margin: 0 auto;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .chain.is-armed .chain-pin,
+    .chain.is-armed .chain-q,
+    .chain.is-armed .chain-q-src,
+    .chain.is-armed .wire-dot {
+        opacity: 1 !important;
+    }
+
+    .chain.is-armed .wire {
+        stroke-dashoffset: 0 !important;
+    }
+
+    .chain-replay {
+        display: none !important;
+    }
+
+    .ask-card:hover {
+        transform: none !important;
+    }
+}
+
+@media print {
+    .chain-replay {
+        display: none !important;
+    }
+
+    .fork,
+    .asks {
+        box-shadow: none !important;
+    }
+}
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased">
+
+    <a href="#main-content" class="skip-to-content">Skip to main content</a>
+
+    <!-- Top banner -->
+    <div id="site-banner" class="bg-gradient-to-r from-slate-900 via-teal-900 to-slate-900 text-white text-center py-2.5 text-sm border-b border-slate-700">
+        <a href="https://github.com/pnnl/nepa-mcp/tree/main" class="hover:text-teal-300 transition-colors inline-flex items-center space-x-2">
+            <i class="fab fa-github" aria-hidden="true"></i>
+            <span>View Source Repository</span>
+        </a>
+    </div>
+
+    <!-- Header -->
+    <nav id="site-nav" class="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-slate-200/80 shadow-sm">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center gap-8 h-20">
+                <a href="index.html" class="inline-flex items-center gap-2 sm:gap-4 mr-auto">
+                    <img src="assets/images/logos/project-logo.png" alt="PermitAI" class="h-9 w-auto object-contain">
+                    <span class="block">
+                        <span class="flex items-center gap-2">
+                            <span class="text-xl font-semibold text-ink tracking-tight whitespace-nowrap">NEPA MCP</span>
+                            <span class="text-xs font-medium bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full whitespace-nowrap">+ Plugins</span>
+                        </span>
+                        <span class="block text-xs text-slate-500 font-light">Toolkit</span>
+                    </span>
+                </a>
+                <div class="hidden xl:flex items-center gap-5 lg:gap-7">
+                    <a href="index.html#overview" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap">Overview</a>
+                    <a href="index.html#quick-start" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap">Quick&nbsp;Start</a>
+                    <a href="index.html#servers" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap">Servers</a>
+                    <a href="index.html#documentation" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap">Docs</a>
+                    <div class="flex items-center gap-2.5 border-l border-slate-200 pl-5 lg:pl-7">
+                        <div class="nav-menu">
+                            <button type="button" aria-haspopup="true" class="nav-vision">
+                                <i class="fas fa-cube" aria-hidden="true"></i>Vision<i class="fas fa-chevron-down nav-vision-chev" aria-hidden="true"></i>
+                            </button>
+                            <div class="nav-pop">
+                                <a href="vision.html">
+                                    <span class="flex items-start gap-2.5">
+                                        <i class="fas fa-cube text-teal-600 text-xs mt-1" aria-hidden="true"></i>
+                                        <span>
+                                            <span class="block text-sm font-medium text-ink">Permitting coverage</span>
+                                            <span class="block text-xs text-slate-500 mt-0.5">Statute, jurisdiction, sector</span>
+                                        </span>
+                                    </span>
+                                </a>
+                                <a href="gis.html">
+                                    <span class="flex items-start gap-2.5">
+                                        <i class="fas fa-layer-group text-teal-600 text-xs mt-1" aria-hidden="true"></i>
+                                        <span>
+                                            <span class="block text-sm font-medium text-ink">Spatial context</span>
+                                            <span class="block text-xs text-slate-500 mt-0.5">The GIS layer stack</span>
+                                        </span>
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
+                        <a href="work-with-us.html" class="invite-pill is-current" aria-current="page"><i class="fas fa-handshake" aria-hidden="true"></i>Work with us</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="xl:hidden border-t border-slate-200/80 overflow-x-auto">
+            <div class="flex items-center gap-5 px-6 py-3 whitespace-nowrap text-sm font-medium text-slate-600">
+                <a href="index.html#overview" class="hover:text-teal-700 transition-colors">Overview</a>
+                <a href="index.html#quick-start" class="hover:text-teal-700 transition-colors">Quick&nbsp;Start</a>
+                <a href="index.html#servers" class="hover:text-teal-700 transition-colors">Servers</a>
+                <a href="index.html#documentation" class="hover:text-teal-700 transition-colors">Docs</a>
+                <a href="work-with-us.html" class="invite-chip is-current" aria-current="page"><i class="fas fa-handshake" aria-hidden="true"></i>Work with us</a>
+                <span class="text-slate-400 uppercase text-xs tracking-widest pl-1">Vision</span>
+                <a href="vision.html" class="nav-vision-chip"><i class="fas fa-cube" aria-hidden="true"></i>Coverage</a>
+                <a href="gis.html" class="nav-vision-chip"><i class="fas fa-layer-group" aria-hidden="true"></i>GIS</a>
+            </div>
+        </div>
+    </nav>
+
+    <main id="main-content">
+
+    <!-- Hero: the claim, then the one drawing that makes it. -->
+    <section class="hero-gradient pt-16 pb-14 lg:pt-20 lg:pb-16 px-6">
+        <div class="container mx-auto max-w-6xl">
+
+            <div class="text-center mx-auto fade-in-up">
+                <p class="text-xs text-teal-700 mb-4 font-semibold uppercase tracking-widest">An open invitation</p>
+                <h1 class="text-3xl md:text-5xl lg:text-6xl font-light text-ink tracking-tight mb-5 mx-auto" style="max-width: 36ch; text-wrap: balance;">
+                    Help connect the public data behind <span class="font-semibold">energy infrastructure</span> reviews
+                </h1>
+                <p class="hero-lede mx-auto text-base md:text-lg text-slate-600 font-light leading-relaxed">
+                    Open-source MCP servers, one per federal system, so an AI assistant can answer a site
+                    question and name the agency behind the answer.
+                </p>
+                <p class="hero-counts" aria-label="Current inventory">
+                    <span><b data-count="agencies">14</b> federal agencies</span>
+                    <span><b data-count="servers">23</b> servers</span>
+                    <span><b data-count="tools">56</b> tools</span>
+                    <span><b data-count="layers">32</b> map layers</span>
+                </p>
+                <!-- Two quiet ways down the page. The drawing is the point of the
+                     hero, so nothing here competes with it. -->
+                <p class="hero-ways">
+                    <a href="#build"><i class="fas fa-plug" aria-hidden="true"></i>Build what is missing</a>
+                    <span aria-hidden="true">&middot;</span>
+                    <a href="#use"><i class="fas fa-magnifying-glass-location" aria-hidden="true"></i>Use the toolkit</a>
+                </p>
+            </div>
+
+            <!-- The drawing -->
+            <div class="mt-12 lg:mt-14 fade-in-up delay-200">
+                <div id="chain" class="chain rounded-2xl border border-slate-200/80 bg-white shadow-sm overflow-hidden">
+
+                    <div class="flex items-center justify-between gap-4 px-5 md:px-7 py-4 border-b border-slate-100">
+                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-widest">How it works</p>
+                        <p class="text-xs text-slate-400 uppercase tracking-widest hidden sm:flex items-center gap-3">
+                            <span><i class="fas fa-hand-pointer mr-1.5" aria-hidden="true"></i>Click a question to see its source</span>
+                            <span class="chain-replay">
+                                <button type="button" class="chain-replay-btn" data-chain-replay aria-label="Replay the drawing">
+                                    <i class="fas fa-rotate-right" aria-hidden="true"></i>
+                                </button>
+                            </span>
+                        </p>
+                    </div>
+
+                    <!-- Ten servers an energy project review reaches for first. The
+                         inventory is larger (see the source reel below); this is the
+                         quick read, not the catalogue. -->
+                    <div class="chain-body">
+                        <svg class="chain-wires" aria-hidden="true" focusable="false"></svg>
+
+                        <div class="chain-col chain-col-loc">
+                            <p class="chain-col-title">You name a project area</p>
+                            <div class="chain-pin-slot">
+                                <div class="chain-pin">
+                                    <!-- A point and a radius on a small map: the whole input.
+                                         The wires leave from this tile's right edge. -->
+                                    <svg class="pin-map" viewBox="0 0 160 160" data-node="loc" role="img" aria-label="A map tile with a pin at 39.90, -117.90 and a dashed circle marking a 25-mile radius">
+                                        <defs>
+                                            <clipPath id="pin-clip"><rect x="0" y="0" width="160" height="160" rx="14"/></clipPath>
+                                        </defs>
+                                        <rect x="0.5" y="0.5" width="159" height="159" rx="14" class="pin-map-plate"/>
+                                        <g clip-path="url(#pin-clip)" class="pin-map-relief">
+                                            <path d="M-10 40 C 30 24, 60 56, 100 38 S 150 14, 175 30"/>
+                                            <path d="M-10 74 C 32 56, 66 92, 104 72 S 150 48, 175 62"/>
+                                            <path d="M-10 108 C 30 90, 62 124, 102 104 S 152 82, 175 96"/>
+                                            <path d="M-10 142 C 34 124, 60 156, 104 140 S 150 120, 175 132"/>
+                                        </g>
+                                        <circle cx="80" cy="84" r="54" class="pin-map-radius"/>
+                                        <line x1="80" y1="84" x2="134" y2="84" class="pin-map-ray"/>
+                                        <text x="108" y="79" class="pin-map-label" text-anchor="middle">25 mi</text>
+                                        <path d="M80 86 C80 86 68.5 73 68.5 65.5 A11.5 11.5 0 0 1 91.5 65.5 C91.5 73 80 86 80 86 Z" class="pin-map-pin"/>
+                                        <circle cx="80" cy="65.5" r="4" class="pin-map-pin-eye"/>
+                                    </svg>
+                                    <span class="chain-pin-coords">39.90, &minus;117.90</span>
+                                    <span class="chain-pin-sub">Dixie Valley, Nevada</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="chain-col chain-col-q">
+                            <p class="chain-col-title">Each MCP server answers one question from a public system</p>
+                            <ul class="chain-list">
+                                <li class="chain-q" data-node="padus" data-source="padus" role="button" tabindex="0" aria-expanded="false"><span class="chain-q-text">Who manages this land? Is any of it a wilderness study area or a military range?</span><span class="chain-q-src"><img src="assets/images/logos/nepa-mcp-plugin.svg" alt="" class="mcp-mark">USGS PAD-US</span></li>
+                                <li class="chain-q" data-node="mlrs_leases" data-source="blm_mlrs" role="button" tabindex="0" aria-expanded="false"><span class="chain-q-text">Which geothermal leases are held here, and which are producing?</span><span class="chain-q-src"><img src="assets/images/logos/nepa-mcp-plugin.svg" alt="" class="mcp-mark">BLM MLRS</span></li>
+                                <li class="chain-q" data-node="mlrs_row" data-source="blm_mlrs_row" role="button" tabindex="0" aria-expanded="false"><span class="chain-q-text">Which transmission rights-of-way cross the area, and which are still pending?</span><span class="chain-q-src"><img src="assets/images/logos/nepa-mcp-plugin.svg" alt="" class="mcp-mark">BLM MLRS</span></li>
+                                <li class="chain-q" data-node="fema_nfhl" data-source="fema_nfhl" role="button" tabindex="0" aria-expanded="false"><span class="chain-q-text">Is any of the site in a flood zone?</span><span class="chain-q-src"><img src="assets/images/logos/nepa-mcp-plugin.svg" alt="" class="mcp-mark">FEMA NFHL</span></li>
+                                <li class="chain-q" data-node="ipac" data-source="ipac" role="button" tabindex="0" aria-expanded="false"><span class="chain-q-text">Which listed species, critical habitat, and wetlands are here?</span><span class="chain-q-src"><img src="assets/images/logos/nepa-mcp-plugin.svg" alt="" class="mcp-mark">USFWS IPaC</span></li>
+                                <li class="chain-q" data-node="gbif" data-source="gbif" role="button" tabindex="0" aria-expanded="false"><span class="chain-q-text">Where exactly have those species been observed, not just their range?</span><span class="chain-q-src"><img src="assets/images/logos/nepa-mcp-plugin.svg" alt="" class="mcp-mark">GBIF</span></li>
+                                <li class="chain-q" data-node="nepa_assist" data-source="nepa_assist" role="button" tabindex="0" aria-expanded="false"><span class="chain-q-text">Which EPA screening flags trip within a mile: Superfund, RCRA, impaired waters?</span><span class="chain-q-src"><img src="assets/images/logos/nepa-mcp-plugin.svg" alt="" class="mcp-mark">EPA NEPAssist</span></li>
+                                <li class="chain-q" data-node="nrcs_soils" data-source="nrcs_soils" role="button" tabindex="0" aria-expanded="false"><span class="chain-q-text">How steep and how well-drained is the ground?</span><span class="chain-q-src"><img src="assets/images/logos/nepa-mcp-plugin.svg" alt="" class="mcp-mark">USDA NRCS soils</span></li>
+                                <li class="chain-q" data-node="tribal" data-source="tribal" role="button" tabindex="0" aria-expanded="false"><span class="chain-q-text">Does the area overlap reservation or Tribal trust lands?</span><span class="chain-q-src"><img src="assets/images/logos/nepa-mcp-plugin.svg" alt="" class="mcp-mark">Census TIGERweb</span></li>
+                                <li class="chain-q" data-node="nrhp" data-source="nrhp" role="button" tabindex="0" aria-expanded="false"><span class="chain-q-text">Which historic places are listed nearby?</span><span class="chain-q-src"><img src="assets/images/logos/nepa-mcp-plugin.svg" alt="" class="mcp-mark">NPS National Register</span></li>
+                                <li class="chain-q" data-node="pd" data-source="permitting_dashboard" role="button" tabindex="0" aria-expanded="false"><span class="chain-q-text">What schedule did energy projects in this state get on the Permitting Dashboard?</span><span class="chain-q-src"><img src="assets/images/logos/nepa-mcp-plugin.svg" alt="" class="mcp-mark">Permitting Council</span></li>
+                                <li class="chain-q" data-node="cfr" data-source="cfr" role="button" tabindex="0" aria-expanded="false"><span class="chain-q-text">What do the geothermal leasing rules say, and when did they last change?</span><span class="chain-q-src"><img src="assets/images/logos/nepa-mcp-plugin.svg" alt="" class="mcp-mark">eCFR</span></li>
+                                <li class="chain-q" data-node="cfr_fr" data-source="cfr_fr" role="button" tabindex="0" aria-expanded="false"><span class="chain-q-text">Which rulemakings and executive orders changed them, and what did each do?</span><span class="chain-q-src"><img src="assets/images/logos/nepa-mcp-plugin.svg" alt="" class="mcp-mark">Federal Register</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- The source behind a clicked question: how the record looks on
+                         the agency's own portal, the server's tools, and a way out to it. -->
+                    <div class="chain-source" id="chain-source" aria-live="polite" aria-hidden="true" inert>
+                        <div class="chain-source-inner">
+                            <figure class="src-shot">
+                                <figcaption class="src-bar">
+                                    <span class="src-dot"></span><span class="src-dot"></span><span class="src-dot"></span>
+                                    <span class="src-url" data-src-url></span>
+                                </figcaption>
+                                <img data-src-img alt="" width="960" height="600" decoding="async">
+                            </figure>
+                            <div class="src-meta">
+                                <p class="src-kicker">The system behind this answer</p>
+                                <h3 class="src-name"><img src="assets/images/logos/nepa-mcp-plugin.svg" alt="" class="mcp-mark"><span data-src-name></span></h3>
+                                <p class="src-agency" data-src-agency></p>
+                                <a class="src-open" data-src-open href="#" target="_blank" rel="noopener noreferrer">Open the portal<i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
+                            </div>
+                            <button type="button" class="src-close" data-src-close aria-label="Close"><i class="fas fa-xmark" aria-hidden="true"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <p class="pull-quote text-center max-w-2xl mx-auto mt-12 lg:mt-14 fade-in-up delay-300">
+                One assistant, many agency systems.
+                <em>Every answer names where it came from.</em>
+            </p>
+
+        </div>
+    </section>
+
+    <div class="section-divider mx-auto max-w-3xl"></div>
+
+    <!-- Two ways in: one plate, split in two. Each half is a door and a link. -->
+    <section id="paths" class="py-14 lg:py-16 px-6 bg-white">
+        <div class="container mx-auto max-w-5xl">
+            <div class="text-center mb-8 lg:mb-10">
+                <h2 class="text-3xl lg:text-4xl font-light text-ink mb-3">Where do you come in?</h2>
+                <p class="text-lg text-slate-600 font-light">Two ways in. Pick yours.</p>
+            </div>
+
+            <div class="fork">
+                <a id="build" class="fork-side fork-side-dark" href="https://github.com/pnnl/nepa-mcp/blob/main/CONTRIBUTING.md">
+                    <span class="fork-icon" aria-hidden="true"><i class="fas fa-plug"></i></span>
+                    <span class="fork-kicker">Build what is missing</span>
+                    <span class="fork-title">I run a system that energy infrastructure reviews depend on</span>
+                    <span class="fork-line">Wrap it as one more server, and every assistant on the protocol can ask it.</span>
+                    <span class="fork-go">Contribution guide<i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+                </a>
+                <span class="fork-or" aria-hidden="true">or</span>
+                <a id="use" class="fork-side" href="index.html#quick-start">
+                    <span class="fork-icon" aria-hidden="true"><i class="fas fa-magnifying-glass-location"></i></span>
+                    <span class="fork-kicker">Use what is built</span>
+                    <span class="fork-title">I have a question about an energy project site</span>
+                    <span class="fork-line">Install once, open Claude Code, VS Code, or Codex, and ask. Every answer names its agency.</span>
+                    <span class="fork-go">Quick start<i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+                </a>
+            </div>
+
+            <p class="text-center text-sm text-slate-500 mt-6">
+                Either way, it all speaks the
+                <a href="https://modelcontextprotocol.io/" target="_blank" rel="noopener noreferrer" class="text-teal-700 font-medium hover:text-teal-800 underline decoration-teal-300 underline-offset-2">Model Context Protocol</a>,
+                an open standard.
+            </p>
+        </div>
+    </section>
+
+    <div class="section-divider mx-auto max-w-3xl"></div>
+
+    <!-- What the toolkit represents -->
+    <section id="represented" class="py-16 lg:py-20 px-6 bg-gradient-to-b from-slate-50 to-white">
+        <div class="container mx-auto max-w-6xl">
+            <div class="text-center mb-10 lg:mb-12">
+                <h2 class="text-3xl lg:text-4xl font-light text-ink mb-3">What the toolkit represents today</h2>
+                <p class="text-lg text-slate-600 font-light max-w-2xl mx-auto">
+                    Every result names its source agency and says where coverage stops.
+                </p>
+            </div>
+
+            <dl class="rep max-w-5xl mx-auto">
+                <div>
+                    <dt><i class="fas fa-landmark" aria-hidden="true"></i>Public records and land status</dt>
+                    <dd>BLM case and land-status records for geothermal, mineral, and oil-and-gas activity; federal regulations and rulemakings; EPA brownfields records.</dd>
+                </div>
+                <div>
+                    <dt><i class="fas fa-map-location-dot" aria-hidden="true"></i>Spatial context</dt>
+                    <dd>Jurisdictions, land-use plans, protected areas, species and habitat, wetlands and flood hazards, cultural and Tribal context, air quality, nearby communities.</dd>
+                </div>
+                <div>
+                    <dt><i class="fas fa-layer-group" aria-hidden="true"></i>Maps and auditable results</dt>
+                    <dd>Interactive project-area maps and downloadable spatial data, with source agencies named and gaps flagged.</dd>
+                </div>
+            </dl>
+
+            <div class="mt-12 lg:mt-14">
+                <div id="sources" class="agency-sources rep-sources" aria-labelledby="agency-sources-title">
+                    <div class="agency-sources-inner">
+                        <h2 id="agency-sources-title">Represented public data sources</h2>
+                        <div id="agency-frame" class="agency-frame" aria-label="Source agencies and their datasets" aria-live="off"></div>
+                        <p id="agency-fallback" class="agency-fallback"><a href="https://github.com/pnnl/nepa-mcp/blob/main/docs/mcp-data-source-licenses.md">Explore the toolkit's data sources and subsources →</a></p>
+                        <div id="agency-controls" class="agency-controls" role="group" aria-label="Agency animation controls" hidden>
+                            <button id="agency-pause" type="button" aria-label="Pause agency animation" title="Pause animation" aria-controls="agency-frame"></button>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-xs text-slate-500 text-center">
+                    Agency marks identify upstream data provenance only. They do not imply endorsement.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider mx-auto max-w-3xl"></div>
+
+    <!-- Come work with us -->
+    <section id="work" class="work-section py-16 lg:py-24 px-6">
+        <div class="container mx-auto max-w-5xl relative">
+            <div class="text-center mb-10 lg:mb-12">
+                <p class="text-xs text-teal-700 mb-4 font-semibold uppercase tracking-widest">Take part</p>
+                <h2 class="text-3xl lg:text-4xl font-light text-ink mb-3">Come work with us</h2>
+                <p class="work-sub">Three ways to take part.</p>
+            </div>
+
+            <!-- Three cards in the homepage's card idiom: a hairline accent on the
+                 top edge, an outlined icon tile, a quiet numeral, and one action. -->
+            <ol class="asks">
+                <li class="ask-card">
+                    <span class="ask-num" aria-hidden="true">01</span>
+                    <span class="ask-icon" aria-hidden="true"><i class="fas fa-comment-dots"></i></span>
+                    <h3>Tell us what is missing</h3>
+                    <p>A dataset, a server, a fix, or plain feedback.</p>
+                    <div class="ask-actions">
+                        <a href="https://github.com/pnnl/nepa-mcp/issues/new" class="ask-go">Open an issue<i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+                        <a href="mailto:policyai@pnnl.gov?subject=NEPA-MCP%3A%20what%20is%20missing" class="ask-alt">or email us</a>
+                    </div>
+                </li>
+                <li class="ask-card">
+                    <span class="ask-num" aria-hidden="true">02</span>
+                    <span class="ask-icon" aria-hidden="true"><i class="fas fa-map-location-dot"></i></span>
+                    <h3>Use it on a real project</h3>
+                    <p>Run it on your project area and tell us what held up.</p>
+                    <div class="ask-actions">
+                        <a href="https://github.com/pnnl/nepa-mcp/discussions/new?category=show-and-tell" class="ask-go">Share what you found<i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+                        <a href="https://github.com/pnnl/nepa-mcp/blob/main/CITATION.cff" class="ask-alt">or cite the work</a>
+                    </div>
+                </li>
+                <li class="ask-card">
+                    <span class="ask-num" aria-hidden="true">03</span>
+                    <span class="ask-icon" aria-hidden="true"><i class="fas fa-people-group"></i></span>
+                    <h3>Help build the community</h3>
+                    <p>Hackathons, workshops, and the conversations between them.</p>
+                    <div class="ask-actions">
+                        <a href="mailto:policyai@pnnl.gov?subject=NEPA-MCP%3A%20working%20together" class="ask-go">Email the project<i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+                        <a href="https://github.com/pnnl/nepa-mcp/discussions/new?category=general" class="ask-alt">or start a discussion</a>
+                    </div>
+                </li>
+            </ol>
+
+            <p class="work-close">Every server here began as someone's question.</p>
+        </div>
+    </section>
+
+    </main>
+
+    <!-- Footer: the homepage footer, sponsors included. This sheet is project
+         outreach, not a maintainer's sketch, so the laboratory and the sponsor
+         belong on it. -->
+    <footer class="bg-gradient-to-br from-slate-900 via-teal-950 to-slate-900 text-slate-300 py-16 px-6 border-t border-teal-900/50">
+        <div class="container mx-auto max-w-6xl">
+            <div class="grid md:grid-cols-3 gap-12 mb-12">
+                <div class="text-left">
+                    <a href="index.html" class="inline-block mb-4">
+                        <img src="assets/images/logos/project-logo.png" alt="PermitAI" class="h-9 w-auto object-contain mb-3" loading="lazy">
+                        <span class="block text-lg font-semibold text-white">NEPA MCP Toolkit</span>
+                    </a>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Public federal data for AI-assisted NEPA screening and environmental review research.
+                    </p>
+                </div>
+
+                <div class="md:text-center">
+                    <h4 class="text-white font-semibold mb-4">Resources</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="index.html" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-house mr-2" aria-hidden="true"></i>Toolkit overview</a></li>
+                        <li><a href="https://github.com/pnnl/nepa-mcp/tree/main" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fab fa-github mr-2" aria-hidden="true"></i>Repository</a></li>
+                        <li><a href="https://github.com/pnnl/nepa-mcp/discussions" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-comments mr-2" aria-hidden="true"></i>Discussions</a></li>
+                        <li><a href="https://github.com/pnnl/nepa-mcp/blob/main/SUPPORT.md" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-life-ring mr-2" aria-hidden="true"></i>Support</a></li>
+                        <li><a href="https://github.com/pnnl/nepa-mcp/blob/main/SECURITY.md" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-shield-halved mr-2" aria-hidden="true"></i>Security</a></li>
+                        <li class="inline-flex items-center text-slate-400"><i class="fas fa-scale-balanced mr-2" aria-hidden="true"></i><a href="https://github.com/pnnl/nepa-mcp/blob/main/LICENSE" class="hover:text-white transition-colors"><span data-license-name>BSD 3-Clause</span> License</a></li>
+                    </ul>
+                </div>
+
+                <div class="md:text-right">
+                    <h4 class="text-white font-semibold mb-4">Source Agencies &amp; Publishers</h4>
+                    <p class="text-sm text-slate-400 leading-relaxed">
+                        BLM · Census Bureau · EPA · FEMA<br>
+                        GPO · NOAA Fisheries · NPS · DOT<br>
+                        USACE · USFWS · USDA · USFS · USGS · NIFC<br>
+                        <span class="text-slate-500">with GBIF and Esri</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="border-t border-teal-900/30 pt-10 pb-6">
+                <div class="mb-8">
+                    <h4 class="text-white font-semibold mb-8 text-center">Development &amp; Sponsorship</h4>
+                    <div class="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-2 md:divide-x divide-teal-800/40">
+                        <div class="flex flex-col items-center text-center px-6 pb-8 md:pb-0">
+                            <div class="h-24 flex items-center justify-center mb-4">
+                                <img src="assets/images/logos/pnnl-horizontal-white.png" alt="Pacific Northwest National Laboratory" class="sponsor-logo sponsor-logo-pnnl" loading="lazy">
+                            </div>
+                            <p class="text-slate-400 text-xs mb-0.5">Developed at</p>
+                            <p class="text-white text-sm font-medium">Pacific Northwest National Laboratory</p>
+                        </div>
+                        <div class="flex flex-col items-center text-center px-6 pt-8 md:pt-0 border-t md:border-t-0 border-teal-800/40">
+                            <div class="h-24 flex items-center justify-center mb-4">
+                                <img src="assets/images/logos/doe.png" alt="U.S. Department of Energy" class="sponsor-logo sponsor-logo-doe" loading="lazy">
+                            </div>
+                            <p class="text-slate-400 text-xs mb-0.5">Sponsored by</p>
+                            <p class="text-white text-sm font-medium">DOE Office of Policy and the Office of
+                            Critical Minerals and Energy Innovation</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center space-y-2">
+                    <p class="text-slate-300 text-sm">Maintained by <a href="https://sarthakchat.github.io/" target="_blank" rel="noopener noreferrer" class="underline-offset-2 decoration-slate-500 hover:text-white hover:underline transition-colors">Sarthak Chaturvedi</a></p>
+                    <details id="citation" class="max-w-3xl mx-auto pt-1 text-xs text-slate-400">
+                        <summary class="inline-block cursor-pointer underline decoration-slate-600 hover:decoration-slate-300">Cite this work</summary>
+                        <div class="mt-4 rounded-xl border border-teal-900/60 bg-slate-950/30 p-5 text-left shadow-inner">
+                            <p class="mb-2 font-semibold uppercase tracking-wider text-slate-300">APA</p>
+                            <p id="apa-citation" class="text-slate-300 leading-relaxed">Chaturvedi, S., Chintalapati, R., Nally, D., Parker, M., Munikoti, S., &amp; Horawalavithana, S. (2026). <em>PermitAI NEPA MCP Toolkit: Federal environmental data, regulatory research, and geospatial screening</em> (Version <span data-release-version>0.1.6</span>) [Computer software]. Pacific Northwest National Laboratory. https://github.com/pnnl/nepa-mcp</p>
+                            <div class="mt-4 flex flex-wrap items-center gap-3">
+                                <button type="button" onclick="copyCode(event, 'apa-citation')" class="bg-slate-700/90 hover:bg-slate-600 text-white px-3 py-2 rounded-lg text-xs font-medium transition-colors"><i class="fas fa-copy mr-2" aria-hidden="true"></i>Copy APA</button>
+                                <a href="https://github.com/pnnl/nepa-mcp/blob/main/CITATION.cff" class="inline-flex items-center px-3 py-2 rounded-lg border border-slate-700 text-slate-300 hover:border-slate-500 hover:text-white transition-colors"><i class="fas fa-file-lines mr-2" aria-hidden="true"></i>CITATION.cff</a>
+                            </div>
+                        </div>
+                    </details>
+                    <details id="privacy" class="max-w-2xl mx-auto pt-2 text-xs text-slate-400">
+                        <summary class="inline-block cursor-pointer underline decoration-slate-600 hover:decoration-slate-300">Privacy &amp; analytics</summary>
+                        <p class="mt-3 leading-relaxed">
+                            This site uses Google Analytics 4 to measure aggregate page visits and interactions. Google may process device, browser, approximate-location, and usage information under its
+                            <a href="https://policies.google.com/privacy" class="underline decoration-slate-600 hover:decoration-slate-300">Privacy Policy</a>.
+                            The site has no account or project-data submission form.
+                        </p>
+                    </details>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/site-data.js?v=19"></script>
+    <script src="assets/js/site.js?v=29"></script>
+    <script src="assets/js/agency-sources.js?v=3"></script>
+<script>
+(function () {
+    'use strict';
+
+    /* Live counts. SITE_DATA is generated from the registry, so the numbers on
+       this sheet move with the inventory rather than with anyone's memory. */
+    if (typeof SITE_DATA !== 'undefined' && SITE_DATA && SITE_DATA.counts) {
+        Array.prototype.forEach.call(document.querySelectorAll('[data-count]'), function (node) {
+            var value = SITE_DATA.counts[node.getAttribute('data-count')];
+            if (value) node.textContent = value;
+        });
+    }
+
+    /* ---- the chain ------------------------------------------------------
+       Wires are measured from the rows, not placed by hand, so they follow
+       the type at any width. The drawing plays once as it comes into view;
+       a small control replays it. */
+    var chain = document.getElementById('chain');
+    if (!chain) return;
+
+    var body = chain.querySelector('.chain-body');
+    var svg = chain.querySelector('.chain-wires');
+    var replayBtn = chain.querySelector('[data-chain-replay]');
+    var qs = [].slice.call(chain.querySelectorAll('.chain-q'));
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var narrow = window.matchMedia('(max-width: 767px)');
+    var NS = 'http://www.w3.org/2000/svg';
+
+    var wires = [];
+    var dots = [];
+    var played = false;
+    var armed = false;
+
+    function nodeOf(id) {
+        return chain.querySelector('[data-node="' + id + '"]');
+    }
+
+    function makeWire(to) {
+        var path = document.createElementNS(NS, 'path');
+        path.setAttribute('class', 'wire');
+        svg.appendChild(path);
+        return { el: path, to: to };
+    }
+
+    /* One dot per wire end, so a wire meets a point rather than the edge of
+       a box. */
+    function makeDot(node) {
+        var dot = document.createElementNS(NS, 'circle');
+        var origin = node === 'loc';
+        dot.setAttribute('class', 'wire-dot' + (origin ? ' wire-dot-origin' : ''));
+        dot.setAttribute('r', origin ? '2.6' : '1.6');
+        svg.appendChild(dot);
+        return { el: dot, node: node };
+    }
+
+    function buildWires() {
+        while (svg.firstChild) svg.removeChild(svg.firstChild);
+        wires = [];
+        dots = [];
+        dots.push(makeDot('loc'));
+        qs.forEach(function (q) {
+            var id = q.getAttribute('data-node');
+            wires.push(makeWire(id));
+            dots.push(makeDot(id));
+        });
+    }
+
+    function edgeOf(el, box, side) {
+        var r = el.getBoundingClientRect();
+        return {
+            x: (side === 'right' ? r.right : r.left) - box.left,
+            y: r.top + r.height / 2 - box.top
+        };
+    }
+
+    function layout() {
+        if (narrow.matches) return;
+        var box = body.getBoundingClientRect();
+        if (!box.width || !box.height) return;
+        svg.setAttribute('width', box.width);
+        svg.setAttribute('height', box.height);
+        svg.setAttribute('viewBox', '0 0 ' + box.width + ' ' + box.height);
+        dots.forEach(function (d) {
+            var at = edgeOf(nodeOf(d.node), box, d.node === 'loc' ? 'right' : 'left');
+            d.el.setAttribute('cx', at.x.toFixed(1));
+            d.el.setAttribute('cy', at.y.toFixed(1));
+        });
+        var a = edgeOf(nodeOf('loc'), box, 'right');
+        /* The fan leaves from the rim of the origin node, not its centre. */
+        a.x += 2.6;
+        wires.forEach(function (w) {
+            var b = edgeOf(nodeOf(w.to), box, 'left');
+            var pull = Math.max(20, (b.x - a.x) * 0.5);
+            w.el.setAttribute('d',
+                'M' + a.x.toFixed(1) + ' ' + a.y.toFixed(1) +
+                ' C' + (a.x + pull).toFixed(1) + ' ' + a.y.toFixed(1) +
+                ', ' + (b.x - pull).toFixed(1) + ' ' + b.y.toFixed(1) +
+                ', ' + b.x.toFixed(1) + ' ' + b.y.toFixed(1));
+            var len = w.el.getTotalLength();
+            w.el.style.setProperty('--len', len.toFixed(1));
+        });
+    }
+
+    /* ---- assembly: the pin, then each wire and its question in turn ---- */
+    function schedule() {
+        var STEP = 85;
+        var BASE = 240;
+        qs.forEach(function (q, i) {
+            var start = BASE + i * STEP;
+            q.style.transitionDelay = start + 'ms';
+            var src = q.querySelector('.chain-q-src');
+            if (src) src.style.transitionDelay = (start + 220) + 'ms';
+        });
+        wires.forEach(function (w, i) {
+            w.el.style.transitionDelay = (BASE - 80 + i * STEP) + 'ms';
+        });
+        dots.forEach(function (d) {
+            var i = qs.indexOf(nodeOf(d.node));
+            d.el.style.transitionDelay = (d.node === 'loc' ? 80 : BASE - 80 + i * STEP + 450) + 'ms';
+        });
+    }
+
+    function play() {
+        schedule();
+        window.requestAnimationFrame(function () {
+            window.requestAnimationFrame(function () {
+                chain.classList.add('is-played');
+                played = true;
+            });
+        });
+    }
+
+    function replay() {
+        if (!armed) return;
+        chain.classList.add('is-resetting');
+        chain.classList.remove('is-played');
+        void chain.offsetWidth;
+        chain.classList.remove('is-resetting');
+        replayBtn.classList.remove('is-spinning');
+        void replayBtn.offsetWidth;
+        replayBtn.classList.add('is-spinning');
+        play();
+    }
+
+    /* ---- the source behind a question --------------------------------------
+       One record per public system. A click on a row opens the viewer with
+       that system's portal, the server's tools, and a link out; the row and
+       its wire take the brand colour meanwhile. */
+    var SOURCES = {
+        padus: {
+            name: 'USGS PAD-US',
+            agency: 'U.S. Geological Survey. The Protected Areas Database of the United States: who manages each parcel of public land and under what designation.',
+            url: 'https://maps.usgs.gov/padus/',
+            shot: 'padus'
+        },
+        blm_mlrs: {
+            name: 'BLM MLRS',
+            agency: 'Bureau of Land Management. The Mineral and Land Records System: geothermal and oil-and-gas lease cases with serial numbers and dispositions.',
+            url: 'https://mlrs.blm.gov/s/',
+            shot: 'blm_mlrs'
+        },
+        blm_mlrs_row: {
+            name: 'BLM MLRS',
+            agency: 'Bureau of Land Management. The same records system, read for rights-of-way, leases, permits, and easements on public land.',
+            url: 'https://mlrs.blm.gov/s/',
+            shot: 'blm_mlrs'
+        },
+        fema_nfhl: {
+            name: 'FEMA NFHL',
+            agency: 'Federal Emergency Management Agency. The National Flood Hazard Layer: flood zones, levees, and water areas behind the flood maps.',
+            url: 'https://experience.arcgis.com/experience/9d22cdae8b7542b88e0d555a3eb92949',
+            shot: 'fema_nfhl'
+        },
+        ipac: {
+            name: 'USFWS IPaC',
+            agency: 'U.S. Fish and Wildlife Service. Information for Planning and Consultation: listed species, critical habitat, migratory birds, wetlands, and refuges.',
+            url: 'https://ipac.ecosphere.fws.gov/',
+            shot: 'ipac'
+        },
+        gbif: {
+            name: 'GBIF',
+            agency: 'Global Biodiversity Information Facility. Georeferenced observation records, so a species range becomes points on the ground.',
+            url: 'https://www.gbif.org/occurrence/map',
+            shot: 'gbif'
+        },
+        nepa_assist: {
+            name: 'EPA NEPAssist',
+            agency: 'Environmental Protection Agency. The NEPAssist screening tool: dozens of yes-or-no checks against EPA layers within a set distance.',
+            url: 'https://nepassisttool.epa.gov/nepassist/nepamap.aspx',
+            shot: 'nepa_assist'
+        },
+        nrcs_soils: {
+            name: 'USDA NRCS soils',
+            agency: 'Natural Resources Conservation Service. The SSURGO soil survey behind Web Soil Survey: drainage, slope, restrictive layers, farmland class.',
+            url: 'https://websoilsurvey.nrcs.usda.gov/app/',
+            shot: 'nrcs_soils'
+        },
+        tribal: {
+            name: 'Census TIGERweb',
+            agency: 'U.S. Census Bureau. TIGERweb boundaries for American Indian, Alaska Native, and Native Hawaiian areas.',
+            url: 'https://tigerweb.geo.census.gov/tigerweb/',
+            shot: 'tribal'
+        },
+        nrhp: {
+            name: 'NPS National Register',
+            agency: 'National Park Service. The National Register of Historic Places, including National Historic Landmarks.',
+            url: 'https://www.nps.gov/subjects/nationalregister/database-research.htm',
+            shot: 'nrhp'
+        },
+        permitting_dashboard: {
+            name: 'Permitting Council',
+            agency: 'Federal Permitting Improvement Steering Council. The Permitting Dashboard: agency-reported reviews, milestones, and dates for tracked projects.',
+            url: 'https://www.permits.performance.gov/',
+            shot: 'permitting_dashboard'
+        },
+        cfr: {
+            name: 'eCFR',
+            agency: 'Government Publishing Office. The Electronic Code of Federal Regulations, with its version history.',
+            url: 'https://www.ecfr.gov/current/title-43/subtitle-B/chapter-II/subchapter-C/part-3200',
+            shot: 'cfr'
+        },
+        cfr_fr: {
+            name: 'Federal Register',
+            agency: 'Office of the Federal Register. Rulemakings and executive orders, each with the agency\'s own plain-language summary.',
+            url: 'https://www.federalregister.gov/',
+            shot: 'cfr_fr'
+        }
+    };
+
+    var viewer = document.getElementById('chain-source');
+    var active = null;
+
+    function hostOf(url) {
+        try { return new URL(url).host.replace(/^www\./, ''); } catch (e) { return url; }
+    }
+
+    function lightWire(id, on) {
+        wires.forEach(function (w) {
+            if (w.to === id) w.el.classList.toggle('lit', on);
+        });
+        dots.forEach(function (d) {
+            if (d.node === id || d.node === 'loc') d.el.classList.toggle('lit', on);
+        });
+    }
+
+    function closeSource() {
+        if (!active) return;
+        active.classList.remove('is-active');
+        active.setAttribute('aria-expanded', 'false');
+        lightWire(active.getAttribute('data-node'), false);
+        active.focus();
+        active = null;
+        viewer.setAttribute('inert', '');
+        viewer.setAttribute('aria-hidden', 'true');
+        viewer.classList.remove('is-open');
+    }
+
+    function openSource(row) {
+        var src = SOURCES[row.getAttribute('data-source')];
+        if (!src || !viewer) return;
+        if (active === row) { closeSource(); return; }
+        if (active) {
+            active.classList.remove('is-active');
+            active.setAttribute('aria-expanded', 'false');
+            lightWire(active.getAttribute('data-node'), false);
+        }
+        active = row;
+        row.classList.add('is-active');
+        row.setAttribute('aria-expanded', 'true');
+        lightWire(row.getAttribute('data-node'), true);
+
+        var img = viewer.querySelector('[data-src-img]');
+        var next = 'assets/images/sources/' + src.shot + '.webp';
+        if (img.getAttribute('src') !== next) {
+            img.setAttribute('src', next);
+            img.setAttribute('alt', 'The ' + src.name + ' portal as it appears in a browser');
+        }
+        viewer.querySelector('[data-src-url]').textContent = hostOf(src.url);
+        viewer.querySelector('[data-src-name]').textContent = src.name;
+        viewer.querySelector('[data-src-agency]').textContent = src.agency;
+        var open = viewer.querySelector('[data-src-open]');
+        open.setAttribute('href', src.url);
+        viewer.removeAttribute('inert');
+        viewer.setAttribute('aria-hidden', 'false');
+        viewer.classList.add('is-open');
+    }
+
+    if (viewer) {
+        qs.forEach(function (row) {
+            row.setAttribute('aria-controls', viewer.id);
+            row.addEventListener('click', function () { openSource(row); });
+            row.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openSource(row); }
+            });
+        });
+        viewer.querySelector('[data-src-close]').addEventListener('click', closeSource);
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') closeSource();
+        });
+    }
+
+    /* ---- boot ---- */
+    buildWires();
+    layout();
+
+    if (!reduced.matches && 'IntersectionObserver' in window && !narrow.matches) {
+        armed = true;
+        chain.classList.add('is-armed');
+        var seen = false;
+        var io = new IntersectionObserver(function (entries) {
+            if (seen) return;
+            if (entries.some(function (e) { return e.isIntersecting; })) {
+                seen = true;
+                io.disconnect();
+                play();
+            }
+        }, { threshold: 0.3 });
+        io.observe(chain);
+        replayBtn.addEventListener('click', replay);
+    }
+
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
+    window.addEventListener('load', layout);
+
+    var resizeTimer;
+    function relayout() {
+        window.clearTimeout(resizeTimer);
+        resizeTimer = window.setTimeout(layout, 60);
+    }
+    window.addEventListener('resize', relayout);
+    if ('ResizeObserver' in window) {
+        new ResizeObserver(relayout).observe(body);
+    }
+
+    /* If the visitor's motion setting changes after load, hand them the
+       finished drawing. */
+    reduced.addEventListener('change', function () {
+        if (reduced.matches) {
+            chain.classList.remove('is-armed');
+            armed = false;
+        }
+    });
+})();
+</script>
+</body>
+</html>

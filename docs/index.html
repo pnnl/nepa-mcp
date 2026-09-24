@@ -131,7 +131,7 @@
     <!-- ?v= is a cache buster. GitHub Pages serves these assets with a long
          max-age, so a returning visitor keeps the old CSS and JS until the URL
          changes. Bump the value whenever site.css or site.js changes. -->
-    <link rel="stylesheet" href="assets/css/site.css?v=36">
+    <link rel="stylesheet" href="assets/css/site.css?v=38">
     <link rel="stylesheet" href="assets/css/agency-sources.css?v=3">
 </head>
 <body class="bg-slate-50 text-slate-900 antialiased">
@@ -148,12 +148,12 @@
 
     <!-- Header -->
     <nav id="site-nav" class="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-slate-200/80 shadow-sm">
-        <div class="container mx-auto px-6 lg:px-8">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center gap-8 h-20">
                 <!-- Stacked lockup: the mark, then the name with the plugin badge over
                      "Toolkit". Gives the badge somewhere to sit without lengthening the
                      single line, and lets the mark carry more weight. -->
-                <a href="#main-content" class="inline-flex items-center gap-4 mr-auto">
+                <a href="#main-content" class="inline-flex items-center gap-2 sm:gap-4 mr-auto">
                     <img src="assets/images/logos/project-logo.png" alt="PermitAI" class="h-9 w-auto object-contain">
                     <span class="block">
                         <span class="flex items-center gap-2">
@@ -163,7 +163,7 @@
                         <span class="block text-xs text-slate-500 font-light">Toolkit</span>
                     </span>
                 </a>
-                <div class="hidden md:flex items-center gap-5 lg:gap-7">
+                <div class="hidden xl:flex items-center gap-5 lg:gap-7">
                     <a href="#overview" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap">Overview</a>
                     <a href="#demo" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap">Demo</a>
                     <a href="#quick-start" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap">Quick&nbsp;Start</a>
@@ -171,8 +171,10 @@
                     <a href="#tools" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap">Tools</a>
                     <a href="#layers" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap">Layers</a>
                     <a href="#documentation" class="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors whitespace-nowrap">Docs</a>
-                    <!-- Cross-page links, so they sit apart from the in-page anchors. -->
-                    <div class="border-l border-slate-200 pl-5 lg:pl-7">
+                    <!-- Cross-page links, so they sit apart from the in-page anchors. The
+                         outreach sheet is the one item that asks something of the visitor,
+                         so it is the filled pill; see .invite-pill in site.css. -->
+                    <div class="flex items-center gap-2.5 border-l border-slate-200 pl-5 lg:pl-7">
                         <div class="nav-menu">
                         <button type="button" aria-haspopup="true" class="nav-vision">
                             <i class="fas fa-cube" aria-hidden="true"></i>Vision<i class="fas fa-chevron-down nav-vision-chev" aria-hidden="true"></i>
@@ -197,13 +199,14 @@
                                 </span>
                             </a>
                         </div>
-                    </div>
+                        </div>
+                        <a href="work-with-us.html" class="invite-pill"><i class="fas fa-handshake" aria-hidden="true"></i>Work with us</a>
                     </div>
                 </div>
             </div>
         </div>
         <!-- Narrow viewports get a scrollable link row rather than a hidden menu. -->
-        <div class="md:hidden border-t border-slate-200/80 overflow-x-auto">
+        <div class="xl:hidden border-t border-slate-200/80 overflow-x-auto">
             <div class="flex items-center gap-5 px-6 py-3 whitespace-nowrap text-sm font-medium text-slate-600">
                 <a href="#overview" class="hover:text-teal-700 transition-colors">Overview</a>
                 <a href="#demo" class="hover:text-teal-700 transition-colors">Demo</a>
@@ -212,6 +215,7 @@
                 <a href="#tools" class="hover:text-teal-700 transition-colors">Tools</a>
                 <a href="#layers" class="hover:text-teal-700 transition-colors">Layers</a>
                 <a href="#documentation" class="hover:text-teal-700 transition-colors">Docs</a>
+                <a href="work-with-us.html" class="invite-chip"><i class="fas fa-handshake" aria-hidden="true"></i>Work with us</a>
                 <span class="text-slate-400 uppercase text-xs tracking-widest pl-1">Vision</span>
                 <a href="vision.html" class="nav-vision-chip"><i class="fas fa-cube" aria-hidden="true"></i>Coverage</a>
                 <a href="gis.html" class="nav-vision-chip"><i class="fas fa-layer-group" aria-hidden="true"></i>GIS</a>
@@ -252,7 +256,7 @@
                 <div class="fade-in-up delay-200 mt-8">
                     <p class="text-xl md:text-2xl text-slate-600 max-w-3xl mx-auto font-light leading-relaxed">
                         Model Context Protocol servers giving AI agents direct access to public
-                        federal data for NEPA screening, regulatory research, and permitting analysis.
+                        federal data for energy infrastructure screening, regulatory research, and permitting analysis.
                     </p>
                 </div>
 
@@ -903,6 +907,9 @@
                         <p class="text-xs font-semibold text-teal-700 uppercase tracking-wider mb-2">Open-source project</p>
                         <h3 class="text-xl font-semibold text-ink mb-2">Contribute &amp; Support</h3>
                         <p class="text-sm text-slate-600 leading-relaxed">Development guidance, support boundaries, and community standards are maintained alongside the code.</p>
+                        <!-- The outreach sheet: how to use the toolkit, add a system as a
+                             server, or help build the community. The card's one action. -->
+                        <a href="work-with-us.html" class="invite-pill mt-4"><i class="fas fa-handshake" aria-hidden="true"></i>Work with us<i class="fas fa-arrow-right text-xs" aria-hidden="true" style="color: rgba(255,255,255,.7);"></i></a>
                         <!-- One entry, not two. "Permitting coverage" and "Spatial context"
                              do not explain themselves on a page that has not introduced
                              them; "Vision" does, and opens to both. A native disclosure,
@@ -969,6 +976,7 @@
                 <div class="md:text-center">
                     <h4 class="text-white font-semibold mb-4">Resources</h4>
                     <ul class="space-y-3 text-sm">
+                        <li><a href="work-with-us.html" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-handshake mr-2" aria-hidden="true"></i>Work with us</a></li>
                         <li><a href="https://github.com/pnnl/nepa-mcp/tree/main" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fab fa-github mr-2" aria-hidden="true"></i>Repository</a></li>
                         <li><a href="https://github.com/pnnl/nepa-mcp/releases/tag/v0.1.6" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-tag mr-2" aria-hidden="true"></i>Release notes</a></li>
                         <li><a href="https://github.com/pnnl/nepa-mcp/blob/main/SUPPORT.md" class="text-slate-400 hover:text-white transition-colors inline-flex items-center"><i class="fas fa-life-ring mr-2" aria-hidden="true"></i>Support</a></li>
