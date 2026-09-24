@@ -171,6 +171,42 @@ class TestResourcesTool:
         assert "Threatened/Endangered Species: 0" in text
         assert "Critical Habitat Units: 0" in text
 
+    @pytest.mark.parametrize("with_valid_bird", [False, True])
+    def test_null_categories_return_reviewable_partial_result_at_max_buffer(self, monkeypatch, with_valid_bird):
+        module = _load_server()
+        api = sys.modules["src.apis.ipac_api"]
+        payload = {"resources": {"marineMammals": None, "wetlands": {"items": None}}}
+        if with_valid_bird:
+            payload["resources"]["migbirds"] = [{"phenologySpecies": {"commonName": "Bald Eagle"}}]
+        monkeypatch.setattr(api.ArcGISService, "create_roi_buffer", lambda *_a, **_k: SIMPLE_GEOMETRY)
+        monkeypatch.setattr(api.ArcGISService, "simplify_polygon_geometry", lambda *_a, **_k: SIMPLE_GEOMETRY)
+
+        def post(_url, **kwargs):
+            assert kwargs["json"]["saveLocationForProjectCreation"] is False
+            return _FakeResponse(payload)
+
+        monkeypatch.setattr(api.requests, "post", post)
+        result = asyncio.run(
+            _call(
+                module,
+                "get_ipac_resources_in_roi",
+                {
+                    "latitude": 34.55,
+                    "longitude": -107.8,
+                    "buffer_miles": 100.0,
+                },
+            )
+        )
+        assert not result.is_error
+        text = _text(result)
+        assert "PARTIAL IPAC RESPONSE" in text
+        assert "Marine Mammals: Unavailable in this response" in text
+        assert "Wetland Types: Unavailable in this response" in text
+        assert "not confirmed no-hit findings" in text
+        assert "not an official species list" in text
+        if with_valid_bird:
+            assert "Bald Eagle" in text and "Migratory Birds: 1" in text
+
 
 class TestInputValidationThroughTool:
     def test_out_of_range_latitude_is_rejected(self):
