@@ -1279,7 +1279,7 @@
             </div>
 
             <!-- The drawing -->
-            <div class="mt-12 lg:mt-14 fade-in-up delay-200">
+            <div class="mt-12 lg:mt-14">
                 <div id="chain" class="chain rounded-2xl border border-slate-200/80 bg-white shadow-sm overflow-hidden">
 
                     <div class="flex items-center justify-between gap-4 px-5 md:px-7 py-4 border-b border-slate-100">
@@ -1636,6 +1636,9 @@
     var dots = [];
     var played = false;
     var armed = false;
+    var starting = false;
+    var ready = false;
+    var visible = false;
 
     function nodeOf(id) {
         return chain.querySelector('[data-node="' + id + '"]');
@@ -1727,9 +1730,20 @@
     }
 
     function play() {
+        if (!armed || !ready || starting || document.hidden) return;
+        starting = true;
+        layout();
+        chain.classList.add('is-resetting');
+        chain.classList.remove('is-played');
         schedule();
+        // Commit the undrawn state before starting, including on first load.
+        void chain.offsetWidth;
+        chain.classList.remove('is-resetting');
+        void chain.offsetWidth;
         window.requestAnimationFrame(function () {
             window.requestAnimationFrame(function () {
+                starting = false;
+                if (!armed || document.hidden) return;
                 chain.classList.add('is-played');
                 played = true;
             });
@@ -1738,10 +1752,6 @@
 
     function replay() {
         if (!armed) return;
-        chain.classList.add('is-resetting');
-        chain.classList.remove('is-played');
-        void chain.offsetWidth;
-        chain.classList.remove('is-resetting');
         replayBtn.classList.remove('is-spinning');
         void replayBtn.offsetWidth;
         replayBtn.classList.add('is-spinning');
@@ -1909,24 +1919,42 @@
     buildWires();
     layout();
 
-    if (!reduced.matches && 'IntersectionObserver' in window && !narrow.matches) {
-        armed = true;
-        chain.classList.add('is-armed');
-        var seen = false;
-        var io = new IntersectionObserver(function (entries) {
-            if (seen) return;
-            if (entries.some(function (e) { return e.isIntersecting; })) {
-                seen = true;
-                io.disconnect();
-                play();
-            }
-        }, { threshold: 0.3 });
-        io.observe(chain);
-        replayBtn.addEventListener('click', replay);
+    function maybePlay() {
+        if (ready && visible && armed && !played && !document.hidden) play();
     }
 
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
-    window.addEventListener('load', layout);
+    function syncMotion() {
+        var enabled = !reduced.matches && !narrow.matches && 'IntersectionObserver' in window;
+        if (enabled !== armed) {
+            armed = enabled;
+            played = false;
+            chain.classList.toggle('is-armed', enabled);
+            chain.classList.remove('is-played');
+        }
+        layout();
+        maybePlay();
+    }
+
+    syncMotion();
+    if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function (entries) {
+            visible = entries[0].isIntersecting && entries[0].intersectionRatio >= 0.5;
+            maybePlay();
+        }, { threshold: 0.5 }).observe(qs[0]);
+    }
+    replayBtn.addEventListener('click', replay);
+
+    // Font and page loading must finish before the drawing runs. Observing the
+    // first question keeps it from finishing while only the panel heading is visible.
+    function pageReady() {
+        Promise.resolve(document.fonts && document.fonts.ready).then(function () {
+            ready = true;
+            syncMotion();
+        });
+    }
+    if (document.readyState === 'complete') pageReady();
+    else window.addEventListener('load', pageReady, { once: true });
+    document.addEventListener('visibilitychange', maybePlay);
 
     var resizeTimer;
     function relayout() {
@@ -1940,12 +1968,8 @@
 
     /* If the visitor's motion setting changes after load, hand them the
        finished drawing. */
-    reduced.addEventListener('change', function () {
-        if (reduced.matches) {
-            chain.classList.remove('is-armed');
-            armed = false;
-        }
-    });
+    reduced.addEventListener('change', syncMotion);
+    narrow.addEventListener('change', syncMotion);
 })();
 </script>
 </body>
