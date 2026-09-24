@@ -16,6 +16,70 @@ from typing import Dict
 from nepa_mcp_common.arcgis import ArcGISService
 
 
+_CATEGORIES = (
+    ("populationsBySid", "species", "species_count", "Threatened/Endangered Species"),
+    ("migbirds", "migratory_birds", "migbirds_count", "Migratory Birds"),
+    ("wetlands", "wetlands", "wetlands_count", "Wetland Types"),
+    ("crithabs", "critical_habitat", "critical_habitat_count", "Critical Habitat Units"),
+    ("refuges", "refuges", "refuges_count", "Refuges"),
+    ("fieldOffices", "field_offices", "field_offices_count", "Field Offices"),
+    ("marineMammals", "marine_mammals", "marine_mammals_count", "Marine Mammals"),
+    (
+        "allReferencedPopulationsBySid",
+        "referenced_populations",
+        "referenced_populations_count",
+        "Referenced Populations",
+    ),
+    ("fishHatcheries", "fish_hatcheries", "fish_hatcheries_count", "Fish Hatcheries"),
+    ("coastalBarriers", "coastal_barriers", "coastal_barriers_count", "Coastal Barriers"),
+)
+
+
+def _dict_or_empty(value: object, field: str, unavailable: set[str]) -> dict:
+    if isinstance(value, dict):
+        return value
+    unavailable.add(field)
+    return {}
+
+
+def _records_or_empty(value: object, field: str, unavailable: set[str]) -> list[dict]:
+    if not isinstance(value, list):
+        unavailable.add(field)
+        return []
+    records = [record for record in value if isinstance(record, dict)]
+    if len(records) != len(value):
+        unavailable.add(field)
+    return records
+
+
+def _population_map(value: object, field: str, unavailable: set[str]) -> dict:
+    records = _dict_or_empty(value, field, unavailable)
+    valid = {key: record for key, record in records.items() if isinstance(record, dict)}
+    if len(valid) != len(records):
+        unavailable.add(field)
+    return valid
+
+
+def _resource_items(resources: dict, field: str, unavailable: set[str]) -> list[dict]:
+    container = _dict_or_empty(resources.get(field, {}), field, unavailable)
+    if container.get("truncated") is True:
+        unavailable.add(field)
+    return _records_or_empty(container.get("items", []), field + ".items", unavailable)
+
+
+def _sid_value(value: object, default: str, field: str, unavailable: set[str]) -> str:
+    sid = _dict_or_empty(value, field, unavailable)
+    result = sid.get("val", default)
+    if not isinstance(result, str):
+        unavailable.add(field)
+        return default
+    return result
+
+
+def _is_unavailable(field: str, unavailable: set[str]) -> bool:
+    return any(item == field or item.startswith(field + ".") for item in unavailable)
+
+
 def get_ipac_resources_in_roi(lat: float, lon: float, buffer_miles: float = 25.0) -> Dict:
     """
     Query the IPaC API for threatened/endangered species and other FWS resources.
@@ -26,7 +90,9 @@ def get_ipac_resources_in_roi(lat: float, lon: float, buffer_miles: float = 25.0
         buffer_miles: Buffer radius in miles (default 25).
 
     Returns:
-        Dictionary mirroring the IPaC API response with additional summary stats.
+        Parsed resource lists, availability and counts, and unchanged raw_response.
+        Unavailable category counts are None; returned_counts records how many
+        usable records were retained without implying a complete category total.
     """
     return _query_ipac_api(lat, lon, buffer_miles)
 
@@ -42,13 +108,16 @@ def _query_ipac_api(lat: float, lon: float, buffer_miles: float) -> Dict:
         buffer_miles: Buffer distance in miles
 
     Returns:
-        Dictionary containing resource lists and explicit `*_count` fields:
+        Dictionary containing resource lists and explicit `*_count` fields
+        (None when the category is unavailable or incomplete):
         - species / species_count
         - migratory_birds / migbirds_count
         - wetlands / wetlands_count
         - refuges / refuges_count
         - field_offices
         - critical_habitat / critical_habitat_count
+        Also includes partial, unavailable_resource_fields, returned_counts,
+        and the untouched raw_response for audit.
     """
     try:
         # Step 1: Get ROI polygon geometry
@@ -83,19 +152,20 @@ def _query_ipac_api(lat: float, lon: float, buffer_miles: float) -> Dict:
         response.raise_for_status()
         data = response.json()
 
-        resources = data.get("resources")
+        resources = data.get("resources") if isinstance(data, dict) else None
         if not isinstance(resources, dict):
             raise ValueError("IPaC response did not include a resources object")
 
         # Step 4: Parse and structure the response
+        unavailable: set[str] = set()
         species_list = []
-        populations = resources.get("populationsBySid", {})
+        populations = _population_map(resources.get("populationsBySid", {}), "populationsBySid", unavailable)
 
         for pop_id, pop_data in populations.items():
-            pop = pop_data.get("population", {})
+            pop = _dict_or_empty(pop_data.get("population", {}), "populationsBySid", unavailable)
             species_list.append(
                 {
-                    "id": pop.get("sid", {}).get("val", pop_id),
+                    "id": _sid_value(pop.get("sid", {}), pop_id, "populationsBySid", unavailable),
                     "common_name": pop.get("optionalCommonName", ""),
                     "scientific_name": pop.get("optionalScientificName", ""),
                     "short_name": pop.get("shortName", ""),
@@ -106,18 +176,19 @@ def _query_ipac_api(lat: float, lon: float, buffer_miles: float) -> Dict:
             )
 
         # Sort by common name
-        species_list.sort(key=lambda x: x["common_name"])
+        species_list.sort(key=lambda x: str(x["common_name"] or ""))
 
         # Migratory birds - parse phenology data
         migbirds_list = []
-        for bird in resources.get("migbirds", []):
-            phenology = bird.get("phenologySpecies", {})
+        for bird in _records_or_empty(resources.get("migbirds", []), "migbirds", unavailable):
+            phenology = _dict_or_empty(bird.get("phenologySpecies", {}), "migbirds", unavailable)
+            level = _dict_or_empty(bird.get("level", {}), "migbirds", unavailable)
             migbirds_list.append(
                 {
                     "common_name": phenology.get("commonName", ""),
                     "scientific_name": phenology.get("scientificName", ""),
                     "code": phenology.get("code", ""),
-                    "conservation_level": bird.get("level", {}).get("name", ""),
+                    "conservation_level": level.get("name", ""),
                     "bcc": bird.get("bcc", False),
                     "breeds_from": bird.get("optionalBreedsFrom", ""),
                     "breeds_to": bird.get("optionalBreedsTo", ""),
@@ -125,56 +196,45 @@ def _query_ipac_api(lat: float, lon: float, buffer_miles: float) -> Dict:
             )
 
         # Sort by common name
-        migbirds_list.sort(key=lambda x: x["common_name"])
+        migbirds_list.sort(key=lambda x: str(x["common_name"] or ""))
 
         # Wetlands - extract items from dict
-        wetlands_data = resources.get("wetlands", {})
-        wetlands_items = []
-        if isinstance(wetlands_data, dict):
-            wetlands_items = wetlands_data.get("items", [])
-            # Parse wetland details
-            wetlands_list = []
-            for wetland in wetlands_items:
-                attrs = wetland.get("attributes", {})
-                wetlands_list.append(
-                    {
-                        "code": wetland.get("wetlandCode", ""),
-                        "system": attrs.get("SYSTEM_NAME", ""),
-                        "class": attrs.get("CLASS_NAME", ""),
-                        "water_regime": attrs.get("WATER_REGIME_SUBGROUP", ""),
-                        "shape": attrs.get("Shape", ""),
-                    }
-                )
-        else:
-            wetlands_list = []
+        wetlands_list = []
+        for wetland in _resource_items(resources, "wetlands", unavailable):
+            attrs = _dict_or_empty(wetland.get("attributes", {}), "wetlands.items", unavailable)
+            wetlands_list.append(
+                {
+                    "code": wetland.get("wetlandCode", ""),
+                    "system": attrs.get("SYSTEM_NAME", ""),
+                    "class": attrs.get("CLASS_NAME", ""),
+                    "water_regime": attrs.get("WATER_REGIME_SUBGROUP", ""),
+                    "shape": attrs.get("Shape", ""),
+                }
+            )
 
         # Refuges - extract items from dict
-        refuges_data = resources.get("refuges", {})
         refuges_list = []
-        if isinstance(refuges_data, dict):
-            refuges_items = refuges_data.get("items", [])
-            for refuge in refuges_items:
-                refuges_list.append(
-                    {
-                        "name": refuge.get("name", ""),
-                        "type": refuge.get("rslType", ""),
-                        "acres": refuge.get("acres", 0),
-                        "org_code": refuge.get("orgCode", ""),
-                    }
-                )
+        for refuge in _resource_items(resources, "refuges", unavailable):
+            refuges_list.append(
+                {
+                    "name": refuge.get("name", ""),
+                    "type": refuge.get("rslType", ""),
+                    "acres": refuge.get("acres", 0),
+                    "org_code": refuge.get("orgCode", ""),
+                }
+            )
 
         # Field offices
         field_offices = []
-        for office in resources.get("fieldOffices", []):
+        for office in _records_or_empty(resources.get("fieldOffices", []), "fieldOffices", unavailable):
             field_offices.append({"name": office.get("officeName", ""), "code": office.get("officeCode", "")})
 
         # Critical Habitat - parse and cross-reference with species data
         critical_habitat_list = []
-        crithabs = resources.get("crithabs", [])
+        crithabs = _records_or_empty(resources.get("crithabs", []), "crithabs", unavailable)
 
         for crithab in crithabs:
-            pop_sid = crithab.get("populationSid", {})
-            pop_id = pop_sid.get("val", "")
+            pop_id = _sid_value(crithab.get("populationSid", {}), "", "crithabs", unavailable)
 
             # Find matching species for detailed info
             species_name = "Unknown"
@@ -186,13 +246,15 @@ def _query_ipac_api(lat: float, lon: float, buffer_miles: float) -> Dict:
 
             if pop_id in populations:
                 pop_data = populations[pop_id]
-                pop = pop_data.get("population", {})
+                pop = _dict_or_empty(pop_data.get("population", {}), "populationsBySid", unavailable)
                 species_name = pop.get("optionalCommonName", "Unknown")
                 scientific_name = pop.get("optionalScientificName", "")
                 listing_status = pop.get("listingStatusName", "")
 
                 # Get Federal Register critical habitat designation info
-                fr_info = pop_data.get("optionalFederalRegisterCrithabStatus", {})
+                fr_info = pop_data.get("optionalFederalRegisterCrithabStatus")
+                if fr_info is not None:
+                    fr_info = _dict_or_empty(fr_info, "populationsBySid", unavailable)
                 if fr_info:
                     fr_date = fr_info.get("date", "")
                     fr_type = fr_info.get("displayType", "")
@@ -215,69 +277,77 @@ def _query_ipac_api(lat: float, lon: float, buffer_miles: float) -> Dict:
 
         # Marine Mammals - cross-reference with population data
         marine_mammals_list = []
-        marine_mammals = resources.get("marineMammals", [])
-        all_populations = resources.get("allReferencedPopulationsBySid", {})
+        marine_mammals = _records_or_empty(resources.get("marineMammals", []), "marineMammals", unavailable)
+        all_populations = _population_map(
+            resources.get("allReferencedPopulationsBySid", {}), "allReferencedPopulationsBySid", unavailable
+        )
 
         for mm in marine_mammals:
-            pop_sid = mm.get("populationSid", {})
-            pop_id = pop_sid.get("val", "")
+            pop_id = _sid_value(mm.get("populationSid", {}), "", "marineMammals", unavailable)
 
             # Try main populations first, then all referenced populations
             pop_data = populations.get(pop_id) or all_populations.get(pop_id)
 
-            if pop_data:
-                # Handle both formats (with or without 'population' wrapper)
-                pop = pop_data.get("population", pop_data) if "population" in pop_data else pop_data
-
-                marine_mammals_list.append(
-                    {
-                        "species_id": pop_id,
-                        "common_name": pop.get("optionalCommonName", "Unknown"),
-                        "scientific_name": pop.get("optionalScientificName", ""),
-                        "listing_status": pop.get("listingStatusName", ""),
-                        "listing_code": pop.get("listingStatusCode", ""),
-                        "group": pop.get("groupName", "Mammals"),
-                    }
-                )
+            if not pop_data:
+                # The resource exists even when its population lookup is absent.
+                # Keep the identifier; do not turn an unresolved record into zero.
+                unavailable.add("marineMammals")
+                pop_data = {}
+            # Handle both formats (with or without 'population' wrapper).
+            pop = _dict_or_empty(pop_data.get("population", pop_data), "marineMammals", unavailable)
+            marine_mammals_list.append(
+                {
+                    "species_id": pop_id,
+                    "common_name": pop.get("optionalCommonName", "Unknown"),
+                    "scientific_name": pop.get("optionalScientificName", ""),
+                    "listing_status": pop.get("listingStatusName", ""),
+                    "listing_code": pop.get("listingStatusCode", ""),
+                    "group": pop.get("groupName", "Mammals"),
+                }
+            )
 
         # Fish Hatcheries - extract from facilities
         fish_hatcheries_list = []
-        fish_hatcheries_data = resources.get("fishHatcheries", {})
+        for hatchery in _resource_items(resources, "fishHatcheries", unavailable):
+            fish_hatcheries_list.append(
+                {
+                    "name": hatchery.get("name", ""),
+                    "type": hatchery.get("rslType", ""),
+                    "acres": hatchery.get("acres", 0),
+                    "org_code": hatchery.get("orgCode", ""),
+                    "url": hatchery.get("url", ""),
+                }
+            )
 
-        if isinstance(fish_hatcheries_data, dict):
-            hatchery_items = fish_hatcheries_data.get("items", [])
-            for hatchery in hatchery_items:
-                fish_hatcheries_list.append(
-                    {
-                        "name": hatchery.get("name", ""),
-                        "type": hatchery.get("rslType", ""),
-                        "acres": hatchery.get("acres", 0),
-                        "org_code": hatchery.get("orgCode", ""),
-                        "url": hatchery.get("url", ""),
-                    }
-                )
-
-        return {
+        # The live API uses an items wrapper; retain support for legacy lists.
+        coastal_data = resources.get("coastalBarriers", [])
+        coastal_barriers = (
+            _resource_items(resources, "coastalBarriers", unavailable)
+            if isinstance(coastal_data, dict)
+            else _records_or_empty(coastal_data, "coastalBarriers", unavailable)
+        )
+        result = {
             "center": {"latitude": lat, "longitude": lon},
             "buffer_miles": buffer_miles,
             "species": species_list,
-            "species_count": len(species_list),
             "migratory_birds": migbirds_list,
-            "migbirds_count": len(migbirds_list),
             "wetlands": wetlands_list,
-            "wetlands_count": len(wetlands_list),
             "refuges": refuges_list,
-            "refuges_count": len(refuges_list),
             "field_offices": field_offices,
             "critical_habitat": critical_habitat_list,
-            "critical_habitat_count": len(critical_habitat_list),
             "marine_mammals": marine_mammals_list,
-            "marine_mammals_count": len(marine_mammals_list),
             "fish_hatcheries": fish_hatcheries_list,
-            "fish_hatcheries_count": len(fish_hatcheries_list),
-            "coastal_barriers": resources.get("coastalBarriers", []),
+            "coastal_barriers": coastal_barriers,
+            "partial": bool(unavailable),
+            "unavailable_resource_fields": sorted(unavailable),
+            "returned_counts": {},
             "raw_response": data,  # Include full response for advanced users
         }
+        for field, collection, count_key, _label in _CATEGORIES:
+            count = len(all_populations) if field == "allReferencedPopulationsBySid" else len(result[collection])
+            result["returned_counts"][count_key] = count
+            result[count_key] = None if _is_unavailable(field, unavailable) else count
+        return result
 
     except requests.exceptions.RequestException as e:
         raise Exception(f"IPaC API request failed: {str(e)}")
@@ -299,10 +369,7 @@ def format_ipac_summary(ipac_data: Dict) -> str:
     lat = center.get("latitude", 0)
     lon = center.get("longitude", 0)
     buffer_miles = ipac_data.get("buffer_miles", 0)
-    species_count = ipac_data.get("species_count", len(ipac_data.get("species", [])))
-    migbirds_count = ipac_data.get("migbirds_count", len(ipac_data.get("migratory_birds", [])))
-    wetlands_count = ipac_data.get("wetlands_count", len(ipac_data.get("wetlands", [])))
-    critical_habitat_count = ipac_data.get("critical_habitat_count", len(ipac_data.get("critical_habitat", [])))
+    unavailable = set(ipac_data.get("unavailable_resource_fields") or [])
 
     lines = [
         "USFWS IPaC Resources within ROI",
@@ -310,12 +377,31 @@ def format_ipac_summary(ipac_data: Dict) -> str:
         f"Location: ({lat}, {lon})",
         f"Buffer: {buffer_miles} miles",
         "",
-        f"Threatened/Endangered Species: {species_count}",
-        f"Migratory Birds: {migbirds_count}",
-        f"Wetland Types: {wetlands_count}",
-        f"Critical Habitat Units: {critical_habitat_count}",
-        "",
     ]
+    if ipac_data.get("partial") or unavailable:
+        affected = [
+            label.lower() for field, _collection, _count, label in _CATEGORIES if _is_unavailable(field, unavailable)
+        ]
+        lines.extend(
+            [
+                "PARTIAL IPAC RESPONSE",
+                "IPaC did not return usable data for all records in: " + ", ".join(affected) + ".",
+                "Unavailable categories are not confirmed no-hit findings and require reviewer follow-up.",
+                "Usable records are retained below; affected category totals are unknown.",
+                "",
+            ]
+        )
+    for field, collection, count_key, label in _CATEGORIES:
+        count = ipac_data.get(count_key, len(ipac_data.get(collection) or []))
+        if _is_unavailable(field, unavailable) or count is None:
+            count_text = "Unavailable in this response"
+            retained = ipac_data.get("returned_counts", {}).get(count_key, 0)
+            if retained:
+                count_text += f" ({retained} records retained; not a complete count)"
+        else:
+            count_text = str(count)
+        lines.append(f"{label}: {count_text}")
+    lines.append("")
 
     critical = ipac_data.get("critical_habitat", [])
     if critical:
@@ -345,6 +431,9 @@ def format_ipac_summary(ipac_data: Dict) -> str:
 
     lines.append(
         "Coordinate with the responsible USFWS field office for ESA Section 7 consultation and MBTA compliance."
+    )
+    lines.append(
+        "Screening information only; not an official species list, consultation determination, or evidence of absence."
     )
 
     return "\n".join(lines)

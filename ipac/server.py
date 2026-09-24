@@ -98,6 +98,11 @@ def _validate_geo_inputs(
 def get_ipac_resources_in_roi_tool(latitude: Latitude, longitude: Longitude, buffer_miles: BufferMiles = 25.0) -> str:
     """Query USFWS IPaC for ESA species, migratory birds, wetlands, critical habitat, and refuge data.
 
+    Null or malformed resource categories produce a partial response that keeps
+    usable records and names unavailable categories. Unavailable is not a no-hit
+    finding. Results are screening information, not an official species list or
+    consultation determination. Missing or invalid overall resources still fail.
+
     Args:
         latitude: Latitude in decimal degrees (WGS84), valid range -90 to 90.
         longitude: Longitude in decimal degrees (WGS84), valid range -180 to 180.

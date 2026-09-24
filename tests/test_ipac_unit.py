@@ -270,8 +270,10 @@ class TestWetlandsAndRefuges:
         res["wetlands"] = []  # unexpected type
         _patch_post(api, monkeypatch, res)
         result = api.get_ipac_resources_in_roi(34.5, -106.5)
-        assert result["wetlands_count"] == 0
+        assert result["wetlands_count"] is None
         assert result["wetlands"] == []
+        assert result["partial"] is True
+        assert result["unavailable_resource_fields"] == ["wetlands"]
 
 
 # ---------------------------------------------------------------------------
