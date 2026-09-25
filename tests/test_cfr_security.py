@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import stat
 import sys
 from pathlib import Path
 
@@ -188,3 +189,32 @@ class TestParserHostileInput:
         api = _load_api()
         cit = api.parse_cfr_citation("40 CFR 1.1" + "(a)" * 50)
         assert len(cit.paragraph_path) == 50
+
+
+# ---------------------------------------------------------------------------
+# Cache directory and file permissions
+# ---------------------------------------------------------------------------
+
+
+class TestCachePermissions:
+    def test_cache_dir_and_file_are_owner_only(self, tmp_path, monkeypatch):
+        api = _load_api()
+        monkeypatch.setattr(api, "CACHE_DIR", tmp_path / "cfr" / ".cache")
+        api._cache_response("abc123", {"ok": True})
+
+        cache_file = api.CACHE_DIR / "abc123.json"
+        assert cache_file.is_file()
+        assert stat.S_IMODE(api.CACHE_DIR.stat().st_mode) & 0o077 == 0
+        assert stat.S_IMODE(cache_file.stat().st_mode) & 0o077 == 0
+        assert not list(api.CACHE_DIR.glob("*.tmp"))
+
+    def test_world_writable_cache_dir_is_not_used(self, tmp_path, monkeypatch):
+        api = _load_api()
+        cache_dir = tmp_path / "shared"
+        cache_dir.mkdir()
+        cache_dir.chmod(0o777)
+        monkeypatch.setattr(api, "CACHE_DIR", cache_dir)
+
+        api._cache_response("abc123", {"ok": True})
+
+        assert list(cache_dir.iterdir()) == []

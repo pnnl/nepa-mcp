@@ -10,6 +10,8 @@ API Documentation:
 """
 
 import re
+import os
+import stat
 import time
 import logging
 import hashlib
@@ -238,10 +240,18 @@ def _cache_response(cache_key: str, data: dict) -> None:
     creation and the write are both guarded.
     """
     try:
-        CACHE_DIR.mkdir(parents=True, exist_ok=True)
+        CACHE_DIR.mkdir(parents=True, exist_ok=True, mode=0o700)
+        if stat.S_IMODE(CACHE_DIR.stat().st_mode) & 0o022:
+            logger.warning(f"Skipping cache write, {CACHE_DIR} is writable by other users")
+            return
+
         cache_file = CACHE_DIR / f"{cache_key}.json"
-        with open(cache_file, "w") as f:
+        temporary = cache_file.with_name(cache_file.name + ".tmp")
+        descriptor = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+        with os.fdopen(descriptor, "w") as f:
             json.dump({"timestamp": datetime.now().isoformat(), "data": data}, f)
+        os.replace(temporary, cache_file)
+        cache_file.chmod(0o600)
     except OSError as e:
         logger.warning(f"Failed to cache response: {e}")
 
