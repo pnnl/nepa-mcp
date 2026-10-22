@@ -77,6 +77,17 @@
         "PYTHONUNBUFFERED": "1"
       }
     },
+    "epa_superfund": {
+      "type": "stdio",
+      "command": "nepa-mcp",
+      "args": [
+        "server",
+        "epa_superfund"
+      ],
+      "env": {
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
     "esa_ranges": {
       "type": "stdio",
       "command": "nepa-mcp",

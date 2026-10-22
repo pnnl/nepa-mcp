@@ -25,6 +25,7 @@ SERVER_SPECS = (
         "EPA air-quality monitoring and NAAQS screening",
         ("EPA_AQS_EMAIL", "EPA_AQS_API_KEY"),
     ),
+    ServerSpec("epa_superfund", "EPA Superfund sites, boundaries, cleanup records, contaminants, and notices"),
     ServerSpec("esa_ranges", "NOAA ESA-listed species ranges"),
     ServerSpec("fema_nfhl", "FEMA flood zones, levees, and water areas"),
     ServerSpec("gbif", "GBIF species occurrences and biodiversity data"),

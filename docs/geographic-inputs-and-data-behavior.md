@@ -54,8 +54,32 @@ See the [Map Composer guide](map-composer.md) for profiles, the complete
   section, or county, and some cases cannot be geocoded. Results therefore
   identify research leads rather than surveyed footprints, title opinions,
   permit determinations, or proof that an operation is active.
+- `epa_superfund` intersects the ROI with NPL status points (a Web Mercator
+  service) and total-site polygons (WGS84), and, in `sems_candidates` scope,
+  FRS SEMS points (NAD83); every layer is requested with an explicit WGS84
+  output reference. Features are grouped by EPA ID before paging, so several
+  polygons count as one site, and each site reports a point, polygon, or
+  combined match basis. Polygon distances are approximate (zero inside the
+  polygon, otherwise the nearest generalized boundary vertex). Source-reported
+  `GIS_AREA` is shown as published; site or ROI acreage is not calculated, and
+  overlap with a polygon is not contaminated acreage.
 
 ## Coverage and upstream failures
+
+Superfund list tools select matching ArcGIS object IDs first, fetch at most
+500 selected IDs per batch, restore ID order, and recheck matching IDs after
+retrieval. Missing, duplicate, unexpected, or changed records and interrupted
+retrievals are reported as partial or truncated, not complete empty results.
+The existing per-layer safety caps and tool budgets still apply.
+
+All eight Superfund list tools return a `result_fingerprint`. Pass it with the
+same filters and the next `result_offset` to check continuation pages. Changes
+to retrieved evidence, selected ArcGIS IDs, or source coverage reject the
+continuation and require restarting at offset zero without the old fingerprint.
+The token excludes retrieval timestamps and cache bookkeeping. It is a change
+guard, not a persisted or transactional upstream snapshot: SEMS and Federal
+Register evidence can remain cached for ten minutes. Calls without a token are
+independent live reads and do not guarantee continuity.
 
 - Empty NOAA West Coast and PCSRF-project results outside their expected
   service geography include a coverage warning.

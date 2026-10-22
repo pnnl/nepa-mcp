@@ -30,11 +30,21 @@ def get_json(
     params: dict[str, Any] | None = None,
     timeout: float | tuple[float, float] = DEFAULT_TIMEOUT_SECONDS,
     service_name: str = "upstream service",
+    headers: dict[str, str] | None = None,
+    allow_redirects: bool = True,
 ) -> dict[str, Any]:
     """Return a JSON object from an upstream service with consistent errors."""
     try:
-        response = requests.get(url, params=params, timeout=timeout)
+        response = requests.get(
+            url,
+            params=params,
+            timeout=timeout,
+            **({"headers": headers} if headers else {}),
+            **({"allow_redirects": False} if not allow_redirects else {}),
+        )
         response.raise_for_status()
+        if not allow_redirects and 300 <= response.status_code < 400:
+            raise UpstreamServiceError(f"{service_name} returned a redirect; destination was not requested")
     except requests.RequestException as exc:
         raise UpstreamServiceError(f"{service_name} request failed: {exc}") from exc
 
@@ -86,6 +96,8 @@ def get_json_rows(
     params: dict[str, Any] | None = None,
     timeout: float | tuple[float, float] = DEFAULT_TIMEOUT_SECONDS,
     service_name: str = "upstream service",
+    headers: dict[str, str] | None = None,
+    allow_redirects: bool = True,
 ) -> list[dict[str, Any]]:
     """GET a JSON array of records, retaining the object helpers' error contract.
 
@@ -93,8 +105,16 @@ def get_json_rows(
     An error object or malformed row must not become a successful empty list.
     """
     try:
-        response = requests.get(url, params=params, timeout=timeout)
+        response = requests.get(
+            url,
+            params=params,
+            timeout=timeout,
+            **({"headers": headers} if headers else {}),
+            **({"allow_redirects": False} if not allow_redirects else {}),
+        )
         response.raise_for_status()
+        if not allow_redirects and 300 <= response.status_code < 400:
+            raise UpstreamServiceError(f"{service_name} returned a redirect; destination was not requested")
     except requests.RequestException as exc:
         raise UpstreamServiceError(f"{service_name} request failed: {exc}") from exc
     try:
