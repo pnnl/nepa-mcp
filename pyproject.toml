@@ -28,7 +28,7 @@ dependencies = [
     "fastmcp==3.4.4",
     "folium>=0.20.0",
     "httpx>=0.28.0",
-    "mcp>=1.28.1",
+    "mcp>=1.30.0",
     "platformdirs>=4.0.0",
     "pyproj>=3.7.0",
     "pydantic>=2.12.0",
