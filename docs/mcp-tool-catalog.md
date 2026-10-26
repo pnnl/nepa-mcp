@@ -1,11 +1,20 @@
 # MCP Tool Catalog
 
-NEPA MCP provides 23 independent servers with 56 tools. Use this catalog to choose the smallest set of servers needed for a workflow.
+NEPA MCP provides 24 independent servers with 65 tools. Use this catalog to choose the smallest set of servers needed for a workflow.
 
 This file is generated from the server registry and each server's live MCP `tools/list` contract. Do not edit it manually. Regenerate it with `uv run python scripts/generate_tool_catalog.py`; add `--check` to verify it without writing.
 
 | Server | Tool | Purpose |
 |---|---|---|
+| `dow_brac` | `get_brac_conveyance_records` | Retrieve published installation conveyance summaries without inferring executed parcel transfers. |
+| `dow_brac` | `get_brac_documents` | List independently paginated official BRAC document links with metadata-only review status. |
+| `dow_brac` | `get_brac_environmental_sites` | Retrieve explicit installation-scoped IR-site/OU index-group candidates with coverage warnings. |
+| `dow_brac` | `get_brac_installation` | Retrieve a BRAC source identity, action evidence, official links, and per-source access limitations. |
+| `dow_brac` | `get_brac_installations_in_roi` | Find EPA FRS BRAC-interest points and opt-in historical polygon intersections as unresolved candidates. |
+| `dow_brac` | `get_brac_land_use_controls` | Retrieve indexed control-document candidates and bounded PDF evidence with unresolved legal effect. |
+| `dow_brac` | `get_brac_property_offers` | Retrieve source-reported Army disposal plans through explicit crosswalks; do not infer open auctions. |
+| `dow_brac` | `get_brac_public_notices` | Retrieve notice-index candidates; unknown dates never become an open participation finding. |
+| `dow_brac` | `search_brac_installations` | Search source-scoped BRAC installation candidates and published actions without requiring geometry. |
 | `blm` | `get_blm_land_use_plans_in_roi` | Identify BLM approved land use plans intersecting the ROI. |
 | `blm` | `get_blm_national_monuments_in_roi` | Identify BLM National Monuments and NCAs intersecting the ROI. |
 | `blm` | `get_blm_wilderness_areas_in_roi` | Identify BLM designated wilderness areas intersecting the ROI. |

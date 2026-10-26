@@ -1,7 +1,7 @@
 # MCP Data Source Licenses
 
 This reference consolidates data-source license notes for the current flat
-23-server repository. It is a public-release aid, not legal advice. Verify final
+24-server repository. It is a public-release aid, not legal advice. Verify final
 license determinations before publishing or redistributing derived datasets.
 
 | Server | Agency / Publisher | Dataset / Service | Primary endpoint | Auth required | License / terms signal | Risk flag | Notes |
@@ -42,3 +42,13 @@ license determinations before publishing or redistributing derived datasets.
 - Confirm whether NOAA Fisheries ArcGIS service pages expose explicit item-level terms beyond general federal data status.
 - Confirm current FEMA NFHL terms for the ArcGIS MapServer specifically, separate from OpenFEMA API terms.
 - Preserve source URLs, retrieval dates, and any upstream warnings when generating public-facing reports from tool outputs.
+
+## DoW BRAC
+
+`dow_brac` uses official Army DENIX pages, EPA FRS BRAC interests, and explicitly
+opted-in historical military-base geometry. Public federal source material is
+returned with provenance; retain source disclaimers and document-specific
+attribution. Navy/Air Force/Devens access returned HTTP 403 in this environment;
+restricted sources are linked, not bypassed. Historical maps and program records
+are not current parcel/suitability findings. See [BRAC source coverage](dow-brac.md)
+for adapter-specific validation and pending acceptance requirements.

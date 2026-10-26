@@ -1,0 +1,17 @@
+---
+name: brac-research
+description: Research DoW BRAC installation identities, historical spatial candidates, official program evidence, conveyance, controls, notices, and planned disposal opportunities.
+---
+
+# BRAC research
+
+Start from an installation name, a source-namespaced server ID, or a location. Use `dow_brac`; FUDS, USACE regulatory districts, Civil Works districts, and Superfund records have separate program identities and cannot substitute for BRAC evidence.
+
+1. Search and resolve candidate identities and explicit actions. Keep different source URLs/round records and ambiguous aliases separate until a published crosswalk resolves them. Local IDs are not government-wide installation IDs. A portfolio entry is not proof of a legislated action; non-BRAC excess property remains distinct. An action can be realignment rather than closure, with retained military uses or receiving/losing roles.
+2. For geographic discovery, explain FRS reference-point evidence and any explicit opt-in historical polygon evidence. Neither is a comprehensive current installation inventory, parcel map, current ownership record, or contamination footprint. Preserve unresolved historical/FRS candidates and separate registry, retrieval, and geometry coverage.
+3. Retrieve installation evidence, independently paged document links, conveyance summaries, and notice candidates within an explicit budget. Distinguish metadata-only links from reviewed contents, NEPA records from cleanup remedies, and parcel transactions from installation summaries. A transfer-readiness document is not an executed deed. Early transfer can coexist with continuing restoration.
+4. Inspect environmental-site/OU candidates and relevant control evidence where supported. Preserve installation/program-scoped identifiers, missing geometry, unresolved parcel relationships, title-only evidence, physical PDF pages/fingerprints, missing/image-only/oversized text, amendments/releases, and unknown legal effect. No OCR or complete title/deed search is implied.
+5. Retrieve property plans/offers only through verified source crosswalks. A planned disposal date is not a bid deadline; historical, withdrawn, sold, and advertised states require authoritative source evidence. Do not infer an active auction from hidden template keywords, remaining acreage, or former military ownership. Unknown notice dates/cancellations/time zones do not establish an open comment window.
+6. Produce a cited installation dossier with identities/actions, source vintages, official evidence links, office entrypoints, cleanup/operational/conveyance statements kept separate, reviewed versus unreviewed documents, source/coverage status, incomplete pages, conflicting evidence, and unresolved questions. Explain the extra parcel-specific evidence needed for suitability research without inventing a score.
+
+This branch has working Army/FRS/historical source paths but pending Navy/Air Force/Devens and advertised-sale acceptance checks. Read the response source manifest and report HTTP 403, unverified parsers, and unsupported crosswalks openly. Do not bypass restricted repositories, silently substitute an inventory, or treat failed access as no records. Do not turn program status, mapped geometry, conveyance, remedy decisions, or reuse announcements into a conclusion of clean land, completed cleanup, unrestricted use, land availability, or development suitability.
