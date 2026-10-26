@@ -20,6 +20,9 @@ CENSUS_API_KEY=
 # EPA AQS credentials: https://aqs.epa.gov/data/api/signup
 EPA_AQS_EMAIL=
 EPA_AQS_API_KEY=
+
+# Required for NRC ADAMS API calls: https://adams-api-developer.nrc.gov/
+NRC_ADAMS_API_KEY=
 """
 
 

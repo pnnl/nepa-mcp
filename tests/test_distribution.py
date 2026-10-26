@@ -20,6 +20,7 @@ from nepa_mcp.registry import CREDENTIAL_VARIABLES, SERVER_SPECS, server_entrypo
 
 ROOT = Path(__file__).resolve().parents[1]
 EXPECTED_SERVERS = {
+    "nrc_adams",
     "blm",
     "blm_mlrs",
     "census",
@@ -90,6 +91,7 @@ def test_registry_matches_the_public_server_inventory() -> None:
         "CENSUS_API_KEY",
         "EPA_AQS_EMAIL",
         "EPA_AQS_API_KEY",
+        "NRC_ADAMS_API_KEY",
     )
 
 
@@ -297,7 +299,7 @@ async def _aggregate_tool_names() -> set[str]:
 
 def test_aggregate_server_discovers_all_tools() -> None:
     tool_names = asyncio.run(_aggregate_tool_names())
-    assert len(tool_names) == 56
+    assert len(tool_names) == 62
     assert {
         "search_permitting_projects",
         "get_project_permitting_timetable",

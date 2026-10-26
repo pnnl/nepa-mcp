@@ -14,6 +14,7 @@ from fastmcp.exceptions import ToolError
 ROOT = Path(__file__).resolve().parents[1]
 
 EXPECTED_TOOL_COUNTS = {
+    "nrc_adams": 6,
     "blm": 3,
     "blm_mlrs": 3,
     "census": 1,
@@ -39,6 +40,14 @@ EXPECTED_TOOL_COUNTS = {
 }
 
 EXPECTED_TOOL_NAMES = {
+    "nrc_adams": {
+        "search_nrc_adams_documents",
+        "get_nrc_adams_document",
+        "get_nrc_adams_document_text",
+        "get_nrc_adams_package",
+        "get_nrc_adams_document_file",
+        "get_nrc_adams_document_references",
+    },
     "blm": {
         "get_blm_land_use_plans_in_roi",
         "get_blm_national_monuments_in_roi",

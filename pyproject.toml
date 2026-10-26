@@ -25,13 +25,14 @@ classifiers = [
 dependencies = [
     "beautifulsoup4>=4.12.0",
     "cryptography>=50.0.0",
-    "fastmcp==3.4.4",
+    "fastmcp==3.4.10",
     "folium>=0.20.0",
     "httpx>=0.28.0",
-    "mcp>=1.28.1",
+    "mcp>=1.30.0",
     "platformdirs>=4.0.0",
     "pyproj>=3.7.0",
     "pydantic>=2.12.0",
+    "pypdf>=6.13.2",
     "python-dotenv>=1.1.0",
     "requests>=2.32.0",
     "shapely>=2.0.0",
@@ -104,6 +105,7 @@ include = [
     "/tigerweb_counties",
     "/tribal",
     "/usace",
+    "/nrc_adams",
 ]
 
 [tool.hatch.build.targets.wheel.force-include]
@@ -130,6 +132,7 @@ include = [
 "tigerweb_counties" = "nepa_mcp/_servers/tigerweb_counties"
 "tribal" = "nepa_mcp/_servers/tribal"
 "usace" = "nepa_mcp/_servers/usace"
+"nrc_adams" = "nepa_mcp/_servers/nrc_adams"
 
 [tool.ruff]
 line-length = 120

@@ -53,7 +53,8 @@ def doctor() -> int:
             continue
         missing = [variable for variable in spec.credentials if variable not in sources]
         if missing:
-            print(f"{spec.name} credentials: optional, missing {', '.join(missing)}")
+            requirement = "required for official_api; optional to toolkit" if spec.name == "nrc_adams" else "optional"
+            print(f"{spec.name} credentials: {requirement}, missing {', '.join(missing)}")
         else:
             source_names = sorted({sources[variable] for variable in spec.credentials})
             print(f"{spec.name} credentials: configured via {', '.join(source_names)}")
@@ -64,7 +65,7 @@ def configure_credentials() -> int:
     path, created = create_credential_template()
     if created:
         print(f"Created private credential template: {path}")
-        print("Add only the optional Census or EPA AQS values you plan to use.")
+        print("Add only the Census, EPA AQS, or NRC ADAMS values needed for your selected servers.")
     else:
         print(f"Credential file already exists; left unchanged: {path}")
     return 0
