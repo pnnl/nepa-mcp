@@ -42,6 +42,16 @@ Before location-scoped calls, confirm or derive latitude, longitude, and buffer 
 - Use `nrhp` for National Register of Historic Places properties.
 - Use `cfr` for current eCFR text, regulatory history, Federal Register citations, and executive orders.
 
+## Research Superfund sites
+
+Use `epa_superfund` to find Superfund sites near the project area or by name,
+state, or listing status, and to look up a site by EPA ID, SEMS id, or FRS
+registry id. For site dossiers (cleanup history, operable units, mapped
+controls, documents, contaminants, and notices), follow the
+`superfund-research` skill. ACRES Brownfields records are a different program;
+do not substitute one for the other. Listing, deletion, or construction
+completion is not a finding of clean or unrestricted land.
+
 ## Research tracked permitting projects
 
 Use `permitting_dashboard` to search dashboard-listed projects, retrieve a

@@ -70,6 +70,16 @@
         "PYTHONUNBUFFERED": "1"
       }
     },
+    "epa_superfund": {
+      "command": "nepa-mcp",
+      "args": [
+        "server",
+        "epa_superfund"
+      ],
+      "env": {
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
     "esa_ranges": {
       "command": "nepa-mcp",
       "args": [

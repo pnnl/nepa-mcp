@@ -27,6 +27,7 @@ EXPECTED_SERVERS = {
     "efh",
     "epa_acres",
     "epa_aqs",
+    "epa_superfund",
     "esa_ranges",
     "fema_nfhl",
     "gbif",
@@ -297,13 +298,15 @@ async def _aggregate_tool_names() -> set[str]:
 
 def test_aggregate_server_discovers_all_tools() -> None:
     tool_names = asyncio.run(_aggregate_tool_names())
-    assert len(tool_names) == 56
+    assert len(tool_names) == 65
     assert {
         "search_permitting_projects",
         "get_project_permitting_timetable",
         "find_permitting_milestones",
         "summarize_roi_buffer",
         "get_epa_acres_properties_in_roi",
+        "get_epa_superfund_site",
+        "get_epa_superfund_sites_in_roi",
         "get_ipac_resources_in_roi",
         "cfr_resolve_citation",
         "get_nrhp_properties_in_roi",

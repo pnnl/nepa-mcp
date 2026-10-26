@@ -252,6 +252,33 @@ def test_query_object_ids_retries_a_transient_timeout(monkeypatch) -> None:
     assert attempts == 2
 
 
+def test_query_object_ids_can_reject_redirects_without_visiting_the_target(monkeypatch) -> None:
+    ArcGISService = _arcgis_service()
+    requests_seen = []
+
+    class Redirect:
+        status_code = 302
+
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            raise AssertionError("Redirect body should not be decoded")
+
+    def fake_post(url, **kwargs):
+        requests_seen.append((url, kwargs))
+        return Redirect()
+
+    monkeypatch.setattr(requests, "post", fake_post)
+    try:
+        ArcGISService.query_object_ids("https://example.test/FeatureServer", 0, None, allow_redirects=False)
+    except RuntimeError as exc:
+        assert "redirect" in str(exc)
+    else:
+        raise AssertionError("Redirect should fail without following it")
+    assert len(requests_seen) == 1 and requests_seen[0][1]["allow_redirects"] is False
+
+
 def test_query_features_rejects_negative_source_offset() -> None:
     ArcGISService = _arcgis_service()
     try:

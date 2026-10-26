@@ -29,6 +29,7 @@ SERVER_NAMES = [
     "efh",
     "epa_acres",
     "epa_aqs",
+    "epa_superfund",
     "esa_ranges",
     "fema_nfhl",
     "gbif",

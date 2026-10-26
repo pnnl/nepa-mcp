@@ -7,7 +7,7 @@ from typing import Any
 import pytest
 import requests
 
-from nepa_mcp_common.http import UpstreamServiceError, get_json_rows, post_json
+from nepa_mcp_common.http import UpstreamServiceError, get_json, get_json_rows, post_json
 
 
 class _Response:
@@ -107,3 +107,24 @@ def test_get_json_rows_wraps_transport_failures(monkeypatch, error):
     monkeypatch.setattr(requests, "get", fail)
     with pytest.raises(UpstreamServiceError, match="request failed"):
         get_json_rows("https://example.test/rows")
+
+
+class _Redirect(_Response):
+    status_code = 302
+
+
+def test_get_helpers_pass_headers_and_reject_redirects_only_when_asked(monkeypatch):
+    observed = []
+
+    def fake_get(url, **kwargs):
+        observed.append(kwargs)
+        return _Redirect({}) if kwargs.get("allow_redirects") is False else _Response({"ok": True})
+
+    monkeypatch.setattr(requests, "get", fake_get)
+    assert get_json("https://example.test/a") == {"ok": True}
+    assert observed[-1] == {"params": None, "timeout": 20}
+    with pytest.raises(UpstreamServiceError, match="redirect"):
+        get_json("https://example.test/a", headers={"User-Agent": "x"}, allow_redirects=False)
+    assert observed[-1]["headers"] == {"User-Agent": "x"} and observed[-1]["allow_redirects"] is False
+    with pytest.raises(UpstreamServiceError, match="redirect"):
+        get_json_rows("https://example.test/rows", allow_redirects=False)

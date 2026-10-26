@@ -18,7 +18,7 @@
   <p>
   Built with<br>
   <a href="https://www.python.org/"><img alt="Python 3.12+" src="https://img.shields.io/badge/Python-3.12%2B-3776AB?style=flat-square&amp;logo=python&amp;logoColor=white" height="20"></a>
-  <a href="https://gofastmcp.com/"><img alt="FastMCP 3.4.4" src="https://img.shields.io/badge/FastMCP-3.4.4-009688?style=flat-square" height="20"></a>
+  <a href="https://gofastmcp.com/"><img alt="FastMCP 3.4.10" src="https://img.shields.io/badge/FastMCP-3.4.10-009688?style=flat-square" height="20"></a>
   <a href="https://docs.pydantic.dev/"><img alt="Pydantic 2.12+" src="https://img.shields.io/badge/Pydantic-2.12%2B-E92063?style=flat-square&amp;logo=pydantic&amp;logoColor=white" height="20"></a>
   <a href="https://shapely.readthedocs.io/"><img alt="Shapely 2.0+" src="https://img.shields.io/badge/Shapely-2.0%2B-2F6F3E?style=flat-square" height="20"></a>
   <a href="https://github.com/pnnl/nepa-mcp/blob/main/LICENSE"><img alt="BSD 3-Clause License" src="https://img.shields.io/badge/License-BSD_3--Clause-F4B942?style=flat-square" height="20"></a>
@@ -31,8 +31,8 @@ toolkit. It gives AI agents structured access to federal environmental,
 regulatory, biological, cultural, socioeconomic, and jurisdictional data used
 in NEPA screening and permitting research.
 
-The current inventory includes 23 MCP servers, 56 MCP tools, and 32 GIS
-layers. Together, the tools and layers represent **88 environmental and
+The current inventory includes 24 MCP servers, 65 MCP tools, and 32 GIS
+layers. Together, the tools and layers represent **97 environmental and
 regulatory research capabilities**. These capabilities draw on public data
 from 13 federal agencies, along with interagency and nonfederal sources.
 
@@ -113,8 +113,9 @@ new task.
 
 ## Codex Plugin
 
-The Codex plugin registers all 23 servers and includes the `nepa-screening`
-skill. If you use the plugin, do not also run `nepa-mcp configure codex`.
+The Codex plugin registers all 24 servers and includes the `nepa-screening`
+and `superfund-research` skills. If you use the plugin, do not also run
+`nepa-mcp configure codex`.
 
 Install and verify the Python runtime before adding the plugin:
 
@@ -168,7 +169,7 @@ complete 32-layer catalog, output behavior, provenance, and artifact storage.
 
 ## Credentials
 
-Credentials are not required to install NEPA MCP or use the other 20 servers.
+Credentials are not required to install NEPA MCP or use the other 22 servers.
 The Census and EPA AQS servers require credentials before they can return data:
 
 | Server | Environment variables |
@@ -201,6 +202,7 @@ Credentials are not copied into MCP client or plugin configuration, and
 | `efh` | [NOAA Fisheries](https://www.fisheries.noaa.gov/) | EFH Mapper data for EFH, HAPC, salmon, HMS, coastal pelagic species, and groundfish screening |
 | `epa_acres` | [U.S. Environmental Protection Agency](https://www.epa.gov/) | ACRES grant-reported Brownfields property records for redevelopment and site-screening context |
 | `epa_aqs` | [U.S. Environmental Protection Agency](https://www.epa.gov/) | Air Quality System monitoring data and NAAQS screening comparisons |
+| `epa_superfund` | [U.S. Environmental Protection Agency](https://www.epa.gov/) | Superfund NPL status, site/OU/institutional-control map records, SEMS contaminants and decision records, and Federal Register notices |
 | `esa_ranges` | [NOAA Fisheries, West Coast Region](https://www.fisheries.noaa.gov/about/west-coast-region) | ESA-listed salmon and steelhead ranges by HUC-12 watershed |
 | `fema_nfhl` | [Federal Emergency Management Agency](https://www.fema.gov/) | National Flood Hazard Layer flood zones, levees, and water areas |
 | `gbif` | [Global Biodiversity Information Facility](https://www.gbif.org/) and contributing dataset publishers; [U.S. Census Bureau](https://www.census.gov/) for county boundaries | Occurrence records by ROI or county; record-level publisher and license vary |

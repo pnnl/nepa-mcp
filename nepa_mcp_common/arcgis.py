@@ -49,13 +49,29 @@ class ArcGISService:
     DEFAULT_MAX_FEATURES = 10_000
 
     @staticmethod
-    def create_roi_buffer(lat: float, lon: float, buffer_miles: float) -> dict[str, Any]:
+    def create_roi_buffer(
+        lat: float,
+        lon: float,
+        buffer_miles: float,
+        *,
+        headers: dict[str, str] | None = None,
+        allow_redirects: bool = True,
+    ) -> dict[str, Any]:
         """Create a geodesic ArcGIS polygon buffer for a region of interest."""
         point = Point(latitude=float(lat), longitude=float(lon))
-        return ArcGISService.create_buffer(point, float(buffer_miles), "miles")
+        return ArcGISService.create_buffer(
+            point, float(buffer_miles), "miles", headers=headers, allow_redirects=allow_redirects
+        )
 
     @staticmethod
-    def create_buffer(point: Point, distance: float, unit: str = "miles") -> dict[str, Any]:
+    def create_buffer(
+        point: Point,
+        distance: float,
+        unit: str = "miles",
+        *,
+        headers: dict[str, str] | None = None,
+        allow_redirects: bool = True,
+    ) -> dict[str, Any]:
         """Create a geodesic ArcGIS polygon buffer around a point."""
         url = f"{ArcGISService.GEOMETRY_SERVICE}/buffer"
         params = {
@@ -75,6 +91,8 @@ class ArcGISService:
             params=params,
             timeout=ArcGISService.DEFAULT_TIMEOUT_SECONDS,
             service_name="ArcGIS GeometryServer",
+            **({"headers": headers} if headers else {}),
+            **({"allow_redirects": False} if not allow_redirects else {}),
         )
         geometries = result.get("geometries")
         if not isinstance(geometries, list) or not geometries:
@@ -166,6 +184,7 @@ class ArcGISService:
         in_sr: int = 4326,
         spatial_relation: str = "esriSpatialRelIntersects",
         max_attempts: int = 3,
+        allow_redirects: bool = True,
     ) -> list[int]:
         """Return the complete deterministic object-ID set for an ArcGIS query.
 
@@ -203,8 +222,16 @@ class ArcGISService:
 
         for attempt in range(1, max_attempts + 1):
             try:
-                response = requests.post(url, data=params, timeout=timeout, headers=headers)
+                response = requests.post(
+                    url,
+                    data=params,
+                    timeout=timeout,
+                    headers=headers,
+                    **({"allow_redirects": False} if not allow_redirects else {}),
+                )
                 response.raise_for_status()
+                if not allow_redirects and 300 <= response.status_code < 400:
+                    raise RuntimeError(f"{service_label} returned a redirect; destination was not requested")
                 payload = response.json()
                 break
             except requests.RequestException as exc:
@@ -276,6 +303,7 @@ class ArcGISService:
         result_offset: int = 0,
         extra_params: dict[str, Any] | None = None,
         max_attempts: int = 3,
+        allow_redirects: bool = True,
     ) -> ArcGISFeatureQueryResult:
         """Query ArcGIS features with pagination and defensive response handling.
 
@@ -351,8 +379,16 @@ class ArcGISService:
             }
             for attempt in range(1, max_attempts + 1):
                 try:
-                    response = requests.post(url, data=params, timeout=timeout, headers=headers)
+                    response = requests.post(
+                        url,
+                        data=params,
+                        timeout=timeout,
+                        headers=headers,
+                        **({"allow_redirects": False} if not allow_redirects else {}),
+                    )
                     response.raise_for_status()
+                    if not allow_redirects and 300 <= response.status_code < 400:
+                        raise RuntimeError(f"{service_label} returned a redirect; destination was not requested")
                     payload = response.json()
                     break
                 except requests.RequestException as exc:

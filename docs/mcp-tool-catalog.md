@@ -1,6 +1,6 @@
 # MCP Tool Catalog
 
-NEPA MCP provides 23 independent servers with 56 tools. Use this catalog to choose the smallest set of servers needed for a workflow.
+NEPA MCP provides 24 independent servers with 65 tools. Use this catalog to choose the smallest set of servers needed for a workflow.
 
 This file is generated from the server registry and each server's live MCP `tools/list` contract. Do not edit it manually. Regenerate it with `uv run python scripts/generate_tool_catalog.py`; add `--check` to verify it without writing.
 
@@ -28,6 +28,15 @@ This file is generated from the server registry and each server's live MCP `tool
 | `epa_aqs` | `analyze_epa_aqs_air_quality_baseline` | Analyze EPA AQS air quality baseline data for NEPA screening. |
 | `epa_aqs` | `get_epa_aqs_air_quality_monitors` | Identify EPA air quality monitoring stations within a region of interest. |
 | `epa_aqs` | `get_epa_aqs_annual_air_quality` | Get annual air quality statistics for criteria pollutants in a region. |
+| `epa_superfund` | `get_epa_superfund_cleanup_actions` | Retrieve a Superfund site's NPL milestones, recorded decision documents by OU, and Federal Register actions. |
+| `epa_superfund` | `get_epa_superfund_contaminants` | List a Superfund site's published contaminant, media, OU, and decision-document associations. |
+| `epa_superfund` | `get_epa_superfund_documents` | List official Superfund site document references: NPL notices, SEMS decisions, and Federal Register documents. |
+| `epa_superfund` | `get_epa_superfund_institutional_controls` | List a Superfund site's mapped institutional-control boundary records, paged independently. |
+| `epa_superfund` | `get_epa_superfund_operable_units` | List a Superfund site's operable units from SEMS decision records and the OU map layer. |
+| `epa_superfund` | `get_epa_superfund_public_notices` | Retrieve Federal Register notices naming a Superfund site, with comment close dates and dockets. |
+| `epa_superfund` | `get_epa_superfund_site` | Retrieve one Superfund site's identity, per-source listing status, milestones, and mapped evidence. |
+| `epa_superfund` | `get_epa_superfund_sites_in_roi` | Find Superfund sites whose NPL status point or total-site polygon intersects a region of interest. |
+| `epa_superfund` | `search_epa_superfund_sites` | Search EPA Superfund site records by name, city, county, state, or NPL listing status. |
 | `esa_ranges` | `get_esa_species_ranges_in_roi` | Query NOAA for ESA-listed species ranges within the ROI. |
 | `fema_nfhl` | `analyze_fema_nfhl_flood_hazard_screening` | Screen FEMA NFHL flood-hazard layers for a location. |
 | `fema_nfhl` | `get_fema_nfhl_flood_zones_in_roi` | Query FEMA flood hazard zones within a radius of a location. |
