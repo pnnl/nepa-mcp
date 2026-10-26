@@ -20,6 +20,7 @@ from nepa_mcp.registry import CREDENTIAL_VARIABLES, SERVER_SPECS, server_entrypo
 
 ROOT = Path(__file__).resolve().parents[1]
 EXPECTED_SERVERS = {
+    "usace_fuds",
     "blm",
     "blm_mlrs",
     "census",
@@ -297,7 +298,7 @@ async def _aggregate_tool_names() -> set[str]:
 
 def test_aggregate_server_discovers_all_tools() -> None:
     tool_names = asyncio.run(_aggregate_tool_names())
-    assert len(tool_names) == 56
+    assert len(tool_names) == 61
     assert {
         "search_permitting_projects",
         "get_project_permitting_timetable",

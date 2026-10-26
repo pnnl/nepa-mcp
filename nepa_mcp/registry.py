@@ -14,6 +14,9 @@ class ServerSpec:
 
 
 SERVER_SPECS = (
+    ServerSpec(
+        "usace_fuds", "USACE FUDS properties, restoration projects, munitions response areas, and program offices"
+    ),
     ServerSpec("blm", "BLM land use plans, wilderness areas, and national monuments"),
     ServerSpec("blm_mlrs", "BLM MLRS authorizations, mineral operations, and energy leases"),
     ServerSpec("census", "Census ACS socioeconomic indicators", ("CENSUS_API_KEY",)),

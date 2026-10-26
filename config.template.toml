@@ -113,3 +113,8 @@ env = { PYTHONUNBUFFERED = "1" }
 command = "nepa-mcp"
 args = ["server", "usace"]
 env = { PYTHONUNBUFFERED = "1" }
+
+[mcp_servers.usace_fuds]
+command = "nepa-mcp"
+args = ["server", "usace_fuds"]
+env = { PYTHONUNBUFFERED = "1" }

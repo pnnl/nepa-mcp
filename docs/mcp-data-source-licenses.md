@@ -1,7 +1,7 @@
 # MCP Data Source Licenses
 
 This reference consolidates data-source license notes for the current flat
-23-server repository. It is a public-release aid, not legal advice. Verify final
+24-server repository. It is a public-release aid, not legal advice. Verify final
 license determinations before publishing or redistributing derived datasets.
 
 | Server | Agency / Publisher | Dataset / Service | Primary endpoint | Auth required | License / terms signal | Risk flag | Notes |
@@ -42,3 +42,12 @@ license determinations before publishing or redistributing derived datasets.
 - Confirm whether NOAA Fisheries ArcGIS service pages expose explicit item-level terms beyond general federal data status.
 - Confirm current FEMA NFHL terms for the ArcGIS MapServer specifically, separate from OpenFEMA API terms.
 - Preserve source URLs, retrieval dates, and any upstream warnings when generating public-facing reports from tool outputs.
+
+## USACE FUDS
+
+`usace_fuds` uses the public USACE FUDS GIS MapServer layers 1, 2, 3, 4, and 9.
+The checked service publishes no additional layer copyright text. Federal
+program data remain subject to the source disclaimers; screening is not a
+hazard, ownership, suitability, or legal determination. No credentials are
+required. Source URLs, fiscal years, failures, and coverage limits are returned.
+See [FUDS source behavior](usace-fuds.md).

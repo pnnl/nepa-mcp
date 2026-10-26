@@ -1,0 +1,217 @@
+{
+  "displayFieldName": "FEATURENAME",
+  "fieldAliases": {
+    "OBJECTID": "ObjectID",
+    "CLOSESTCITY": "Closest City to FUDS",
+    "CONGRESSIONALDISTRICT": "Congressional District",
+    "COUNTY": "County Name",
+    "CURRENTOWNER": "Current Property Owner",
+    "DODFUDSPROPERTYIDPK": "Primary Key Identifier",
+    "ELIGIBILITY": "Eligibility of FUDS Property",
+    "EMSMGMTACTIONPLANLINK": "Link to Executive Management System Management Action Plan",
+    "EPAREGION": "Environmental Protection Agency Region",
+    "FEATUREDESCRIPTION": "Feature Description",
+    "FEATURENAME": "Feature Name",
+    "FUDSINSTALLATIONID": "FUDS Installation ID",
+    "FUDSUNIQUEPROPERTYNUMBER": "FUDS Unique Property Number",
+    "HAS_PROJECTS": "Does the FUDS Property have projects?",
+    "LATITUDE": "Latitude (dd)",
+    "LONGITUDE": "Longitude (dd)",
+    "STATE": "State or Territory",
+    "STATUS": "Property Status",
+    "STATUSCODE": "National Priorities List Status Code",
+    "USACEDISTRICT": "USACE District",
+    "FISCALYEAR": "Data Fiscal Year",
+    "USACEDIVISION": "USACE Division",
+    "SE_ANNO_CAD_DATA": "SE_ANNO_CAD_DATA"
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "ObjectID"
+    },
+    {
+      "name": "CLOSESTCITY",
+      "type": "esriFieldTypeString",
+      "alias": "Closest City to FUDS",
+      "length": 255
+    },
+    {
+      "name": "CONGRESSIONALDISTRICT",
+      "type": "esriFieldTypeString",
+      "alias": "Congressional District",
+      "length": 2
+    },
+    {
+      "name": "COUNTY",
+      "type": "esriFieldTypeString",
+      "alias": "County Name",
+      "length": 255
+    },
+    {
+      "name": "CURRENTOWNER",
+      "type": "esriFieldTypeString",
+      "alias": "Current Property Owner",
+      "length": 3000
+    },
+    {
+      "name": "DODFUDSPROPERTYIDPK",
+      "type": "esriFieldTypeString",
+      "alias": "Primary Key Identifier",
+      "length": 40
+    },
+    {
+      "name": "ELIGIBILITY",
+      "type": "esriFieldTypeString",
+      "alias": "Eligibility of FUDS Property",
+      "length": 100
+    },
+    {
+      "name": "EMSMGMTACTIONPLANLINK",
+      "type": "esriFieldTypeString",
+      "alias": "Link to Executive Management System Management Action Plan",
+      "length": 255
+    },
+    {
+      "name": "EPAREGION",
+      "type": "esriFieldTypeString",
+      "alias": "Environmental Protection Agency Region",
+      "length": 255
+    },
+    {
+      "name": "FEATUREDESCRIPTION",
+      "type": "esriFieldTypeString",
+      "alias": "Feature Description",
+      "length": 1073741822
+    },
+    {
+      "name": "FEATURENAME",
+      "type": "esriFieldTypeString",
+      "alias": "Feature Name",
+      "length": 80
+    },
+    {
+      "name": "FUDSINSTALLATIONID",
+      "type": "esriFieldTypeString",
+      "alias": "FUDS Installation ID",
+      "length": 15
+    },
+    {
+      "name": "FUDSUNIQUEPROPERTYNUMBER",
+      "type": "esriFieldTypeString",
+      "alias": "FUDS Unique Property Number",
+      "length": 255
+    },
+    {
+      "name": "HAS_PROJECTS",
+      "type": "esriFieldTypeString",
+      "alias": "Does the FUDS Property have projects?",
+      "length": 3
+    },
+    {
+      "name": "LATITUDE",
+      "type": "esriFieldTypeDouble",
+      "alias": "Latitude (dd)"
+    },
+    {
+      "name": "LONGITUDE",
+      "type": "esriFieldTypeDouble",
+      "alias": "Longitude (dd)"
+    },
+    {
+      "name": "STATE",
+      "type": "esriFieldTypeString",
+      "alias": "State or Territory",
+      "length": 3
+    },
+    {
+      "name": "STATUS",
+      "type": "esriFieldTypeString",
+      "alias": "Property Status",
+      "length": 255
+    },
+    {
+      "name": "STATUSCODE",
+      "type": "esriFieldTypeString",
+      "alias": "National Priorities List Status Code",
+      "length": 255
+    },
+    {
+      "name": "USACEDISTRICT",
+      "type": "esriFieldTypeString",
+      "alias": "USACE District",
+      "length": 255
+    },
+    {
+      "name": "FISCALYEAR",
+      "type": "esriFieldTypeString",
+      "alias": "Data Fiscal Year",
+      "length": 4
+    },
+    {
+      "name": "USACEDIVISION",
+      "type": "esriFieldTypeString",
+      "alias": "USACE Division",
+      "length": 20
+    },
+    {
+      "name": "SE_ANNO_CAD_DATA",
+      "type": "esriFieldTypeBlob",
+      "alias": "SE_ANNO_CAD_DATA"
+    }
+  ],
+  "features": [
+    {
+      "attributes": {
+        "OBJECTID": 1,
+        "CLOSESTCITY": "HATTIESBURG",
+        "CONGRESSIONALDISTRICT": "04",
+        "COUNTY": "FORREST",
+        "DODFUDSPROPERTYIDPK": "A04MS0001",
+        "ELIGIBILITY": "Eligible",
+        "EMSMGMTACTIONPLANLINK": "https://fudsportal.usace.army.mil/ems/inventory/map?id=61977",
+        "EPAREGION": "04",
+        "FEATURENAME": "SOUTHEAST AIR DEPOT",
+        "FUDSINSTALLATIONID": "MS49799F000100",
+        "FUDSUNIQUEPROPERTYNUMBER": "A04MS0001",
+        "HAS_PROJECTS": "no",
+        "LATITUDE": 31.26444444,
+        "LONGITUDE": -89.25194444,
+        "STATE": "ms",
+        "STATUS": "Properties without projects",
+        "STATUSCODE": "Not on the NPL",
+        "USACEDISTRICT": "sas",
+        "FISCALYEAR": "2024",
+        "USACEDIVISION": "sad",
+        "SE_ANNO_CAD_DATA": null
+      }
+    },
+    {
+      "attributes": {
+        "OBJECTID": 2,
+        "CLOSESTCITY": "MEEHAN",
+        "CONGRESSIONALDISTRICT": "03",
+        "COUNTY": "LAUDERDALE",
+        "DODFUDSPROPERTYIDPK": "A04MS0002",
+        "ELIGIBILITY": "Eligible",
+        "EMSMGMTACTIONPLANLINK": "https://fudsportal.usace.army.mil/ems/inventory/map?id=62561",
+        "EPAREGION": "04",
+        "FEATURENAME": "MEEHAN RANGE",
+        "FUDSINSTALLATIONID": "MS49799F743800",
+        "FUDSUNIQUEPROPERTYNUMBER": "A04MS0002",
+        "HAS_PROJECTS": "yes",
+        "LATITUDE": 32.40611111,
+        "LONGITUDE": -88.87583333,
+        "STATE": "ms",
+        "STATUS": "Properties with projects",
+        "STATUSCODE": "Not on the NPL",
+        "USACEDISTRICT": "sas",
+        "FISCALYEAR": "2024",
+        "USACEDIVISION": "sad",
+        "SE_ANNO_CAD_DATA": null
+      }
+    }
+  ],
+  "exceededTransferLimit": true
+}

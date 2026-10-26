@@ -22,6 +22,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 
 SERVER_NAMES = [
+    "usace_fuds",
     "blm",
     "blm_mlrs",
     "census",

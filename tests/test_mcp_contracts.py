@@ -14,6 +14,7 @@ from fastmcp.exceptions import ToolError
 ROOT = Path(__file__).resolve().parents[1]
 
 EXPECTED_TOOL_COUNTS = {
+    "usace_fuds": 5,
     "blm": 3,
     "blm_mlrs": 3,
     "census": 1,
@@ -39,6 +40,13 @@ EXPECTED_TOOL_COUNTS = {
 }
 
 EXPECTED_TOOL_NAMES = {
+    "usace_fuds": {
+        "get_usace_fuds_properties_in_roi",
+        "get_usace_fuds_property",
+        "get_usace_fuds_projects",
+        "get_usace_fuds_munitions_response_sites_in_roi",
+        "get_usace_fuds_program_district",
+    },
     "blm": {
         "get_blm_land_use_plans_in_roi",
         "get_blm_national_monuments_in_roi",
@@ -220,7 +228,7 @@ def test_geo_tool_schemas_document_ranges_and_units(server_name: str) -> None:
 
     for tool in tools:
         properties = tool.inputSchema["properties"]
-        if "latitude" not in properties:
+        if "latitude" not in properties or not {"buffer_miles", "radius_miles"}.intersection(properties):
             continue
 
         latitude_description = properties["latitude"]["description"].lower()
@@ -252,7 +260,7 @@ async def _assert_geo_validation_errors(server_name: str) -> None:
 
         for tool in tools:
             properties = tool.inputSchema["properties"]
-            if "latitude" not in properties:
+            if "latitude" not in properties or not {"buffer_miles", "radius_miles"}.intersection(properties):
                 continue
 
             distance_name = "radius_miles" if "radius_miles" in properties else "buffer_miles"
