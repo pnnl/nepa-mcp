@@ -1,11 +1,16 @@
 # MCP Tool Catalog
 
-NEPA MCP provides 23 independent servers with 56 tools. Use this catalog to choose the smallest set of servers needed for a workflow.
+NEPA MCP provides 24 independent servers with 61 tools. Use this catalog to choose the smallest set of servers needed for a workflow.
 
 This file is generated from the server registry and each server's live MCP `tools/list` contract. Do not edit it manually. Regenerate it with `uv run python scripts/generate_tool_catalog.py`; add `--check` to verify it without writing.
 
 | Server | Tool | Purpose |
 |---|---|---|
+| `usace_fuds` | `get_usace_fuds_munitions_response_sites_in_roi` | Find mapped FUDS munitions response areas; polygons are research leads, not individual hazard locations. |
+| `usace_fuds` | `get_usace_fuds_program_district` | Resolve a recorded property assignment or coordinate matches in FUDS program districts. |
+| `usace_fuds` | `get_usace_fuds_projects` | List FUDS restoration projects by property key, preserving dates, costs, and priority context. |
+| `usace_fuds` | `get_usace_fuds_properties_in_roi` | Find published FUDS property points and intersecting polygons; deduplicate before pagination. |
+| `usace_fuds` | `get_usace_fuds_property` | Retrieve FUDS property records by public number, preserving source conflicts and boundary coverage. |
 | `blm` | `get_blm_land_use_plans_in_roi` | Identify BLM approved land use plans intersecting the ROI. |
 | `blm` | `get_blm_national_monuments_in_roi` | Identify BLM National Monuments and NCAs intersecting the ROI. |
 | `blm` | `get_blm_wilderness_areas_in_roi` | Identify BLM designated wilderness areas intersecting the ROI. |

@@ -75,3 +75,9 @@ Most tools use public APIs. Census requires `CENSUS_API_KEY`; EPA AQS requires `
 ## Reporting
 
 Keep retrieved facts tied to their source systems and observation dates. Distinguish screening indicators from legal conclusions, formal agency determinations, consultation requirements, and professional judgments. Explain geographic coverage limitations when a no-hit result may mean the queried service does not cover the project location.
+
+## Research Formerly Used Defense Sites
+
+Use `usace_fuds` and the `fuds-research` skill for FUDS property dossiers,
+restoration projects, mapped munitions response areas, and FUDS program offices.
+Regulatory and Civil Works districts do not establish FUDS responsibility.

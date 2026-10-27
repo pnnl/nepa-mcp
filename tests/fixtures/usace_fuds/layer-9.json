@@ -1,0 +1,314 @@
+{
+  "displayFieldName": "DIST",
+  "fieldAliases": {
+    "OBJECTID": "OBJECTID",
+    "DIST": "DIST",
+    "MIL_DIST": "MIL_DIST",
+    "SUBCOM_ID": "SUBCOM_ID",
+    "DIV": "DIV",
+    "MIL_DIV": "MIL_DIV",
+    "MACOM_ID": "MACOM_ID",
+    "PAO_PHONE": "PAO_PHONE",
+    "LEVEL_": "Level",
+    "OFFICE": "Office",
+    "US_MAIL_ADDRESS": "US_Mail_Address",
+    "CITY": "City",
+    "STATE": "State",
+    "ZIP": "Zip",
+    "LAT": "Lat",
+    "LONG_": "Long",
+    "PAO_PHONE_1": "PAO_Phone",
+    "WEB": "Web",
+    "PAO_EMAIL": "PAO_Email",
+    "DIV_STATEMENT": "Div_Statement",
+    "DIV_OFFICE": "Div_Office",
+    "DIV_SYMBOL": "Div_Symbol",
+    "DIV_US_MAIL": "Div_US_Mail",
+    "DIV_CITY": "Div_City",
+    "DIV_STATE": "Div_State",
+    "DIV_ZIP": "Div_Zip",
+    "DIV_LAT": "Div_Lat",
+    "DIV_LONG": "Div_Long",
+    "DIV_PAO_PHONE": "Div_PAO_Phone",
+    "DIV_WEB": "Div_Web",
+    "DIV_EMAIL": "Div_Email",
+    "SE_ANNO_CAD_DATA": "SE_ANNO_CAD_DATA",
+    "SHAPE_Length": "SHAPE_Length",
+    "SHAPE_Area": "SHAPE_Area"
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID"
+    },
+    {
+      "name": "DIST",
+      "type": "esriFieldTypeString",
+      "alias": "DIST",
+      "length": 8
+    },
+    {
+      "name": "MIL_DIST",
+      "type": "esriFieldTypeString",
+      "alias": "MIL_DIST",
+      "length": 50
+    },
+    {
+      "name": "SUBCOM_ID",
+      "type": "esriFieldTypeDouble",
+      "alias": "SUBCOM_ID"
+    },
+    {
+      "name": "DIV",
+      "type": "esriFieldTypeString",
+      "alias": "DIV",
+      "length": 9
+    },
+    {
+      "name": "MIL_DIV",
+      "type": "esriFieldTypeString",
+      "alias": "MIL_DIV",
+      "length": 50
+    },
+    {
+      "name": "MACOM_ID",
+      "type": "esriFieldTypeDouble",
+      "alias": "MACOM_ID"
+    },
+    {
+      "name": "PAO_PHONE",
+      "type": "esriFieldTypeString",
+      "alias": "PAO_PHONE",
+      "length": 12
+    },
+    {
+      "name": "LEVEL_",
+      "type": "esriFieldTypeString",
+      "alias": "Level",
+      "length": 1073741822
+    },
+    {
+      "name": "OFFICE",
+      "type": "esriFieldTypeString",
+      "alias": "Office",
+      "length": 1073741822
+    },
+    {
+      "name": "US_MAIL_ADDRESS",
+      "type": "esriFieldTypeString",
+      "alias": "US_Mail_Address",
+      "length": 1073741822
+    },
+    {
+      "name": "CITY",
+      "type": "esriFieldTypeString",
+      "alias": "City",
+      "length": 1073741822
+    },
+    {
+      "name": "STATE",
+      "type": "esriFieldTypeString",
+      "alias": "State",
+      "length": 1073741822
+    },
+    {
+      "name": "ZIP",
+      "type": "esriFieldTypeString",
+      "alias": "Zip",
+      "length": 1073741822
+    },
+    {
+      "name": "LAT",
+      "type": "esriFieldTypeDouble",
+      "alias": "Lat"
+    },
+    {
+      "name": "LONG_",
+      "type": "esriFieldTypeDouble",
+      "alias": "Long"
+    },
+    {
+      "name": "PAO_PHONE_1",
+      "type": "esriFieldTypeString",
+      "alias": "PAO_Phone",
+      "length": 1073741822
+    },
+    {
+      "name": "WEB",
+      "type": "esriFieldTypeString",
+      "alias": "Web",
+      "length": 1073741822
+    },
+    {
+      "name": "PAO_EMAIL",
+      "type": "esriFieldTypeString",
+      "alias": "PAO_Email",
+      "length": 1073741822
+    },
+    {
+      "name": "DIV_STATEMENT",
+      "type": "esriFieldTypeString",
+      "alias": "Div_Statement",
+      "length": 1073741822
+    },
+    {
+      "name": "DIV_OFFICE",
+      "type": "esriFieldTypeString",
+      "alias": "Div_Office",
+      "length": 1073741822
+    },
+    {
+      "name": "DIV_SYMBOL",
+      "type": "esriFieldTypeString",
+      "alias": "Div_Symbol",
+      "length": 1073741822
+    },
+    {
+      "name": "DIV_US_MAIL",
+      "type": "esriFieldTypeString",
+      "alias": "Div_US_Mail",
+      "length": 1073741822
+    },
+    {
+      "name": "DIV_CITY",
+      "type": "esriFieldTypeString",
+      "alias": "Div_City",
+      "length": 1073741822
+    },
+    {
+      "name": "DIV_STATE",
+      "type": "esriFieldTypeString",
+      "alias": "Div_State",
+      "length": 1073741822
+    },
+    {
+      "name": "DIV_ZIP",
+      "type": "esriFieldTypeString",
+      "alias": "Div_Zip",
+      "length": 1073741822
+    },
+    {
+      "name": "DIV_LAT",
+      "type": "esriFieldTypeDouble",
+      "alias": "Div_Lat"
+    },
+    {
+      "name": "DIV_LONG",
+      "type": "esriFieldTypeDouble",
+      "alias": "Div_Long"
+    },
+    {
+      "name": "DIV_PAO_PHONE",
+      "type": "esriFieldTypeString",
+      "alias": "Div_PAO_Phone",
+      "length": 1073741822
+    },
+    {
+      "name": "DIV_WEB",
+      "type": "esriFieldTypeString",
+      "alias": "Div_Web",
+      "length": 1073741822
+    },
+    {
+      "name": "DIV_EMAIL",
+      "type": "esriFieldTypeString",
+      "alias": "Div_Email",
+      "length": 1073741822
+    },
+    {
+      "name": "SE_ANNO_CAD_DATA",
+      "type": "esriFieldTypeBlob",
+      "alias": "SE_ANNO_CAD_DATA"
+    },
+    {
+      "name": "SHAPE_Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "SHAPE_Length"
+    },
+    {
+      "name": "SHAPE_Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "SHAPE_Area"
+    }
+  ],
+  "features": [
+    {
+      "attributes": {
+        "OBJECTID": 1,
+        "DIST": "LRL",
+        "MIL_DIST": "Louisville District",
+        "SUBCOM_ID": 42519,
+        "DIV": "LRD",
+        "MIL_DIV": "Great Lakes, Ohio River Division",
+        "MACOM_ID": 41501,
+        "PAO_PHONE": "502-315-6768",
+        "LEVEL_": null,
+        "OFFICE": "Louisville",
+        "US_MAIL_ADDRESS": "600 Dr. Martin Luther King Pl",
+        "CITY": "Louisville",
+        "STATE": "KY",
+        "ZIP": "40202",
+        "LAT": 38.2486,
+        "LONG_": -85.7622,
+        "PAO_PHONE_1": "502-315-6766",
+        "WEB": "https://www.lrl.usace.army.mil",
+        "PAO_EMAIL": "lrl-pagemaster-pa@usace.army.mil",
+        "DIV_STATEMENT": "The Louisville District is within the Great Lakes and Ohio River Division.",
+        "DIV_OFFICE": "Great Lakes and Ohio River",
+        "DIV_SYMBOL": "LRD",
+        "DIV_US_MAIL": "550 Main St Room 100032",
+        "DIV_CITY": "Cincinnati",
+        "DIV_STATE": "OH",
+        "DIV_ZIP": "45202-3222",
+        "DIV_LAT": 39.1024,
+        "DIV_LONG": -84.5094,
+        "DIV_PAO_PHONE": "513-684-3010",
+        "DIV_WEB": "https://www.lrd.usace.army.mil",
+        "DIV_EMAIL": "dll-lrdor-dd-p@usace.army.mil",
+        "SE_ANNO_CAD_DATA": null,
+        "SHAPE_Length": 65.66759387322749,
+        "SHAPE_Area": 83.81240647080203
+      }
+    },
+    {
+      "attributes": {
+        "OBJECTID": 2,
+        "DIST": "NAB",
+        "MIL_DIST": "Baltimore District",
+        "SUBCOM_ID": 42503,
+        "DIV": "NAD",
+        "MIL_DIV": "North Atlantic Division",
+        "MACOM_ID": 41503,
+        "PAO_PHONE": "410-962-2809",
+        "LEVEL_": null,
+        "OFFICE": "Baltimore",
+        "US_MAIL_ADDRESS": "2 Hopkins Plz",
+        "CITY": "Baltimore",
+        "STATE": "MD",
+        "ZIP": "21201",
+        "LAT": 39.289100000000005,
+        "LONG_": -76.6172,
+        "PAO_PHONE_1": "410-962-2809 \u00a0",
+        "WEB": "https://www.nab.usace.army.mil",
+        "PAO_EMAIL": "cenab-cc@usace.army.mil",
+        "DIV_STATEMENT": "The Baltimore District is within the North Atlantic Division.",
+        "DIV_OFFICE": "North Atlantic",
+        "DIV_SYMBOL": "NAD",
+        "DIV_US_MAIL": "302 General Lee Ave",
+        "DIV_CITY": "Fort Hamilton",
+        "DIV_STATE": "NY",
+        "DIV_ZIP": "11252-6700",
+        "DIV_LAT": 40.6077,
+        "DIV_LONG": -74.0266,
+        "DIV_PAO_PHONE": "347-370-4548",
+        "DIV_WEB": "https://www.nad.usace.army.mil",
+        "DIV_EMAIL": "DLL-CENADO-PA@usace.army.mil",
+        "SE_ANNO_CAD_DATA": null,
+        "SHAPE_Length": 40.2831202102513,
+        "SHAPE_Area": 28.065625826604283
+      }
+    }
+  ],
+  "exceededTransferLimit": true
+}

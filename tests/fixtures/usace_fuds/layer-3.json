@@ -1,0 +1,227 @@
+{
+  "displayFieldName": "featureName",
+  "fieldAliases": {
+    "OBJECTID": "OBJECTID",
+    "FEATUREDESCRIPTION": "Feature Description",
+    "FEATURENAME": "Feature Name",
+    "FUDSINSTALLATIONID": "FUDS Installation ID",
+    "MEDIAID": "Media Identifier",
+    "SDSID": "Globally Unique Identifier",
+    "FISCALYEAR": "Fiscal Year of the Data",
+    "USACEDIVISION": "USACE Division",
+    "USACEDISTRICT": "USACE District",
+    "DERPPROGRAM": "Defense Environmental Restoration Program (DERP)",
+    "DODFORMERLYUSEDDEFENSESITENAME": "DoD Formerly Used Defense Site (FUDS) Name.",
+    "ENVIRONMENTALRESTORATIONSIIDPK": "Primary Key Identifier",
+    "ENVRESTORATIONSITEMRAIDFK": "Munitions Response Area (MRA) Foreign Key Identifier",
+    "FUDSPROPERTYID": "Unique ID for a FUDS Property",
+    "FUDSSITEID": "FUDS Site ID",
+    "OFFICIALSITENAME": "Official Site Identifier",
+    "PROJECTCATEGORY": "Project Category",
+    "PROJECTNUMBER": "Project Number",
+    "PROJECTSTATUS": "Project Status",
+    "RELATIVEPRIORITY": "Relative Priority",
+    "STATEORTERRITORYNAME": "State or Territory Name",
+    "SE_ANNO_CAD_DATA": "SE_ANNO_CAD_DATA",
+    "SHAPE_Area": "SHAPE.AREA",
+    "SHAPE_Length": "SHAPE.LEN"
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID"
+    },
+    {
+      "name": "FEATUREDESCRIPTION",
+      "type": "esriFieldTypeString",
+      "alias": "Feature Description",
+      "length": 2000
+    },
+    {
+      "name": "FEATURENAME",
+      "type": "esriFieldTypeString",
+      "alias": "Feature Name",
+      "length": 80
+    },
+    {
+      "name": "FUDSINSTALLATIONID",
+      "type": "esriFieldTypeString",
+      "alias": "FUDS Installation ID",
+      "length": 15
+    },
+    {
+      "name": "MEDIAID",
+      "type": "esriFieldTypeString",
+      "alias": "Media Identifier",
+      "length": 40
+    },
+    {
+      "name": "SDSID",
+      "type": "esriFieldTypeGUID",
+      "alias": "Globally Unique Identifier",
+      "length": 38
+    },
+    {
+      "name": "FISCALYEAR",
+      "type": "esriFieldTypeInteger",
+      "alias": "Fiscal Year of the Data"
+    },
+    {
+      "name": "USACEDIVISION",
+      "type": "esriFieldTypeString",
+      "alias": "USACE Division",
+      "length": 20
+    },
+    {
+      "name": "USACEDISTRICT",
+      "type": "esriFieldTypeString",
+      "alias": "USACE District",
+      "length": 50
+    },
+    {
+      "name": "DERPPROGRAM",
+      "type": "esriFieldTypeString",
+      "alias": "Defense Environmental Restoration Program (DERP)",
+      "length": 4
+    },
+    {
+      "name": "DODFORMERLYUSEDDEFENSESITENAME",
+      "type": "esriFieldTypeString",
+      "alias": "DoD Formerly Used Defense Site (FUDS) Name.",
+      "length": 255
+    },
+    {
+      "name": "ENVIRONMENTALRESTORATIONSIIDPK",
+      "type": "esriFieldTypeString",
+      "alias": "Primary Key Identifier",
+      "length": 40
+    },
+    {
+      "name": "ENVRESTORATIONSITEMRAIDFK",
+      "type": "esriFieldTypeString",
+      "alias": "Munitions Response Area (MRA) Foreign Key Identifier",
+      "length": 20
+    },
+    {
+      "name": "FUDSPROPERTYID",
+      "type": "esriFieldTypeString",
+      "alias": "Unique ID for a FUDS Property",
+      "length": 11
+    },
+    {
+      "name": "FUDSSITEID",
+      "type": "esriFieldTypeString",
+      "alias": "FUDS Site ID",
+      "length": 2
+    },
+    {
+      "name": "OFFICIALSITENAME",
+      "type": "esriFieldTypeString",
+      "alias": "Official Site Identifier",
+      "length": 100
+    },
+    {
+      "name": "PROJECTCATEGORY",
+      "type": "esriFieldTypeString",
+      "alias": "Project Category",
+      "length": 7
+    },
+    {
+      "name": "PROJECTNUMBER",
+      "type": "esriFieldTypeString",
+      "alias": "Project Number",
+      "length": 13
+    },
+    {
+      "name": "PROJECTSTATUS",
+      "type": "esriFieldTypeString",
+      "alias": "Project Status",
+      "length": 100
+    },
+    {
+      "name": "RELATIVEPRIORITY",
+      "type": "esriFieldTypeString",
+      "alias": "Relative Priority",
+      "length": 3
+    },
+    {
+      "name": "STATEORTERRITORYNAME",
+      "type": "esriFieldTypeString",
+      "alias": "State or Territory Name",
+      "length": 3
+    },
+    {
+      "name": "SE_ANNO_CAD_DATA",
+      "type": "esriFieldTypeBlob",
+      "alias": "SE_ANNO_CAD_DATA"
+    },
+    {
+      "name": "SHAPE_Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "SHAPE.AREA"
+    },
+    {
+      "name": "SHAPE_Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "SHAPE.LEN"
+    }
+  ],
+  "features": [
+    {
+      "attributes": {
+        "OBJECTID": 1,
+        "FEATURENAME": "Rocket Range",
+        "FUDSINSTALLATIONID": "CA99799F755700",
+        "MEDIAID": null,
+        "SDSID": null,
+        "FISCALYEAR": 2024,
+        "USACEDIVISION": "spd",
+        "USACEDISTRICT": "spl",
+        "DERPPROGRAM": "mmrp",
+        "DODFORMERLYUSEDDEFENSESITENAME": "HOLTVILLE ROCKET TARGET 1R (#94)",
+        "ENVIRONMENTALRESTORATIONSIIDPK": "01",
+        "ENVRESTORATIONSITEMRAIDFK": "J09CA017201R01",
+        "FUDSPROPERTYID": "J09CA0172",
+        "FUDSSITEID": "01",
+        "OFFICIALSITENAME": null,
+        "PROJECTCATEGORY": null,
+        "PROJECTNUMBER": "J09CA017201",
+        "PROJECTSTATUS": "investigation",
+        "RELATIVEPRIORITY": null,
+        "STATEORTERRITORYNAME": "ca",
+        "SE_ANNO_CAD_DATA": null,
+        "SHAPE_Area": 0.003108059128856964,
+        "SHAPE_Length": 0.2591000515803801
+      }
+    },
+    {
+      "attributes": {
+        "OBJECTID": 2,
+        "FEATURENAME": "Multiple Use Range Complex",
+        "FUDSINSTALLATIONID": "CA99799F540400",
+        "MEDIAID": null,
+        "SDSID": null,
+        "FISCALYEAR": 2024,
+        "USACEDIVISION": "spd",
+        "USACEDISTRICT": "spl",
+        "DERPPROGRAM": "mmrp",
+        "DODFORMERLYUSEDDEFENSESITENAME": "CAMP PILOT KNOB",
+        "ENVIRONMENTALRESTORATIONSIIDPK": "01",
+        "ENVRESTORATIONSITEMRAIDFK": "J09CA028801R01",
+        "FUDSPROPERTYID": "J09CA0288",
+        "FUDSSITEID": "01",
+        "OFFICIALSITENAME": null,
+        "PROJECTCATEGORY": null,
+        "PROJECTNUMBER": "J09CA028801",
+        "PROJECTSTATUS": "investigation",
+        "RELATIVEPRIORITY": null,
+        "STATEORTERRITORYNAME": "ca",
+        "SE_ANNO_CAD_DATA": null,
+        "SHAPE_Area": 0.0008643304745983308,
+        "SHAPE_Length": 0.15432531264201507
+      }
+    }
+  ],
+  "exceededTransferLimit": true
+}

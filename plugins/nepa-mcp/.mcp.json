@@ -229,6 +229,16 @@
       "env": {
         "PYTHONUNBUFFERED": "1"
       }
+    },
+    "usace_fuds": {
+      "command": "nepa-mcp",
+      "args": [
+        "server",
+        "usace_fuds"
+      ],
+      "env": {
+        "PYTHONUNBUFFERED": "1"
+      }
     }
   }
 }
