@@ -229,6 +229,16 @@
       "env": {
         "PYTHONUNBUFFERED": "1"
       }
+    },
+    "nrc_adams": {
+      "command": "nepa-mcp",
+      "args": [
+        "server",
+        "nrc_adams"
+      ],
+      "env": {
+        "PYTHONUNBUFFERED": "1"
+      }
     }
   }
 }

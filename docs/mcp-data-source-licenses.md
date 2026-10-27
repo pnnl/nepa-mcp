@@ -1,7 +1,7 @@
 # MCP Data Source Licenses
 
 This reference consolidates data-source license notes for the current flat
-23-server repository. It is a public-release aid, not legal advice. Verify final
+24-server repository. It is a public-release aid, not legal advice. Verify final
 license determinations before publishing or redistributing derived datasets.
 
 | Server | Agency / Publisher | Dataset / Service | Primary endpoint | Auth required | License / terms signal | Risk flag | Notes |
@@ -42,3 +42,12 @@ license determinations before publishing or redistributing derived datasets.
 - Confirm whether NOAA Fisheries ArcGIS service pages expose explicit item-level terms beyond general federal data status.
 - Confirm current FEMA NFHL terms for the ArcGIS MapServer specifically, separate from OpenFEMA API terms.
 - Preserve source URLs, retrieval dates, and any upstream warnings when generating public-facing reports from tool outputs.
+
+## NRC ADAMS
+
+`nrc_adams` uses the NRC APS subscription API and source-returned allowlisted
+NRC PDF links. Subscription configuration is required for dependent calls,
+with no silent anonymous fallback. NRC publication may include applicant and
+third-party materials; hosting does not confer NRC authorship, endorsement,
+or unrestricted reuse rights. Preserve attribution and inspect document terms.
+See [NRC access, security, limits, and pending live verification](nrc-adams.md).

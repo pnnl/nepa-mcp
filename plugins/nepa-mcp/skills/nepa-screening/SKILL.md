@@ -75,3 +75,11 @@ Most tools use public APIs. Census requires `CENSUS_API_KEY`; EPA AQS requires `
 ## Reporting
 
 Keep retrieved facts tied to their source systems and observation dates. Distinguish screening indicators from legal conclusions, formal agency determinations, consultation requirements, and professional judgments. Explain geographic coverage limitations when a no-hit result may mean the queried service does not cover the project location.
+
+## Research NRC documents
+
+Use `nrc_adams` and `adams-research` for public NRC document dossiers and
+chronologies. The default adapter needs `NRC_ADAMS_API_KEY` in private server
+configuration; discovery and other servers remain available without it.
+NRC records are distinct from USDA `nrcs_soils`. Document presence does not
+establish approval, NEPA completion, or current operating authority.

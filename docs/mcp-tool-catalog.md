@@ -1,6 +1,6 @@
 # MCP Tool Catalog
 
-NEPA MCP provides 23 independent servers with 56 tools. Use this catalog to choose the smallest set of servers needed for a workflow.
+NEPA MCP provides 24 independent servers with 62 tools. Use this catalog to choose the smallest set of servers needed for a workflow.
 
 This file is generated from the server registry and each server's live MCP `tools/list` contract. Do not edit it manually. Regenerate it with `uv run python scripts/generate_tool_catalog.py`; add `--check` to verify it without writing.
 
@@ -44,6 +44,12 @@ This file is generated from the server registry and each server's live MCP `tool
 | `map_composer` | `list_available_layers` | List Map Composer layer IDs, source publishers, review uses, and profiles. |
 | `nepa_assist` | `analyze_nepa_assist_screening` | Analyze EPA NEPAssist environmental screening layers for a location. |
 | `noaa` | `get_noaa_critical_habitat_in_roi` | Query NOAA for West Coast Region ESA critical habitat within the ROI. |
+| `nrc_adams` | `get_nrc_adams_document` | Retrieve one public accession's metadata and source-returned official links, without implying content review. |
+| `nrc_adams` | `get_nrc_adams_document_file` | Retrieve a verified bounded original PDF as an immutable, expiring MCP resource link. |
+| `nrc_adams` | `get_nrc_adams_document_references` | Extract source-located outgoing accession candidates, excluding self mentions, with bounded verification. |
+| `nrc_adams` | `get_nrc_adams_document_text` | Retrieve bounded API indexed text with a fingerprint and explicit completeness limitations. |
+| `nrc_adams` | `get_nrc_adams_package` | Read explicitly published package membership with bounded member lookups and independent pagination. |
+| `nrc_adams` | `search_nrc_adams_documents` | Search public NRC ADAMS records with typed AND filters, explicit libraries, and skip continuation. |
 | `nrcs_soils` | `analyze_nrcs_ssurgo_soil_constraints` | Summarize NRCS SSURGO soil indicators relevant to early siting review. |
 | `nrcs_soils` | `get_nrcs_ssurgo_farmland_classification_in_roi` | Get exact NRCS SSURGO farmland classifications within a project-area buffer. |
 | `nrcs_soils` | `get_nrcs_ssurgo_mapunits_in_roi` | Get USDA-NRCS SSURGO soil map units intersecting a project-area buffer. |
