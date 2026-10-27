@@ -57,7 +57,6 @@ def get_brac_public_notices(installation_id, published_on_or_after=None, max_res
                     "participation_status": "unresolved_deadline_year_timezone_and_revision_state",
                     "body_reviewed": False,
                     "crosswalk_basis": "Exact full installation name in official source link title; explicit curated round-record association",
-                    "evaluated_at": now(),
                     "date_filter_status": "matched_published_date" if posted else "unresolved_missing_publication_date",
                 }
             )
@@ -76,13 +75,12 @@ def get_brac_public_notices(installation_id, published_on_or_after=None, max_res
                     "timezone": None,
                     "participation_status": "unresolved_dates_and_revision_state",
                     "cancellation_or_extension": "not established from linked document contents",
-                    "evaluated_at": now(),
                     "date_filter_status": "unresolved_missing_publication_date"
                     if published_on_or_after
                     else "not_requested",
                 }
             )
-    return output(
+    result = output(
         records,
         reports,
         [
@@ -93,3 +91,8 @@ def get_brac_public_notices(installation_id, published_on_or_after=None, max_res
         max_results,
         result_offset,
     )
+    # Evaluation time describes this call, not a change to the source notice inventory.
+    evaluated_at = now()
+    for notice in result["records"]:
+        notice["evaluated_at"] = evaluated_at
+    return result

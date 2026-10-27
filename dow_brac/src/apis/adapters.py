@@ -1,6 +1,7 @@
 """Configured-source HTTP and content-scoped HTML parsing; no restricted-system bypass."""
 
 import time
+from copy import deepcopy
 from urllib.parse import urljoin
 from bs4 import BeautifulSoup
 import requests
@@ -33,7 +34,7 @@ def fetch(url, budget=None):
         return None, {**report, "status": "unsupported", "warnings": ["Unapproved source URL; not fetched"]}
     hit = _CACHE.get(url)
     if hit and time.monotonic() - hit[0] < 600:
-        return hit[1], {**hit[2], "cached": True, "cache_age_seconds": round(time.monotonic() - hit[0], 2)}
+        return hit[1], {**deepcopy(hit[2]), "cached": True, "cache_age_seconds": round(time.monotonic() - hit[0], 2)}
     budget = budget or Budget()
     current = url
     try:
@@ -89,7 +90,7 @@ def fetch(url, budget=None):
                 )
                 if len(_CACHE) >= 128:
                     _CACHE.clear()
-                _CACHE[url] = (time.monotonic(), content, report)
+                _CACHE[url] = (time.monotonic(), content, deepcopy(report))
                 return content, report
         raise RuntimeError("Redirect cap exceeded")
     except (requests.RequestException, RuntimeError) as exc:

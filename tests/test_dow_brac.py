@@ -285,3 +285,132 @@ def test_verified_army_notice_scope_and_ambiguous_deadline(server, monkeypatch):
     assert all(row["published_date"] == "2026-10-15" for row in result["records"])
     assert all(row["deadline"] is None and "unresolved" in row["participation_status"] for row in result["records"])
     assert server.notices_api.get_brac_public_notices(identity, published_on_or_after="2026-10-16")["records"] == []
+
+
+@pytest.mark.parametrize("scoped_notice", [True, False])
+def test_notice_pagination_fingerprint_ignores_clock_but_detects_source_changes(server, monkeypatch, scoped_notice):
+    import copy
+
+    api = server.notices_api
+    url = "https://www.denix.osd.mil/armybrac/"
+    record = {"url": url}
+    if scoped_notice:
+        record["notice_link_title_prefix"] = "Umatilla Chemical Depot "
+        content = BeautifulSoup((FIXTURES / "army.html").read_text(), "html.parser")
+    else:
+        content = BeautifulSoup(
+            '<main><a href="notice-one.pdf">Public notice one</a><a href="notice-two.pdf">Public notice two</a></main>',
+            "html.parser",
+        )
+    report = {"url": url, "status": "ok", "complete": True}
+    monkeypatch.setattr(api, "resolve", lambda *_a: (record, []))
+    monkeypatch.setattr(api, "fetch", lambda *_a: (copy.deepcopy(content), copy.deepcopy(report)))
+    monkeypatch.setattr(api, "now", lambda: "2026-10-26T12:00:00Z")
+    first = api.get_brac_public_notices("army:example", max_results=1)
+    monkeypatch.setattr(api, "now", lambda: "2026-10-27T12:00:00Z")
+    second = api.get_brac_public_notices(
+        "army:example", max_results=1, result_offset=first["pagination"]["next_result_offset"]
+    )
+    repeated = api.get_brac_public_notices("army:example", max_results=1)
+    assert first["records"][0]["url"] != second["records"][0]["url"]
+    assert first["records"][0]["evaluated_at"] != repeated["records"][0]["evaluated_at"]
+    assert first["result_fingerprint"] == second["result_fingerprint"] == repeated["result_fingerprint"]
+    if scoped_notice:
+        anchor = content.find("a", title=lambda value: value and value.startswith(record["notice_link_title_prefix"]))
+        anchor["title"] += " revised"
+    else:
+        content.find("a").string = "Revised public notice one"
+    changed = api.get_brac_public_notices("army:example", max_results=1)
+    assert changed["result_fingerprint"] != first["result_fingerprint"]
+    report.update(status="partial", complete=False)
+    partial = api.get_brac_public_notices("army:example", max_results=1)
+    assert partial["result_fingerprint"] != changed["result_fingerprint"]
+
+
+@pytest.mark.parametrize("documents_first", [False, True])
+def test_site_parser_failure_does_not_change_cached_document_or_conveyance_status(server, monkeypatch, documents_first):
+    calls = sources(server, monkeypatch)
+    identity = server.installations_api.local_id("https://www.denix.osd.mil/armybrac/brac-1995/fort-indiantown-gap/")
+    if documents_first:
+        assert server.documents_api.get_brac_documents(identity)["pagination"]["retrieval_complete"]
+    sites = server.environmental_sites_api.get_brac_environmental_sites(identity)
+    assert sites["sources"][-1]["status"] == "schema_error"
+    docs = server.documents_api.get_brac_documents(identity)
+    conveyances = server.conveyances_api.get_brac_conveyance_records(identity)
+    assert len(docs["records"]) == 2 and conveyances["records"]
+    for result in (docs, conveyances):
+        assert result["sources"][-1]["status"] == "ok"
+        assert result["sources"][-1]["warnings"] == []
+        assert result["pagination"]["retrieval_complete"]
+    evidence_url = "https://www.denix.osd.mil/armybrac/pennsylvania-reserve-component/fort-indiantown-gap/"
+    assert sum(url == evidence_url for url, _ in calls) == 1
+    # Mutating a cached caller's nested warnings must not leak to later callers either.
+    docs["sources"][-1]["warnings"].append("caller-specific parse warning")
+    again = server.documents_api.get_brac_documents(identity)
+    assert again["sources"][-1]["warnings"] == []
+
+
+@pytest.mark.parametrize("evidence_status", [200, 403])
+def test_installation_detail_uses_reviewed_crosswalk_and_preserves_source_failure(server, monkeypatch, evidence_status):
+    import sys
+
+    calls = sources(server, monkeypatch)
+    adapters = sys.modules["src.apis.adapters"]
+    original_get = adapters.requests.get
+    original_url = "https://www.denix.osd.mil/armybrac/brac-1995/fort-indiantown-gap/"
+    evidence_url = "https://www.denix.osd.mil/armybrac/pennsylvania-reserve-component/fort-indiantown-gap/"
+
+    def get(url, **kwargs):
+        response = original_get(url, **kwargs)
+        return Response("restricted", 403) if url == evidence_url and evidence_status == 403 else response
+
+    monkeypatch.setattr(adapters.requests, "get", get)
+    identity = server.installations_api.local_id(original_url)
+    result = server.installations_api.get_brac_installation(identity)
+    detail = result["records"][0]
+    assert result["sources"][-1]["url"] == evidence_url
+    assert detail["url"] == original_url and detail["evidence_url"] == evidence_url
+    assert detail["identity_crosswalks"][0]["target_url"] == evidence_url
+    assert not any(url == original_url for url, _ in calls)
+    if evidence_status == 200:
+        assert result["sources"][-1]["status"] == "ok"
+        assert "BRAC Summary:" in detail["published_page_text"]
+        assert len(detail["documents"]) == 2
+        assert all(document["discovery_paths"] == [evidence_url] for document in detail["documents"])
+    else:
+        assert result["sources"][-1]["status"] == "restricted"
+        assert "published_page_text" not in detail and detail["documents"] == []
+        assert not result["pagination"]["retrieval_complete"]
+
+
+def test_control_pagination_fingerprint_tracks_index_independently_of_page_extraction(server, monkeypatch):
+    import copy
+
+    api = server.controls_api
+    docs = [
+        {"title": f"Land use control {i}", "url": f"https://www.nae.usace.army.mil/control-{i}.pdf"} for i in range(5)
+    ]
+    reports = [{"url": "https://www.nae.usace.army.mil/index/", "status": "ok", "complete": True}]
+    monkeypatch.setattr(api, "index", lambda *_a: ({}, copy.deepcopy(docs), copy.deepcopy(reports)))
+    calls = []
+
+    def extract(url):
+        calls.append(url)
+        return {"status": "text_extracted", "sha256": "verified-file-hash", "evidence": [{"physical_pdf_page": 1}]}
+
+    monkeypatch.setattr(api, "extract_control", extract)
+    first = api.get_brac_land_use_controls("army:example", max_results=1)
+    second = api.get_brac_land_use_controls("army:example", max_results=1, result_offset=1)
+    assert len(calls) == 2
+    assert first["result_fingerprint"] == second["result_fingerprint"]
+    assert first["records"][0]["url"] != second["records"][0]["url"]
+    assert first["records"][0]["extraction"]["sha256"] == "verified-file-hash"
+    calls.clear()
+    full = api.get_brac_land_use_controls("army:example")
+    assert len(calls) == 3 and len(full["records"]) == 5
+    assert full["records"][3]["extraction"]["status"] == "document_request_cap"
+    assert full["result_fingerprint"] == first["result_fingerprint"]
+    assert "index" in full["fingerprint_scope"].lower()
+    docs[0]["title"] += " amended"
+    changed = api.get_brac_land_use_controls("army:example", max_results=1)
+    assert changed["result_fingerprint"] != first["result_fingerprint"]

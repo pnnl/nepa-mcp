@@ -165,12 +165,14 @@ def get_brac_installation(installation_id):
     record, reports = resolve(installation_id, budget)
     if record is None:
         return output([], reports, ["No matching local source identity; narrow or repeat installation search"])
-    if not record["url"]:
+    url = record.get("evidence_url") or record.get("url")
+    if not url:
         return output([record], reports, ["Directory row has no supported detail URL"])
-    content, report = fetch(record["url"], budget)
+    content, report = fetch(url, budget)
     reports.append(report)
     detail = {
         **record,
+        "evidence_url": url,
         "cleanup_statements": [],
         "conveyance_statements": [],
         "operational_status": "not established",
@@ -181,7 +183,7 @@ def get_brac_installation(installation_id):
         "documents": [],
     }
     if content is not None:
-        detail["documents"] = [r for r in links(content, record["url"]) if ".pdf" in r["url"].lower()]
+        detail["documents"] = [r for r in links(content, url) if ".pdf" in r["url"].lower()]
         detail["published_page_text"] = content.get_text(" ", strip=True)[:16000]
         detail["page_text_complete"] = len(content.get_text(" ", strip=True)) <= 16000
     return output(

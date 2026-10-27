@@ -114,22 +114,16 @@ def get_brac_land_use_controls(installation_id, site_id=None, parcel_id=None, ma
     record, docs, reports = index(installation_id)
     candidates = [d for d in docs if re.search(r"land.use.control|institutional.control|\bLUCIP\b", d["title"], re.I)]
     records = []
-    for i, d in enumerate(candidates):
-        extraction = (
-            extract_control(d["url"])
-            if result_offset <= i < result_offset + min(max_results, 3)
-            else {"status": "document_request_cap", "body_reviewed": False}
-        )
+    for d in candidates:
         records.append(
             {
                 **d,
                 "evidence_type": "control_document_title_candidate",
                 "instrument_effect": "unresolved; signed/recorded filename is not proof",
                 "affected_entity": "installation research scope; individual parcel/site effect unresolved",
-                "extraction": extraction,
             }
         )
-    return output(
+    result = output(
         records,
         reports,
         [
@@ -138,3 +132,12 @@ def get_brac_land_use_controls(installation_id, site_id=None, parcel_id=None, ma
         max_results,
         result_offset,
     )
+    # Fingerprint the full index before adding extraction results for this page only.
+    result["fingerprint_scope"] = (
+        "Control index records and source retrieval status; extracted PDF bytes have separate SHA-256 fingerprints."
+    )
+    for i, document in enumerate(result["records"]):
+        document["extraction"] = (
+            extract_control(document["url"]) if i < 3 else {"status": "document_request_cap", "body_reviewed": False}
+        )
+    return result
