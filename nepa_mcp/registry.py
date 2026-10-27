@@ -14,6 +14,9 @@ class ServerSpec:
 
 
 SERVER_SPECS = (
+    ServerSpec(
+        "dow_brac", "DoW BRAC installation, program evidence, historical spatial candidates, and property research"
+    ),
     ServerSpec("blm", "BLM land use plans, wilderness areas, and national monuments"),
     ServerSpec("blm_mlrs", "BLM MLRS authorizations, mineral operations, and energy leases"),
     ServerSpec("census", "Census ACS socioeconomic indicators", ("CENSUS_API_KEY",)),

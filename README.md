@@ -18,7 +18,7 @@
   <p>
   Built with<br>
   <a href="https://www.python.org/"><img alt="Python 3.12+" src="https://img.shields.io/badge/Python-3.12%2B-3776AB?style=flat-square&amp;logo=python&amp;logoColor=white" height="20"></a>
-  <a href="https://gofastmcp.com/"><img alt="FastMCP 3.4.4" src="https://img.shields.io/badge/FastMCP-3.4.4-009688?style=flat-square" height="20"></a>
+  <a href="https://gofastmcp.com/"><img alt="FastMCP 3.4.10" src="https://img.shields.io/badge/FastMCP-3.4.10-009688?style=flat-square" height="20"></a>
   <a href="https://docs.pydantic.dev/"><img alt="Pydantic 2.12+" src="https://img.shields.io/badge/Pydantic-2.12%2B-E92063?style=flat-square&amp;logo=pydantic&amp;logoColor=white" height="20"></a>
   <a href="https://shapely.readthedocs.io/"><img alt="Shapely 2.0+" src="https://img.shields.io/badge/Shapely-2.0%2B-2F6F3E?style=flat-square" height="20"></a>
   <a href="https://github.com/pnnl/nepa-mcp/blob/main/LICENSE"><img alt="BSD 3-Clause License" src="https://img.shields.io/badge/License-BSD_3--Clause-F4B942?style=flat-square" height="20"></a>
@@ -31,8 +31,8 @@ toolkit. It gives AI agents structured access to federal environmental,
 regulatory, biological, cultural, socioeconomic, and jurisdictional data used
 in NEPA screening and permitting research.
 
-The current inventory includes 23 MCP servers, 56 MCP tools, and 32 GIS
-layers. Together, the tools and layers represent **88 environmental and
+The current inventory includes 24 MCP servers, 65 MCP tools, and 32 GIS
+layers. Together, the tools and layers represent **97 environmental and
 regulatory research capabilities**. These capabilities draw on public data
 from 13 federal agencies, along with interagency and nonfederal sources.
 
@@ -113,7 +113,7 @@ new task.
 
 ## Codex Plugin
 
-The Codex plugin registers all 23 servers and includes the `nepa-screening`
+The Codex plugin registers all 24 servers and includes the `nepa-screening`
 skill. If you use the plugin, do not also run `nepa-mcp configure codex`.
 
 Install and verify the Python runtime before adding the plugin:
@@ -123,7 +123,7 @@ pipx install nepa-mcp
 nepa-mcp doctor
 ```
 
-`doctor` should report `Installed servers: 23`. Then add the marketplace in
+`doctor` should report `Installed servers: 24`. Then add the marketplace in
 Codex Desktop:
 
 1. Open **Plugins** and select **Add plugin marketplace**.
@@ -216,6 +216,7 @@ Credentials are not copied into MCP client or plugin configuration, and
 | `pcsrf` | [NOAA Fisheries](https://www.fisheries.noaa.gov/) | PCSRF projects plus species ranges, a 2021 critical-habitat snapshot, and Atlantic salmon EFH/HAPC |
 | `tigerweb_counties` | [U.S. Census Bureau](https://www.census.gov/) | TIGERweb county-boundary intersections |
 | `tribal` | [U.S. Census Bureau](https://www.census.gov/) | TIGERweb AIANNHA geographic areas for tribal-consultation screening |
+| `dow_brac` | Official source-specific research | DoW BRAC installation, program evidence, historical spatial candidates, and property research |
 | `usace` | [U.S. Army Corps of Engineers](https://www.usace.army.mil/) | Regulatory boundaries and wetland delineation regions and subregions |
 
 > Many geographic servers also use [Esri's ArcGIS Geometry Service](https://developers.arcgis.com/rest/services-reference/enterprise/geometry-service/)
