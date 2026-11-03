@@ -171,12 +171,12 @@ def get_brac_land_use_controls(
 def get_brac_property_offers(
     installation_id: Identity,
     include_historical: Annotated[
-        bool, Field(description="Request historical offer evidence; unavailable auction-state adapters stay explicit.")
+        bool, Field(description="Include verified historical GSA notices; no current availability is established.")
     ] = False,
     max_results: PageSize = 100,
     result_offset: Offset = 0,
 ) -> str:
-    """Retrieve source-reported Army disposal plans through explicit crosswalks; do not infer open auctions."""
+    """Retrieve Army disposal plans and, on request, archived GSA sale notices for verified BRAC parcels."""
     return json.dumps(
         offers_api.get_brac_property_offers(installation_id, include_historical, max_results, result_offset)
     )

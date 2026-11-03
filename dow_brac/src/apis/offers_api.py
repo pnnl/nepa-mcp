@@ -3,6 +3,7 @@
 from datetime import datetime
 from src.apis.adapters import Budget, fetch
 from src.apis.installations_api import resolve
+from src.apis.gsa_offers import historical_weymouth
 from src.core.normalization import output, page
 from src.core.sources import ARMY
 
@@ -65,6 +66,21 @@ def get_brac_property_offers(installation_id, include_historical=False, max_resu
     record, reports = resolve(installation_id, budget)
     if record is None:
         return output([], reports, ["Unknown installation source identity"], max_results, result_offset)
+    if installation_id == "navy:south-weymouth":
+        records = []
+        if include_historical:
+            records, archive_reports = historical_weymouth(record, budget)
+            reports.extend(archive_reports)
+        return output(
+            records,
+            reports,
+            [
+                "Current sale/lease coverage is unavailable. Archived GSA notices are included only "
+                "when include_historical=True; a soft close is not a final deadline or sale."
+            ],
+            max_results,
+            result_offset,
+        )
     alias = OFFER_CROSSWALKS.get(record.get("url"))
     if alias is None:
         reports.append(

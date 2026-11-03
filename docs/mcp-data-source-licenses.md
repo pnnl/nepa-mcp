@@ -45,7 +45,7 @@ license determinations before publishing or redistributing derived datasets.
 
 ## DoW BRAC
 
-`dow_brac` uses official Army DENIX pages, EPA FRS BRAC interests, and explicitly
+`dow_brac` uses two archived public GSA auction notices (verified November 3), official Army DENIX pages, EPA FRS BRAC interests, and explicitly
 opted-in historical military-base geometry. Public federal source material is
 returned with provenance; retain source disclaimers and document-specific
 attribution. Navy/Air Force/Devens access returned HTTP 403 in this environment;

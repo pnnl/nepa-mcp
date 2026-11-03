@@ -86,7 +86,7 @@ def registry(budget=None):
             "installation_id": identity,
             "aliases": [],
             "actions": [],
-            "identity_basis": "Curated official research entrypoint from issue #55; current program/action evidence requires retrieval",
+            "identity_basis": "Curated official BRAC research entrypoint; current program/action evidence requires retrieval",
             "geometry_available": False,
             "identity_crosswalks": [],
         }

@@ -5,7 +5,7 @@ import json
 import math
 from datetime import UTC, datetime
 from urllib.parse import urlsplit
-from src.core.sources import MANIFEST, NOTE
+from src.core.sources import MANIFEST, NOTE, WEYMOUTH_ANNOUNCEMENT, WEYMOUTH_SOFT_CLOSE
 
 
 def now():
@@ -67,7 +67,7 @@ def source_url(value):
             "www.realestatesales.gov",
             "www.nrc.gov",
         }
-        return value if allowed else None
+        return value if allowed or value in {WEYMOUTH_ANNOUNCEMENT, WEYMOUTH_SOFT_CLOSE} else None
     except ValueError:
         return None
 

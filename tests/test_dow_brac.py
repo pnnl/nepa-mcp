@@ -414,3 +414,48 @@ def test_control_pagination_fingerprint_tracks_index_independently_of_page_extra
     docs[0]["title"] += " amended"
     changed = api.get_brac_land_use_controls("army:example", max_results=1)
     assert changed["result_fingerprint"] != first["result_fingerprint"]
+
+
+@pytest.mark.parametrize("bad_update", [False, True])
+def test_historical_weymouth_evidence(server, monkeypatch, bad_update):
+    import sys
+
+    calls = sources(server, monkeypatch)
+    adapters = sys.modules["src.apis.adapters"]
+    original = adapters.requests.get
+    manifest = sys.modules["src.core.sources"]
+    seen = []
+
+    def get(url, **kwargs):
+        if url not in (manifest.WEYMOUTH_ANNOUNCEMENT, manifest.WEYMOUTH_SOFT_CLOSE):
+            return original(url, **kwargs)
+        seen.append(url)
+        name = "weymouth-ad" if url == manifest.WEYMOUTH_ANNOUNCEMENT else "weymouth-update"
+        html = (FIXTURES / (name + ".html")).read_text()
+        if name == "weymouth-update" and bad_update:
+            html = html.replace("50.31 acres", "12 acres") + "<aside hidden>Sold! Extended!</aside>"
+        return Response(html)
+
+    monkeypatch.setattr(adapters.requests, "get", get)
+    search = server.offers_api.get_brac_property_offers
+    assert not search("navy:south-weymouth")["records"] and not seen
+    result = search("navy:south-weymouth", include_historical=True)
+    assert calls and len(seen) == 2
+    (offer,) = result["records"]
+    assert offer["events"][0]["event"] == "auction_opened"
+    assert offer["evidence_type"] == "advertised_sale"
+    assert offer["bid_deadline"] is None and offer["final_disposition"] == "unknown"
+    if bad_update:
+        assert offer["soft_close_date"] is None and len(offer["events"]) == 1
+        assert result["sources"][-1]["status"] == "schema_error"
+    else:
+        assert offer["soft_close_date"] == "2022-06-02" and len(offer["events"]) == 2
+
+
+@pytest.mark.skipif(os.environ.get("NEPA_BRAC_LIVE") != "1", reason="Explicit live GSA archive check")
+def test_live_gsa_advertised_sale():
+    m = load_server_module("dow_brac")
+    r = m.offers_api.get_brac_property_offers("navy:south-weymouth", include_historical=True)
+    (offer,) = r["records"]
+    assert [e["published_date"] for e in offer["events"]] == ["2022-03-07", "2022-05-11"]
+    assert offer["soft_close_date"] == "2022-06-02" and offer["current_availability"] == "unverified"

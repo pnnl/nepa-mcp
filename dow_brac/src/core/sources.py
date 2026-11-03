@@ -4,7 +4,23 @@ ARMY = "https://www.denix.osd.mil/armybrac/"
 FRS = "https://gispub.epa.gov/arcgis/rest/services/OEI/FRS_INTERESTS/MapServer"
 HISTORICAL = "https://services.arcgis.com/hRUr1F8lE8Jq2uJo/arcgis/rest/services/milbases/FeatureServer"
 ROUNDS = (1988, 1991, 1993, 1995, 2005)
+GSA_ARCHIVE = (
+    "https://www.gsa.gov/about-gsa/newsroom/former-gsa-regional-news-archive/region-1-newsroom/press-releases/"
+)
+WEYMOUTH_ANNOUNCEMENT = (
+    GSA_ARCHIVE + "gsa-announces-public-auction-for-nearly-51-acres-of-land-in-south-weymouth-ma-03072022"
+)
+WEYMOUTH_SOFT_CLOSE = (
+    GSA_ARCHIVE
+    + "soft-close-date-announced-for-us-general-services-administration-online-auction-of-nearly-51-acres-of-land-in-south-weymouth-mass-05112022"
+)
 SEEDS = {
+    "navy:south-weymouth": {
+        "name": "Former Naval Air Station South Weymouth",
+        "component": "navy",
+        "state": "MA",
+        "url": "https://www.bracpmo.navy.mil/BRAC-Bases/Northeast/Former-Naval-Air-Station-South-Weymouth/",
+    },
     "navy:alameda": {
         "name": "Former Naval Air Station Alameda",
         "component": "navy",
@@ -34,7 +50,7 @@ SEEDS = {
     },
 }
 MANIFEST = {
-    "version": "2026-10-23.1",
+    "version": "2026-11-03.1",
     "parser_version": "1 (Army verified; blocked-source parsers require captured live contracts)",
     "army_rounds": {
         "url": ARMY,
@@ -82,8 +98,9 @@ MANIFEST = {
         "validation_status": "HTTP 403; nonempty instrument/content validation pending",
     },
     "advertised_offers": {
-        "url": "https://www.realestatesales.gov/our-listing/",
-        "validation_status": "No verified BRAC parcel crosswalk/authoritative auction-state contract; unsupported, not inferred from template text",
+        "url": WEYMOUTH_ANNOUNCEMENT,
+        "update_url": WEYMOUTH_SOFT_CLOSE,
+        "validation_status": "Archived Weymouth Woods sale advertisement and soft close verified. No current listing, award, deed or lease established.",
     },
 }
 NOTE = "BRAC association, historical geometry, remedy or conveyance milestones do not establish clean land, unrestricted use, current ownership, land availability, completed cleanup, or development suitability. Cleanup, operational status, and conveyance are separate source statements."

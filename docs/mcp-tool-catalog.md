@@ -12,7 +12,7 @@ This file is generated from the server registry and each server's live MCP `tool
 | `dow_brac` | `get_brac_installation` | Retrieve a BRAC source identity, action evidence, official links, and per-source access limitations. |
 | `dow_brac` | `get_brac_installations_in_roi` | Find EPA FRS BRAC-interest points and opt-in historical polygon intersections as unresolved candidates. |
 | `dow_brac` | `get_brac_land_use_controls` | Retrieve indexed control-document candidates and bounded PDF evidence with unresolved legal effect. |
-| `dow_brac` | `get_brac_property_offers` | Retrieve source-reported Army disposal plans through explicit crosswalks; do not infer open auctions. |
+| `dow_brac` | `get_brac_property_offers` | Retrieve Army disposal plans and, on request, archived GSA sale notices for verified BRAC parcels. |
 | `dow_brac` | `get_brac_public_notices` | Retrieve notice-index candidates; unknown dates never become an open participation finding. |
 | `dow_brac` | `search_brac_installations` | Search source-scoped BRAC installation candidates and published actions without requiring geometry. |
 | `blm` | `get_blm_land_use_plans_in_roi` | Identify BLM approved land use plans intersecting the ROI. |
