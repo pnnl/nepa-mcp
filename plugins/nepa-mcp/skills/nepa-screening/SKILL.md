@@ -75,3 +75,11 @@ Most tools use public APIs. Census requires `CENSUS_API_KEY`; EPA AQS requires `
 ## Reporting
 
 Keep retrieved facts tied to their source systems and observation dates. Distinguish screening indicators from legal conclusions, formal agency determinations, consultation requirements, and professional judgments. Explain geographic coverage limitations when a no-hit result may mean the queried service does not cover the project location.
+
+## Research BRAC installations
+
+Use `dow_brac` and `brac-research` for DoW BRAC installation dossiers,
+source-reported conveyance, environmental-site/control evidence, notices,
+and planned disposals. Preserve the response source-capability manifest:
+FRS points and historical polygons are unresolved candidates, and unavailable
+military department sources do not become no-record findings.

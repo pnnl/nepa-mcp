@@ -14,6 +14,7 @@ from fastmcp.exceptions import ToolError
 ROOT = Path(__file__).resolve().parents[1]
 
 EXPECTED_TOOL_COUNTS = {
+    "dow_brac": 9,
     "blm": 3,
     "blm_mlrs": 3,
     "census": 1,
@@ -39,6 +40,17 @@ EXPECTED_TOOL_COUNTS = {
 }
 
 EXPECTED_TOOL_NAMES = {
+    "dow_brac": {
+        "search_brac_installations",
+        "get_brac_installation",
+        "get_brac_installations_in_roi",
+        "get_brac_documents",
+        "get_brac_conveyance_records",
+        "get_brac_public_notices",
+        "get_brac_environmental_sites",
+        "get_brac_land_use_controls",
+        "get_brac_property_offers",
+    },
     "blm": {
         "get_blm_land_use_plans_in_roi",
         "get_blm_national_monuments_in_roi",

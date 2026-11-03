@@ -1,0 +1,5 @@
+# Fixture provenance
+
+Army HTML content captured from public DENIX pages on 2026-10-23. Navigation/scripts/images are omitted where irrelevant; content and source links retain their meanings. Round directory, Fort Indiantown Gap, homepage, and offers URLs are documented in the adapter and source manifest. These are offline snapshots, not current national coverage assertions. Navy/AF/Devens live contracts remain unavailable (HTTP 403); their grouping/error tests use explicitly synthetic input rather than pretending to be captured source fixtures.
+
+Weymouth fixtures retain only the relevant dated elements of the [GSA announcement](https://www.gsa.gov/about-gsa/newsroom/former-gsa-regional-news-archive/region-1-newsroom/press-releases/gsa-announces-public-auction-for-nearly-51-acres-of-land-in-south-weymouth-ma-03072022) and [soft-close update](https://www.gsa.gov/about-gsa/newsroom/former-gsa-regional-news-archive/region-1-newsroom/press-releases/soft-close-date-announced-for-us-general-services-administration-online-auction-of-nearly-51-acres-of-land-in-south-weymouth-mass-05112022), retrieved November 3, 2026. They describe one historical advertisement.

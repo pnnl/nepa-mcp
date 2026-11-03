@@ -3,7 +3,7 @@
 import asyncio
 import copy
 import sys
-from datetime import date
+from datetime import UTC, date, datetime, timedelta
 
 import pytest
 from fastmcp import Client
@@ -12,6 +12,13 @@ from nepa_mcp.loader import load_server_module
 from nepa_mcp_common.http import UpstreamServiceError
 
 STAMP = 1788590286
+NOW = datetime(2026, 9, 6, tzinfo=UTC)
+
+
+class FrozenDatetime(datetime):
+    @classmethod
+    def now(cls, tz=None):
+        return NOW.astimezone(tz) if tz is not None else NOW.replace(tzinfo=None)
 
 
 def _row(**overrides):
@@ -86,7 +93,8 @@ def api(monkeypatch):
     server = load_server_module("permitting_dashboard")
     module = sys.modules[server.search_permitting_projects.__module__]
     monkeypatch.setattr(module, "_metadata", lambda: STAMP)
-    monkeypatch.setattr(module, "_today", lambda: date(2026, 9, 6))
+    # Freeze both milestone interpretation and dataset freshness/retrieval time.
+    monkeypatch.setattr(module, "datetime", FrozenDatetime)
     # A forgotten mock must fail immediately rather than use the network.
     monkeypatch.setattr(module, "get_json_rows", lambda *_a, **_k: pytest.fail("Unexpected network query"))
     return module
@@ -101,6 +109,19 @@ def install_rows(api, monkeypatch, rows):
 
     monkeypatch.setattr(api, "get_json_rows", query)
     return calls
+
+
+@pytest.mark.parametrize(
+    "age,expected_status",
+    [(timedelta(days=7), "ok"), (timedelta(days=7, seconds=1), "partial")],
+)
+def test_dataset_freshness_boundary(api, monkeypatch, age, expected_status):
+    install_rows(api, monkeypatch, [_row()])
+    monkeypatch.setattr(api, "_metadata", lambda: int((NOW - age).timestamp()))
+    result = api.search_permitting_projects(query="Example")
+    assert result["status"] == expected_status
+    assert result["retrieved_at_utc"] == NOW.isoformat()
+    assert any("seven days old" in warning for warning in result["warnings"]) == (expected_status == "partial")
 
 
 def test_timetable_preserves_review_grain_and_source_values(api, monkeypatch):

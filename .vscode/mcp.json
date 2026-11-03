@@ -252,6 +252,17 @@
       "env": {
         "PYTHONUNBUFFERED": "1"
       }
+    },
+    "dow_brac": {
+      "command": "nepa-mcp",
+      "args": [
+        "server",
+        "dow_brac"
+      ],
+      "env": {
+        "PYTHONUNBUFFERED": "1"
+      },
+      "type": "stdio"
     }
   }
 }
