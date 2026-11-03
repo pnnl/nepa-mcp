@@ -76,7 +76,7 @@ class _FakeResponse:
         return self._payload
 
 
-def _install_mock_network(module, counties, value_map=None):
+def _install_mock_network(monkeypatch, module, counties, value_map=None):
     """Patch the network on the api module that ``server.py`` actually imports."""
     api = sys.modules.get("src.apis.simplified_census_api", module)
     value_map = {**DEFAULT_VALUE_MAP, **(value_map or {})}
@@ -95,8 +95,8 @@ def _install_mock_network(module, counties, value_map=None):
 
     from nepa_mcp_common.arcgis import ArcGISService
 
-    ArcGISService.create_roi_buffer = staticmethod(lambda *_a, **_k: SIMPLE_GEOMETRY)
-    api.requests.get = fake_get
+    monkeypatch.setattr(ArcGISService, "create_roi_buffer", staticmethod(lambda *_a, **_k: SIMPLE_GEOMETRY))
+    monkeypatch.setattr(api.requests, "get", fake_get)
 
 
 async def _call(module, tool_name, args):
@@ -125,25 +125,25 @@ class TestToolRegistration:
 
 
 class TestSocioeconomicTool:
-    def test_returns_markdown_with_county_indicators(self):
+    def test_returns_markdown_with_county_indicators(self, monkeypatch):
         module = _load_server()
-        _install_mock_network(module, [BERNALILLO])
+        _install_mock_network(monkeypatch, module, [BERNALILLO])
         result = asyncio.run(_call(module, TOOL_NAME, {"latitude": 34.5, "longitude": -106.5, "buffer_miles": 25}))
         text = _text(result)
         assert "Bernalillo County, NM" in text
         assert "Median household income: $55,000" in text
         assert "U.S. Census Bureau ACS 5-Year Estimates" in text
 
-    def test_empty_roi_is_graceful(self):
+    def test_empty_roi_is_graceful(self, monkeypatch):
         module = _load_server()
-        _install_mock_network(module, [])
+        _install_mock_network(monkeypatch, module, [])
         result = asyncio.run(_call(module, TOOL_NAME, {"latitude": 34.5, "longitude": -106.5}))
         assert "No counties found in the region of interest." in _text(result)
 
     def test_missing_api_key_returns_error_message(self, monkeypatch):
         module = _load_server()
         monkeypatch.delenv("CENSUS_API_KEY", raising=False)
-        _install_mock_network(module, [BERNALILLO])
+        _install_mock_network(monkeypatch, module, [BERNALILLO])
         result = asyncio.run(_call(module, TOOL_NAME, {"latitude": 34.5, "longitude": -106.5}))
         assert "CENSUS_API_KEY" in _text(result)
 

@@ -146,6 +146,7 @@ def test_planned_disposals_and_explicit_crosswalks(server, monkeypatch):
     )
     r = server.offers_api.get_brac_property_offers(identity)
     row = r["records"][0]
+    assert not r["pagination"]["retrieval_complete"]
     assert row["evidence_type"] == "planned_disposal" and row["bid_deadline"] is None
     assert row["expected_disposal_date"] == "2029-12-31" and row["published_acres"] == "34.31"
     assert row["parcel_label"] == "Dunn Field – West"
@@ -190,7 +191,7 @@ def test_unknown_notice_deadline_and_source_failure_are_visible(server, monkeypa
     sources(server, monkeypatch)
     r = server.notices_api.get_brac_public_notices("navy:roosevelt-roads")
     assert any(x["status"] == "restricted" for x in r["sources"])
-    assert not r["records"] and r["status"] == "partial"
+    assert not r["records"] and r["status"] == "unavailable"
     with pytest.raises(ValueError):
         server.notices_api.get_brac_public_notices("navy:roosevelt-roads", "2026-02-30")
 
@@ -440,8 +441,9 @@ def test_historical_weymouth_evidence(server, monkeypatch, bad_update):
     search = server.offers_api.get_brac_property_offers
     assert not search("navy:south-weymouth")["records"] and not seen
     result = search("navy:south-weymouth", include_historical=True)
-    assert calls and len(seen) == 2
+    assert not calls and len(seen) == 2
     (offer,) = result["records"]
+    assert offer["listing_id"] == "BOSTN121005001"
     assert offer["events"][0]["event"] == "auction_opened"
     assert offer["evidence_type"] == "advertised_sale"
     assert offer["bid_deadline"] is None and offer["final_disposition"] == "unknown"
@@ -459,3 +461,28 @@ def test_live_gsa_advertised_sale():
     (offer,) = r["records"]
     assert [e["published_date"] for e in offer["events"]] == ["2022-03-07", "2022-05-11"]
     assert offer["soft_close_date"] == "2022-06-02" and offer["current_availability"] == "unverified"
+
+
+def test_offer_mcp_reports_unsupported_current_inventory_without_network(server):
+    import json
+
+    async def check():
+        async with Client(server.mcp) as client:
+            response = await client.call_tool("get_brac_property_offers", {"installation_id": "navy:south-weymouth"})
+            result = json.loads(response.content[0].text)
+            assert result["status"] == "unavailable" and not result["records"]
+            assert not result["pagination"]["retrieval_complete"]
+            assert result["pagination"]["total_kind"] == "lower_bound"
+            assert [s["status"] for s in result["sources"]] == ["unsupported"]
+
+    asyncio.run(check())
+
+
+def test_soft_close_date_comes_from_source(server):
+    from src.apis import gsa_offers as gsa
+    from unittest.mock import patch
+
+    html = (FIXTURES / "weymouth-update.html").read_text().replace("June 2, 2022", "June 9, 2022")
+    with patch.object(gsa, "fetch", return_value=(BeautifulSoup(html, "html.parser"), {"status": "ok"})):
+        event, report = gsa._notice(gsa.WEYMOUTH_SOFT_CLOSE, None)
+    assert event["event_date"] == "2022-06-09" and report["status"] == "ok"

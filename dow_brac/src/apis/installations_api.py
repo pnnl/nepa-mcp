@@ -10,6 +10,18 @@ def local_id(url):
     return "army:" + fingerprint(url.rstrip("/"))[:16]
 
 
+def _seed_record(identity):
+    return {
+        **SEEDS[identity],
+        "installation_id": identity,
+        "aliases": [],
+        "actions": [],
+        "identity_basis": "Curated official BRAC research entrypoint; current program/action evidence requires retrieval",
+        "geometry_available": False,
+        "identity_crosswalks": [],
+    }
+
+
 def registry(budget=None):
     budget = budget or Budget()
     records = {}
@@ -80,16 +92,7 @@ def registry(budget=None):
                 warnings=["No expected round/action groups parsed; source schema may have changed"],
             )
     # These are explicit limited research entrypoints, not fabricated live installation records.
-    for identity, seed in SEEDS.items():
-        records[identity] = {
-            **seed,
-            "installation_id": identity,
-            "aliases": [],
-            "actions": [],
-            "identity_basis": "Curated official BRAC research entrypoint; current program/action evidence requires retrieval",
-            "geometry_available": False,
-            "identity_crosswalks": [],
-        }
+    records.update({identity: _seed_record(identity) for identity in SEEDS})
     # Reviewed official page explicitly identifies the same installation and BRAC 1995 action.
     round_url = ARMY + "brac-1995/fort-indiantown-gap/"
     identity = local_id(round_url)
@@ -118,6 +121,8 @@ def validate_id(value):
 
 def resolve(installation_id, budget=None):
     validate_id(installation_id)
+    if installation_id in SEEDS:
+        return _seed_record(installation_id), []
     records, reports = registry(budget)
     return next((r for r in records if r["installation_id"] == installation_id), None), reports
 

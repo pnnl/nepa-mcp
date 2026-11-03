@@ -66,6 +66,16 @@ def get_brac_property_offers(installation_id, include_historical=False, max_resu
     record, reports = resolve(installation_id, budget)
     if record is None:
         return output([], reports, ["Unknown installation source identity"], max_results, result_offset)
+    # Completing the plan or archive source is not complete coverage of current listings.
+    reports.append(
+        {
+            "url": record.get("url"),
+            "scope": "current_advertised_sales_and_leases",
+            "status": "unsupported",
+            "complete": False,
+            "warnings": ["No current sale or lease inventory is supported for this installation."],
+        }
+    )
     if installation_id == "navy:south-weymouth":
         records = []
         if include_historical:
@@ -94,7 +104,7 @@ def get_brac_property_offers(installation_id, include_historical=False, max_resu
         return output(
             [],
             reports,
-            ["Advertised offer adapters and historical auction state are unverified; no availability conclusion."],
+            ["No advertised-offer source is verified for this installation; availability is unknown."],
             max_results,
             result_offset,
         )
@@ -124,7 +134,7 @@ def get_brac_property_offers(installation_id, include_historical=False, max_resu
         records,
         reports,
         [
-            "Only source-reported Army disposal plans are supported. No verified advertised-sale state or historical auction adapter; expected disposal dates are not bidding deadlines."
+            "Only Army disposal plans are verified for this installation; expected disposal dates are not bidding deadlines."
         ],
         max_results,
         result_offset,

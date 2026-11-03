@@ -1,6 +1,7 @@
 """Two archived GSA notices for one identified auction; no live listing state is inferred."""
 
 import re
+from datetime import date, datetime
 
 from src.apis.adapters import fetch
 from src.core.sources import WEYMOUTH_ANNOUNCEMENT, WEYMOUTH_SOFT_CLOSE, SEEDS
@@ -16,18 +17,28 @@ def _notice(url, budget):
     items = [li.get_text(" ", strip=True) for li in content.select("li") if not li.find("li")]
     stamp = content.select_one("time[datetime]")
     opening = url == WEYMOUTH_ANNOUNCEMENT
-    event = (
-        r"The auction opened (March 1, 2022, at 2:00 p\.m\. CT)"
+    # Identify the reviewed sale independently of dates: retain dated evidence
+    # from the publisher, rather than replaying dates from the test fixture.
+    date_pattern = r"([A-Z][a-z]+ [0-9]{1,2}, [0-9]{4})"
+    pattern = (
+        r"The auction opened " + date_pattern + r"(, at [0-9]{1,2}:[0-9]{2} [ap]\.m\. [A-Z]{2,4})"
         if opening
-        else r"has set Thursday, (June 2, 2022), as the soft close date"
+        else r"has set [A-Za-z]+, " + date_pattern + r", as the soft close date"
     )
-    match = re.search(event, paragraphs)
-    # Check the reviewed parcel, source date, IFB and event together. A different sale or
-    # a changed notice needs a new review; never scan generic auction-status templates.
-    expected_date = "2022-03-07" if opening else "2022-05-11"
+    matches = list(re.finditer(pattern, paragraphs))
+    match = matches[0] if len(matches) == 1 else None
+    try:
+        published = date.fromisoformat(stamp["datetime"].split("T")[0]) if stamp else None
+        event_date = datetime.strptime(match[1], "%B %d, %Y").date() if match else None
+    except ValueError:
+        published = event_date = None
+    listing = content.find(
+        "a", href=re.compile(r"^https://realestatesales\.gov/gsaauctions/(?:aucpbsindx/|aucdsclnk)\?sl=BOSTN121005001$")
+    )
     if not (
-        stamp
-        and stamp["datetime"].split("T")[0] == expected_date
+        published
+        and event_date
+        and listing
         and content.find("a", href=IFB)
         and "as Weymouth Woods and was a former housing site for the US Coast Guard" in paragraphs
         and "transferred from the U.S. Navy to the U.S. Coast Guard in 1998" in paragraphs
@@ -43,9 +54,11 @@ def _notice(url, budget):
         }
     return {
         "source_url": url,
-        "published_date": expected_date,
+        "published_date": published.isoformat(),
+        "event_date": event_date.isoformat(),
+        "listing_url": listing["href"],
         "event": "auction_opened" if opening else "soft_close_announced",
-        "source_date_text": match[1],
+        "source_date_text": match[1] + (match[2] if opening else ""),
     }, report
 
 
@@ -69,11 +82,11 @@ def historical_weymouth(record, budget):
                 {"frontage_or_access": "Memorial Grove Avenue", "acres": "0.77"},
             ],
             "bid_deadline": None,
-            "soft_close_date": "2022-06-02" if update else None,
+            "soft_close_date": update["event_date"] if update else None,
             "events": events,
             "source_url": events[0]["source_url"],
             "published_ifb_url": IFB,
-            "listing_id": None,
+            "listing_id": events[0]["listing_url"].split("sl=")[1],
             "crosswalk_source": SEEDS["navy:south-weymouth"]["url"],
             "crosswalk_basis": "Navy BRAC records the Coast Guard housing transfer at NAS South Weymouth; "
             "GSA identifies the former housing, 1998 Navy transfer, both parcels and their common IFB. "

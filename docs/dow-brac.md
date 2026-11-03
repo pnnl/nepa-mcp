@@ -19,6 +19,8 @@ All nine tools are exposed, but this branch must not be represented as satisfyin
 
 ## Identity, access, and pagination
 
+Direct lookup of a curated installation uses its registered source identity without fetching the Army round directories. A property-offer response reports unsupported current-sale coverage even when it retrieves all the available historical notices or plans.
+
 IDs are local source-namespaced identities, not government-wide BRAC identifiers. Army actions come from the installation rows inside a round's content/action groups; navigation menus and non-BRAC links are excluded. Distinct official URLs are not merged by name or proximity. Exact shared URLs can preserve multiple action records. An explicit reviewed crosswalk links the Army round-1995 Indiantown Gap entry to its working state-page evidence; the target explicitly names that installation/action. Other aliases remain unresolved.
 
 A few Navy/Air Force/Devens URLs are labelled curated research entrypoints from issue #55, with unknown actions, rather than presented as a verified live national registry. Search requires a term or supported filter. Unsupported filter values fail before requests. Registry entries without geometry remain searchable. FRS registry IDs, program acronym/ID pairs, and historical feature IDs stay separate. ArcGIS geometry is requested in WGS84 with `outSR=4326`; raw NAD83 attribute fields and collection/accuracy metadata are preserved. FRS program-interest activity is not military operational status.
