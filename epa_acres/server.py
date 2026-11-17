@@ -30,6 +30,9 @@ from src.apis.acres_api import (
     format_epa_acres_summary,
 )
 
+from src.apis.property_api import property_records
+from nepa_mcp_common.epa_records import render
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("epa-acres-mcp-server")
 
@@ -158,6 +161,29 @@ def get_epa_acres_properties_in_roi_tool(
     logger.info("Querying EPA ACRES for (%s, %s) with buffer %s mi", latitude, longitude, buffer_miles)
     result = get_epa_acres_properties_in_roi(latitude, longitude, buffer_miles)
     return format_epa_acres_summary(result, max_results=max_results, result_offset=result_offset)
+
+
+PropertyId = Annotated[
+    str, Field(pattern=r"^[0-9]{1,12}$", description="Numeric ACRES property ID from the Brownfields property search.")
+]
+RecordLimit = Annotated[int, Field(ge=1, le=100, description="Maximum number of source records per page (1–100).")]
+RecordOffset = Annotated[int, Field(ge=0, le=9999, description="Zero-based row offset in the requested records.")]
+
+
+@mcp.tool(annotations=READ_ONLY_TOOL_ANNOTATIONS, timeout=60.0)
+def get_epa_acres_property(
+    property_id: PropertyId, max_results: RecordLimit = 25, result_offset: RecordOffset = 0
+) -> str:
+    """Get a brownfield property profile and dated, grantee-reported accomplishments by ACRES property ID."""
+    return render(property_records(property_id, max_results, result_offset))
+
+
+@mcp.tool(annotations=READ_ONLY_TOOL_ANNOTATIONS, timeout=60.0)
+def get_epa_acres_property_grants(
+    property_id: PropertyId, max_results: RecordLimit = 25, result_offset: RecordOffset = 0
+) -> str:
+    """List grants explicitly linked to an ACRES property, with recipient, grant type, and whole-grant award."""
+    return render(property_records(property_id, max_results, result_offset, grants=True))
 
 
 if __name__ == "__main__":

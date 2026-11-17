@@ -66,6 +66,17 @@
         "PYTHONUNBUFFERED": "1"
       }
     },
+    "epa_echo": {
+      "type": "stdio",
+      "command": "nepa-mcp",
+      "args": [
+        "server",
+        "epa_echo"
+      ],
+      "env": {
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
     "epa_aqs": {
       "type": "stdio",
       "command": "nepa-mcp",

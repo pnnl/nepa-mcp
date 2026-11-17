@@ -26,6 +26,7 @@ EXPECTED_SERVERS = {
     "cfr",
     "efh",
     "epa_acres",
+    "epa_echo",
     "epa_aqs",
     "esa_ranges",
     "fema_nfhl",
@@ -297,7 +298,7 @@ async def _aggregate_tool_names() -> set[str]:
 
 def test_aggregate_server_discovers_all_tools() -> None:
     tool_names = asyncio.run(_aggregate_tool_names())
-    assert len(tool_names) == 56
+    assert len(tool_names) == 62
     assert {
         "search_permitting_projects",
         "get_project_permitting_timetable",

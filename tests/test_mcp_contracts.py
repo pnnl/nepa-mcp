@@ -19,7 +19,8 @@ EXPECTED_TOOL_COUNTS = {
     "census": 1,
     "cfr": 7,
     "efh": 4,
-    "epa_acres": 1,
+    "epa_echo": 4,
+    "epa_acres": 3,
     "epa_aqs": 3,
     "esa_ranges": 1,
     "fema_nfhl": 4,
@@ -65,7 +66,13 @@ EXPECTED_TOOL_NAMES = {
         "get_efh_hms_cps_groundfish",
         "get_efh_salmon",
     },
-    "epa_acres": {"get_epa_acres_properties_in_roi"},
+    "epa_acres": {"get_epa_acres_properties_in_roi", "get_epa_acres_property", "get_epa_acres_property_grants"},
+    "epa_echo": {
+        "search_epa_echo_facilities",
+        "get_epa_echo_facility_report",
+        "get_epa_echo_discharge_reports",
+        "get_epa_echo_civil_case",
+    },
     "epa_aqs": {
         "analyze_epa_aqs_air_quality_baseline",
         "get_epa_aqs_air_quality_monitors",
@@ -227,12 +234,12 @@ def test_geo_tool_schemas_document_ranges_and_units(server_name: str) -> None:
         longitude_description = properties["longitude"]["description"].lower()
         assert "wgs84" in latitude_description
         assert "-90" in latitude_description and "90" in latitude_description
-        assert properties["latitude"]["minimum"] == -90
-        assert properties["latitude"]["maximum"] == 90
+        assert properties["latitude"].get("anyOf", [properties["latitude"]])[0]["minimum"] == -90
+        assert properties["latitude"].get("anyOf", [properties["latitude"]])[0]["maximum"] == 90
         assert "wgs84" in longitude_description
         assert "-180" in longitude_description and "180" in longitude_description
-        assert properties["longitude"]["minimum"] == -180
-        assert properties["longitude"]["maximum"] == 180
+        assert properties["longitude"].get("anyOf", [properties["longitude"]])[0]["minimum"] == -180
+        assert properties["longitude"].get("anyOf", [properties["longitude"]])[0]["maximum"] == 180
 
         distance_name = "radius_miles" if "radius_miles" in properties else "buffer_miles"
         distance_description = properties[distance_name]["description"].lower()

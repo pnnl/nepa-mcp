@@ -87,6 +87,7 @@ include = [
     "/cfr",
     "/efh",
     "/epa_acres",
+    "/epa_echo",
     "/epa_aqs",
     "/esa_ranges",
     "/fema_nfhl",
@@ -113,6 +114,7 @@ include = [
 "cfr" = "nepa_mcp/_servers/cfr"
 "efh" = "nepa_mcp/_servers/efh"
 "epa_acres" = "nepa_mcp/_servers/epa_acres"
+"epa_echo" = "nepa_mcp/_servers/epa_echo"
 "epa_aqs" = "nepa_mcp/_servers/epa_aqs"
 "esa_ranges" = "nepa_mcp/_servers/esa_ranges"
 "fema_nfhl" = "nepa_mcp/_servers/fema_nfhl"

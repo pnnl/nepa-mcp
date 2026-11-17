@@ -61,3 +61,28 @@ See the [Map Composer guide](map-composer.md) for profiles, the complete
   service geography include a coverage warning.
 - Upstream request failures and partial-layer failures are returned as
   warnings; they are not presented as evidence that a resource is absent.
+
+### EPA property and facility records
+
+The ACRES region search still returns brownfield property points. Use its ACRES
+property ID for the property profile and grant lookups. Envirofacts publishes
+activity dates separately from award dates. One grant can support multiple
+properties; its cumulative award is not spending on a particular property.
+
+ECHO accepts either a name and state or coordinates and a 0.1–100 mile radius.
+An FRS ID identifies a facility; a facility may have multiple program IDs.
+The facility report has separate pages for permits, inspections, quarterly
+statuses, and enforcement. Only use an EPA-linked case number or permit ID for
+follow-up. Facility locations and outfall locations can differ.
+
+Discharge reports filter by the monitoring period end date (inclusive, up to
+367 days per request). Compare values using their reported outfall, parameter,
+units, and statistical basis. Missing values, no-discharge codes, and reported
+violations have different meanings.
+
+The six record tools return JSON as MCP text. Check `status` and `warnings`
+before interpreting `records`. A successful page can have `has_more: true`;
+use `next_page` for facility search or `next_offset` for detail records with
+the same filters and page size. A second request reads current EPA data and
+does not guarantee the same snapshot. Live MCP checks are opt-in:
+`NEPA_EPA_LIVE=1 uv run pytest -q tests/test_epa_echo_records.py -k public_epa`.

@@ -31,8 +31,8 @@ toolkit. It gives AI agents structured access to federal environmental,
 regulatory, biological, cultural, socioeconomic, and jurisdictional data used
 in NEPA screening and permitting research.
 
-The current inventory includes 23 MCP servers, 56 MCP tools, and 32 GIS
-layers. Together, the tools and layers represent **88 environmental and
+The current inventory includes 24 MCP servers, 62 MCP tools, and 32 GIS
+layers. Together, the tools and layers represent **94 environmental and
 regulatory research capabilities**. These capabilities draw on public data
 from 13 federal agencies, along with interagency and nonfederal sources.
 
@@ -113,8 +113,8 @@ new task.
 
 ## Codex Plugin
 
-The Codex plugin registers all 23 servers and includes the `nepa-screening`
-skill. If you use the plugin, do not also run `nepa-mcp configure codex`.
+The Codex plugin registers all 24 servers and includes the `nepa-screening` and
+`epa-facility-research` skills. If you use the plugin, do not also run `nepa-mcp configure codex`.
 
 Install and verify the Python runtime before adding the plugin:
 
@@ -123,7 +123,7 @@ pipx install nepa-mcp
 nepa-mcp doctor
 ```
 
-`doctor` should report `Installed servers: 23`. Then add the marketplace in
+`doctor` should report `Installed servers: 24`. Then add the marketplace in
 Codex Desktop:
 
 1. Open **Plugins** and select **Add plugin marketplace**.
@@ -199,7 +199,8 @@ Credentials are not copied into MCP client or plugin configuration, and
 | `census` | [U.S. Census Bureau](https://www.census.gov/) | ACS 5-Year socioeconomic indicators for intersecting TIGERweb counties |
 | `cfr` | [Office of the Federal Register / National Archives](https://www.archives.gov/federal-register) and [U.S. Government Publishing Office](https://www.gpo.gov/) | eCFR and Federal Register records, including executive orders |
 | `efh` | [NOAA Fisheries](https://www.fisheries.noaa.gov/) | EFH Mapper data for EFH, HAPC, salmon, HMS, coastal pelagic species, and groundfish screening |
-| `epa_acres` | [U.S. Environmental Protection Agency](https://www.epa.gov/) | ACRES grant-reported Brownfields property records for redevelopment and site-screening context |
+| `epa_acres` | [U.S. Environmental Protection Agency](https://www.epa.gov/) | Brownfields property search, reported milestones, and linked grants |
+| `epa_echo` | [EPA ECHO](https://echo.epa.gov/tools/web-services) | Facility search, compliance and inspection history, NPDES discharge reports, and ICIS civil enforcement cases |
 | `epa_aqs` | [U.S. Environmental Protection Agency](https://www.epa.gov/) | Air Quality System monitoring data and NAAQS screening comparisons |
 | `esa_ranges` | [NOAA Fisheries, West Coast Region](https://www.fisheries.noaa.gov/about/west-coast-region) | ESA-listed salmon and steelhead ranges by HUC-12 watershed |
 | `fema_nfhl` | [Federal Emergency Management Agency](https://www.fema.gov/) | National Flood Hazard Layer flood zones, levees, and water areas |

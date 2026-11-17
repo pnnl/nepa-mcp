@@ -1,0 +1,12 @@
+# EPA ECHO Server Dependencies
+
+# FastMCP server framework
+fastmcp==3.4.4
+
+# HTTP/Networking
+requests>=2.32.0
+
+# HTTP Server (required for streamable-http)
+uvicorn>=0.35.0
+starlette>=0.48.0
+sse-starlette>=3.0.0
