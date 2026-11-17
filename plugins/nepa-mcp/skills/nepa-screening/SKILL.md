@@ -31,6 +31,7 @@ Before location-scoped calls, confirm or derive latitude, longitude, and buffer 
   results as grant-reported screening data, not a complete contaminated-site
   inventory. Dense results are nearest-first and paginated; follow the returned
   `result_offset` instruction when the complete property list is needed.
+- Follow the [EPA facility research skill](../epa-facility-research/SKILL.md) for brownfield grants and milestones, ECHO facility reports, discharge records, and civil cases.
 - Use `padus` for protected areas, ownership, management, and conservation status.
 - Use `blm` for BLM land use plans, wilderness areas, and national monuments.
 - Use `blm_mlrs` for BLM land-use authorization cases, locatable-mineral

@@ -1,7 +1,7 @@
 # EFH Server Dependencies
 
 # FastMCP server framework
-fastmcp==3.4.4
+fastmcp==3.4.10
 
 # HTTP/Networking
 requests>=2.32.0

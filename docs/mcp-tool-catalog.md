@@ -1,6 +1,6 @@
 # MCP Tool Catalog
 
-NEPA MCP provides 23 independent servers with 56 tools. Use this catalog to choose the smallest set of servers needed for a workflow.
+NEPA MCP provides 24 independent servers with 62 tools. Use this catalog to choose the smallest set of servers needed for a workflow.
 
 This file is generated from the server registry and each server's live MCP `tools/list` contract. Do not edit it manually. Regenerate it with `uv run python scripts/generate_tool_catalog.py`; add `--check` to verify it without writing.
 
@@ -25,9 +25,15 @@ This file is generated from the server registry and each server's live MCP `tool
 | `efh` | `get_efh_hms_cps_groundfish` | Query NOAA for HMS, Coastal Pelagic, and Groundfish EFH within the ROI. |
 | `efh` | `get_efh_salmon` | Query NOAA for salmon Essential Fish Habitat by HUC-8 watershed within the ROI. |
 | `epa_acres` | `get_epa_acres_properties_in_roi` | Query EPA ACRES Brownfields property records within a region of interest. |
+| `epa_acres` | `get_epa_acres_property` | Get a brownfield property profile and dated, grantee-reported accomplishments by ACRES property ID. |
+| `epa_acres` | `get_epa_acres_property_grants` | List grants explicitly linked to an ACRES property, with recipient, grant type, and whole-grant award. |
 | `epa_aqs` | `analyze_epa_aqs_air_quality_baseline` | Analyze EPA AQS air quality baseline data for NEPA screening. |
 | `epa_aqs` | `get_epa_aqs_air_quality_monitors` | Identify EPA air quality monitoring stations within a region of interest. |
 | `epa_aqs` | `get_epa_aqs_annual_air_quality` | Get annual air quality statistics for criteria pollutants in a region. |
+| `epa_echo` | `get_epa_echo_civil_case` | Retrieve an ICIS civil enforcement case, statutes, dated actions, and EPA-reported penalties. |
+| `epa_echo` | `get_epa_echo_discharge_reports` | Retrieve discharge reports, limits, units, no-discharge codes, and reported violations for one NPDES permit. |
+| `epa_echo` | `get_epa_echo_facility_report` | Retrieve permits, inspections, quarterly compliance history, and enforcement records for an FRS facility. |
+| `epa_echo` | `search_epa_echo_facilities` | Find regulated facilities by name and state or by distance from project coordinates. |
 | `esa_ranges` | `get_esa_species_ranges_in_roi` | Query NOAA for ESA-listed species ranges within the ROI. |
 | `fema_nfhl` | `analyze_fema_nfhl_flood_hazard_screening` | Screen FEMA NFHL flood-hazard layers for a location. |
 | `fema_nfhl` | `get_fema_nfhl_flood_zones_in_roi` | Query FEMA flood hazard zones within a radius of a location. |

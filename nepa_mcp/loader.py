@@ -22,8 +22,10 @@ def load_server_module(name: str) -> ModuleType:
     directory = server_directory(name)
     entrypoint = server_entrypoint(name)
     directory_text = str(directory)
-    if directory_text not in sys.path:
-        sys.path.insert(0, directory_text)
+    # A previous load can leave this directory behind another server's src/.
+    if directory_text in sys.path:
+        sys.path.remove(directory_text)
+    sys.path.insert(0, directory_text)
 
     module_name = f"_nepa_mcp_server_{name}"
     spec = importlib.util.spec_from_file_location(module_name, entrypoint)

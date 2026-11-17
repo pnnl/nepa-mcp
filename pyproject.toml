@@ -25,10 +25,10 @@ classifiers = [
 dependencies = [
     "beautifulsoup4>=4.12.0",
     "cryptography>=50.0.0",
-    "fastmcp==3.4.4",
+    "fastmcp==3.4.10",
     "folium>=0.20.0",
     "httpx>=0.28.0",
-    "mcp>=1.28.1",
+    "mcp>=1.30.0",
     "platformdirs>=4.0.0",
     "pyproj>=3.7.0",
     "pydantic>=2.12.0",
@@ -87,6 +87,7 @@ include = [
     "/cfr",
     "/efh",
     "/epa_acres",
+    "/epa_echo",
     "/epa_aqs",
     "/esa_ranges",
     "/fema_nfhl",
@@ -113,6 +114,7 @@ include = [
 "cfr" = "nepa_mcp/_servers/cfr"
 "efh" = "nepa_mcp/_servers/efh"
 "epa_acres" = "nepa_mcp/_servers/epa_acres"
+"epa_echo" = "nepa_mcp/_servers/epa_echo"
 "epa_aqs" = "nepa_mcp/_servers/epa_aqs"
 "esa_ranges" = "nepa_mcp/_servers/esa_ranges"
 "fema_nfhl" = "nepa_mcp/_servers/fema_nfhl"
