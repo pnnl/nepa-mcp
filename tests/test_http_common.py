@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
+import gzip
+from io import BytesIO
 from typing import Any
 
 import pytest
 import requests
+from urllib3.response import HTTPResponse
 
-from nepa_mcp_common.http import UpstreamServiceError, get_json_rows, post_json
+from nepa_mcp_common.http import ResponseTooLarge, UpstreamServiceError, get_json, get_json_rows, post_json
 
 
 class _Response:
@@ -22,6 +25,58 @@ class _Response:
         if self.json_error:
             raise ValueError("not json")
         return self.payload
+
+
+@pytest.fixture
+def streamed_response(monkeypatch):
+    response = requests.Response()
+    response.status_code = 200
+
+    def send(adapter, request, *, stream, **kwargs):
+        assert stream
+        return response
+
+    monkeypatch.setattr(requests, "get", requests.api.get)
+    monkeypatch.setattr(requests.adapters.HTTPAdapter, "send", send)
+    return response
+
+
+@pytest.mark.parametrize("extra_byte", [False, True])
+def test_get_json_limits_decoded_bytes_without_content_length(streamed_response, extra_byte):
+    payload = b'{"count": 7}' + b" " * 65536
+    compressed = gzip.compress(payload + (b" " if extra_byte else b""))
+    raw = HTTPResponse(body=BytesIO(compressed), headers={"Content-Encoding": "gzip"}, preload_content=False)
+    streamed_response.raw = raw
+
+    if extra_byte:
+        with pytest.raises(ResponseTooLarge):
+            get_json("https://example.test/report", max_bytes=len(payload))
+    else:
+        assert get_json("https://example.test/report", max_bytes=len(payload)) == {"count": 7}
+    assert raw.closed
+
+
+def test_limited_request_stops_at_first_oversized_chunk(monkeypatch, streamed_response):
+    def chunks(chunk_size):
+        yield b"invalid JSON"
+        pytest.fail("read beyond the size limit")
+
+    streamed_response.raw = BytesIO()
+    monkeypatch.setattr(streamed_response, "iter_content", chunks)
+    with pytest.raises(ResponseTooLarge):
+        get_json("https://example.test/report", max_bytes=5)
+    assert streamed_response.raw.closed
+
+
+def test_limited_request_closes_redirect_without_reading_it(monkeypatch, streamed_response):
+    response = streamed_response
+    response.status_code = 302
+    response.headers["Location"] = "/another-report"
+    response.raw = BytesIO(b"redirect body")
+    monkeypatch.setattr(response, "iter_content", lambda **kw: pytest.fail("read redirect body"))
+    with pytest.raises(UpstreamServiceError, match="redirect"):
+        get_json("https://example.test/report", max_bytes=10)
+    assert response.raw.closed
 
 
 def test_post_json_sends_json_body_and_returns_object(monkeypatch):

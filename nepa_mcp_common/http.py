@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from typing import Any
 
 import requests
@@ -11,6 +12,17 @@ DEFAULT_TIMEOUT_SECONDS = 20
 
 class UpstreamServiceError(RuntimeError):
     """Raised when an upstream service fails or returns an error payload."""
+
+
+class ResponseTooLarge(UpstreamServiceError):
+    """The decoded response exceeded the caller's byte limit."""
+
+
+def _reject_redirect(response, **kwargs):
+    # Requests otherwise reads the entire redirect body before following it.
+    if response.is_redirect:
+        response.close()
+        raise UpstreamServiceError("Unexpected redirect for a size-limited request")
 
 
 def _format_arcgis_error(error: Any) -> str:
@@ -30,16 +42,28 @@ def get_json(
     params: dict[str, Any] | None = None,
     timeout: float | tuple[float, float] = DEFAULT_TIMEOUT_SECONDS,
     service_name: str = "upstream service",
+    max_bytes: int | None = None,
 ) -> dict[str, Any]:
     """Return a JSON object from an upstream service with consistent errors."""
     try:
-        response = requests.get(url, params=params, timeout=timeout)
-        response.raise_for_status()
+        if max_bytes is None:
+            response = requests.get(url, params=params, timeout=timeout)
+            response.raise_for_status()
+        else:
+            with requests.get(
+                url, params=params, timeout=timeout, stream=True, hooks={"response": _reject_redirect}
+            ) as response:
+                response.raise_for_status()
+                body = bytearray()
+                for chunk in response.iter_content(chunk_size=64 * 1024):
+                    if len(body) + len(chunk) > max_bytes:
+                        raise ResponseTooLarge(f"{service_name} response exceeded {max_bytes} bytes")
+                    body.extend(chunk)
     except requests.RequestException as exc:
         raise UpstreamServiceError(f"{service_name} request failed: {exc}") from exc
 
     try:
-        data = response.json()
+        data = response.json() if max_bytes is None else json.loads(body)
     except ValueError as exc:
         raise UpstreamServiceError(f"{service_name} returned invalid JSON") from exc
 

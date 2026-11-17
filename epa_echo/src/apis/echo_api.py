@@ -5,10 +5,11 @@ from datetime import date, datetime
 from urllib.parse import urlencode
 
 from nepa_mcp_common.epa_records import evidence, fields, page, warn, window
-from nepa_mcp_common.http import UpstreamServiceError, get_json
+from nepa_mcp_common.http import ResponseTooLarge, UpstreamServiceError, get_json
 from nepa_mcp_common.validation import validate_coordinates
 
 BASE = "https://echodata.epa.gov/echo/"
+DISCHARGE_MAX_BYTES = 8 * 1024 * 1024
 COLS = "1,2,3,4,6,19,20,21,22,23,24,25,26,27,28,29,30,31"
 FAC_FIELDS = "FacName FacStreet FacCity FacState RegistryID FacLat FacLong AIRIDs CamdIDs NPDESIDs RCRAIDs RmpIDs SemsIDs SDWAIDs TRIIDs EisIDs GHGIDs TscaIDs"
 STATES = set(
@@ -16,12 +17,16 @@ STATES = set(
 )
 
 
-def _request(result, service, **params):
+def _request(result, service, *, max_bytes=None, **params):
     params["output"] = "JSON"
     url = BASE + service
     result["sources"].append(url + "?" + urlencode(params))
     try:
-        payload = get_json(url, params=params, service_name="EPA ECHO", timeout=20)
+        payload = get_json(url, params=params, service_name="EPA ECHO", timeout=20, max_bytes=max_bytes)
+    except ResponseTooLarge as exc:
+        raise UpstreamServiceError(
+            "EPA's report was too large. Try a shorter date range or specify an outfall or parameter code."
+        ) from exc
     except UpstreamServiceError as exc:
         raise UpstreamServiceError(f"ECHO {service} was unavailable for this request.") from exc
     data = payload.get("Results")
@@ -53,10 +58,10 @@ def _rows(result, obj, key):
     if not isinstance(value, list):
         warn(result, f"ECHO did not return a record list for {key}.")
         return []
-    rows = [row for row in value if isinstance(row, dict)]
-    if len(rows) != len(value):
-        warn(result, f"Skipped malformed {key} rows.")
-    return rows
+    if all(isinstance(row, dict) for row in value):
+        return value
+    warn(result, f"Skipped malformed {key} rows.")
+    return [row for row in value if isinstance(row, dict)]
 
 
 def _id(value, pattern, name):
@@ -288,11 +293,15 @@ def discharges(permit_id, start_date, end_date, outfall, parameter_code, max_res
         end_date=end_date,
         scope="Reported monitoring values and violations; missing values are not zero.",
     )
-    data = _lookup(result, "eff_rest_services.get_effluent_chart", permit_id, "SourceId", **params)
+    data = _lookup(
+        result, "eff_rest_services.get_effluent_chart", permit_id, "SourceId", max_bytes=DISCHARGE_MAX_BYTES, **params
+    )
     if data is None:
         return result
     result["permit"] = fields(data, "SourceId RegistryId CWPPermitStatusDesc StartDate EndDate")
     rows = []
+    matches = 0
+    page_end = result_offset + max_results
     for feature in _rows(result, data, "PermFeatures"):
         fid = feature.get("PermFeatureNmbr")
         if not fid:
@@ -316,6 +325,9 @@ def discharges(permit_id, start_date, end_date, outfall, parameter_code, max_res
                 if "NPDESViolations" not in dmr:
                     warn(result, "EPA omitted the reported violations field.")
                 violations = [] if dmr.get("NPDESViolations") is None else _rows(result, dmr, "NPDESViolations")
+                matches += 1
+                if not result_offset < matches <= page_end:
+                    continue
                 rows.append(
                     dict(
                         outfall=fid,
@@ -327,11 +339,5 @@ def discharges(permit_id, start_date, end_date, outfall, parameter_code, max_res
                         ],
                     )
                 )
-    page(
-        result,
-        rows[result_offset : result_offset + max_results],
-        max_results,
-        result_offset,
-        more=len(rows) > result_offset + max_results,
-    )
+    page(result, rows, max_results, result_offset, more=matches > page_end)
     return result

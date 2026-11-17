@@ -9,7 +9,7 @@ from fastmcp import Client
 
 from epa_echo.src.apis import echo_api as api
 from nepa_mcp.loader import load_server_module
-from nepa_mcp_common.http import UpstreamServiceError
+from nepa_mcp_common.http import ResponseTooLarge, UpstreamServiceError
 
 FRS = "110029030144"
 PERMIT = "DC0021199"
@@ -156,6 +156,33 @@ def test_dmr_period_and_value_semantics(monkeypatch):
     a, b = r["records"]
     assert a["DMRValueNmbr"] == 0 and a["violations"] == []
     assert b["DMRValueNmbr"] is None and b["NODICode"] == "P" and b["violations"] == [{"ViolationCode": "D80"}]
+
+
+@pytest.mark.parametrize("count,more", [(15, False), (16, True)])
+def test_discharge_page_counts_matches_and_keeps_later_warnings(monkeypatch, count, more):
+    rows = [
+        {"MonitoringPeriodEndDate": "31-MAR-24", "DMREventId": i, "NPDESViolations": []} for i in range(1, count + 1)
+    ]
+    rows.insert(0, {"MonitoringPeriodEndDate": "31-DEC-23"})
+    rows.append({"MonitoringPeriodEndDate": "unknown"})
+    parameter = {"ParameterCode": "00300", "DischargeMonitoringReports": rows}
+    install(monkeypatch, {"SourceId": PERMIT, "PermFeatures": [{"PermFeatureNmbr": "001", "Parameters": [parameter]}]})
+
+    r = api.discharges(PERMIT, "2024-01-01", "2024-03-31", None, None, 5, 10)
+    assert [row["DMREventId"] for row in r["records"]] == [11, 12, 13, 14, 15]
+    assert r["has_more"] is more and r["next_offset"] == (15 if more else None)
+    assert r["status"] == "partial" and "monitoring period" in r["warnings"][0]
+
+
+def test_oversize_discharge_report_is_unavailable(monkeypatch):
+    def oversized(url, *, params, max_bytes, **kwargs):
+        assert max_bytes == api.DISCHARGE_MAX_BYTES and "max_bytes" not in params
+        raise ResponseTooLarge("report too large")
+
+    monkeypatch.setattr(api, "get_json", oversized)
+    r = api.discharges(PERMIT, "2024-01-01", "2024-03-31", None, None, 1, 0)
+    assert r["status"] == "unavailable" and "records" not in r
+    assert "shorter date range" in r["warnings"][0] and r["sources"]
 
 
 def test_case_and_penalty_roles(monkeypatch):
