@@ -25,6 +25,10 @@ code together. A facility coordinate does not locate its outfalls. Use an ICIS
 case number from the cases section with `get_epa_echo_civil_case`; distinguish
 reported penalties from amounts collected.
 
+Discharge reports default to 50 MB per request. If `reason` is
+`response_size_limit`, narrow the query or retry with `max_response_mb=100`.
+Increasing the limit does not help with an EPA timeout or rate limit.
+
 Keep the same filters and page size when following the returned page or offset.
 EPA data can change between requests. Cite the returned sources and reporting
 periods, label missing IDs and unavailable sections, and say when more records

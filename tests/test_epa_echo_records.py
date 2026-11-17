@@ -3,9 +3,12 @@
 import asyncio
 import json
 import os
+from io import BytesIO
 
 import pytest
+import requests
 from fastmcp import Client
+from urllib3.exceptions import ReadTimeoutError
 
 from epa_echo.src.apis import echo_api as api
 from nepa_mcp.loader import load_server_module
@@ -174,15 +177,74 @@ def test_discharge_page_counts_matches_and_keeps_later_warnings(monkeypatch, cou
     assert r["status"] == "partial" and "monitoring period" in r["warnings"][0]
 
 
-def test_oversize_discharge_report_is_unavailable(monkeypatch):
-    def oversized(url, *, params, max_bytes, **kwargs):
-        assert max_bytes == api.DISCHARGE_MAX_BYTES and "max_bytes" not in params
-        raise ResponseTooLarge("report too large")
+def test_discharge_size_limit_and_explicit_retry(monkeypatch):
+    payload = json.dumps({"Results": {"Message": "Success", "SourceId": PERMIT, "PermFeatures": []}}).encode()
+    body = payload.ljust(1_000_001)
+    calls = []
+
+    def fetch(url, *, params, stream, **kw):
+        assert stream and "max_response_mb" not in params
+        calls.append(params.copy())
+        response = requests.Response()
+        response.status_code = 200
+        response.raw = BytesIO(body)
+        return response
+
+    monkeypatch.setattr(requests, "get", fetch)
+    args = dict(permit_id=PERMIT, start_date="2024-01-01", end_date="2024-01-31", max_response_mb=1)
+    r = asyncio.run(mcp_call("epa_echo", "get_epa_echo_discharge_reports", args))
+    assert len(calls) == 1 and r["reason"] == "response_size_limit" and r["status"] == "unavailable"
+    assert "records" not in r and r["sources"] and "NEPA-MCP" in r["warnings"][0]
+    assert "1 MB" in r["warnings"][0] and "max_response_mb=2" in r["warnings"][0]
+    r = asyncio.run(mcp_call("epa_echo", "get_epa_echo_discharge_reports", dict(args, max_response_mb=2)))
+    assert calls[0] == calls[1] and r["status"] == "empty" and "reason" not in r
+
+
+@pytest.mark.parametrize("override,limit", [({}, 50), ({"max_response_mb": 100}, 100)])
+def test_discharge_limit_warning_at_default_and_maximum(monkeypatch, override, limit):
+    def oversized(url, *, max_bytes, **kw):
+        assert max_bytes == limit * 1_000_000
+        raise ResponseTooLarge("too large")
 
     monkeypatch.setattr(api, "get_json", oversized)
-    r = api.discharges(PERMIT, "2024-01-01", "2024-03-31", None, None, 1, 0)
-    assert r["status"] == "unavailable" and "records" not in r
-    assert "shorter date range" in r["warnings"][0] and r["sources"]
+    r = api.discharges(PERMIT, "2024-01-01", "2024-01-31", None, None, 1, 0, **override)
+    warning = r["warnings"][0]
+    assert r["reason"] == "response_size_limit" and f"{limit} MB" in warning
+    assert ("max_response_mb=100" in warning) == (limit < 100)
+    assert "date range" in warning
+
+
+@pytest.mark.parametrize("value", [0, 101, 1.5, True])
+def test_discharge_rejects_invalid_response_budget_before_request(monkeypatch, value):
+    monkeypatch.setattr(api, "get_json", lambda *a, **kw: pytest.fail("unexpected request"))
+    with pytest.raises(ValueError, match="max_response_mb"):
+        api.discharges(PERMIT, "2024-01-01", "2024-01-31", None, None, 1, 0, value)
+
+
+@pytest.mark.parametrize(
+    "failure,reason,warning",
+    [
+        (429, "upstream_rate_limited", "HTTP 429"),
+        (503, "upstream_http_error", "HTTP 503"),
+        (requests.Timeout("private detail"), "upstream_timeout", "timed out"),
+        (requests.ConnectionError(ReadTimeoutError(None, None, "private detail")), "upstream_timeout", "timed out"),
+        (requests.ConnectionError("private detail"), "upstream_connection_error", "connection"),
+        (200, "invalid_upstream_response", "invalid JSON"),
+    ],
+)
+def test_discharge_distinguishes_upstream_failures(monkeypatch, failure, reason, warning):
+    def fetch(url, **kw):
+        if isinstance(failure, Exception):
+            raise failure
+        response = requests.Response()
+        response.status_code = failure
+        response.raw = BytesIO(b"private detail")
+        return response
+
+    monkeypatch.setattr(requests, "get", fetch)
+    r = api.discharges(PERMIT, "2024-01-01", "2024-01-31", None, None, 1, 0)
+    assert r["status"] == "unavailable" and r["reason"] == reason and warning in r["warnings"][0]
+    assert "records" not in r and "private detail" not in str(r) and "max_response_mb" not in str(r)
 
 
 def test_case_and_penalty_roles(monkeypatch):

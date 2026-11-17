@@ -9,7 +9,8 @@ from nepa_mcp_common.http import ResponseTooLarge, UpstreamServiceError, get_jso
 from nepa_mcp_common.validation import validate_coordinates
 
 BASE = "https://echodata.epa.gov/echo/"
-DISCHARGE_MAX_BYTES = 8 * 1024 * 1024
+DEFAULT_RESPONSE_MB = 50
+MAX_RESPONSE_MB = 100
 COLS = "1,2,3,4,6,19,20,21,22,23,24,25,26,27,28,29,30,31"
 FAC_FIELDS = "FacName FacStreet FacCity FacState RegistryID FacLat FacLong AIRIDs CamdIDs NPDESIDs RCRAIDs RmpIDs SemsIDs SDWAIDs TRIIDs EisIDs GHGIDs TscaIDs"
 STATES = set(
@@ -17,24 +18,32 @@ STATES = set(
 )
 
 
-def _request(result, service, *, max_bytes=None, **params):
+def _request(result, service, *, max_bytes=None, timeout=20, **params):
     params["output"] = "JSON"
     url = BASE + service
     result["sources"].append(url + "?" + urlencode(params))
     try:
-        payload = get_json(url, params=params, service_name="EPA ECHO", timeout=20, max_bytes=max_bytes)
+        payload = get_json(url, params=params, service_name="EPA ECHO", timeout=timeout, max_bytes=max_bytes)
     except ResponseTooLarge as exc:
-        raise UpstreamServiceError(
-            "EPA's report was too large. Try a shorter date range or specify an outfall or parameter code."
-        ) from exc
+        limit_mb = max_bytes // 1_000_000
+        message = f"NEPA-MCP stopped reading this report at its {limit_mb} MB limit. "
+        if limit_mb < MAX_RESPONSE_MB:
+            message += f"Retry with max_response_mb={min(2 * limit_mb, MAX_RESPONSE_MB)}, or narrow the date range, outfall, or pollutant."
+        else:
+            message += "Narrow the date range, outfall, or pollutant."
+        raise UpstreamServiceError(message, reason="response_size_limit") from exc
     except UpstreamServiceError as exc:
+        if exc.reason != "upstream_error":
+            raise
         raise UpstreamServiceError(f"ECHO {service} was unavailable for this request.") from exc
     data = payload.get("Results")
     err = payload.get("Error") or (data.get("Error") if isinstance(data, dict) else None)
     if err:
-        raise UpstreamServiceError(f"ECHO {service} returned an error for this request.")
+        raise UpstreamServiceError(f"ECHO {service} returned an error for this request.", reason="upstream_api_error")
     if not isinstance(data, dict) or data.get("Message") not in ("Success", "Working"):
-        raise UpstreamServiceError(f"ECHO {service}: missing or unsuccessful results.")
+        raise UpstreamServiceError(
+            f"ECHO {service}: missing or unsuccessful results.", reason="invalid_upstream_response"
+        )
     return data
 
 
@@ -43,9 +52,12 @@ def _lookup(result, service, identifier, identity_field, container=None, **param
         data = _request(result, service, p_id=identifier, **params)
         identity = data if container is None else data.get(container)
         if not isinstance(identity, dict) or identity.get(identity_field) != identifier:
-            raise UpstreamServiceError("Missing or conflicting EPA identifier; no records attributed.")
+            raise UpstreamServiceError(
+                "Missing or conflicting EPA identifier; no records attributed.", reason="invalid_upstream_response"
+            )
         return data
     except UpstreamServiceError as exc:
+        result["reason"] = exc.reason
         warn(result, str(exc), unavailable=True)
         return None
 
@@ -116,6 +128,7 @@ def search(name, state, latitude, longitude, radius_miles, max_results, page_num
         if any(not r.get("RegistryID") for r in result["records"]):
             warn(result, "Some facilities lack an FRS ID.")
     except UpstreamServiceError as exc:
+        result["reason"] = exc.reason
         warn(result, str(exc), unavailable="reported_matches" not in result)
     return result
 
@@ -276,9 +289,20 @@ DMR_FIELDS = (
 )
 
 
-def discharges(permit_id, start_date, end_date, outfall, parameter_code, max_results, result_offset):
+def discharges(
+    permit_id,
+    start_date,
+    end_date,
+    outfall,
+    parameter_code,
+    max_results,
+    result_offset,
+    max_response_mb=DEFAULT_RESPONSE_MB,
+):
     _id(permit_id, r"[A-Z0-9]{9}", "NPDES permit ID")
     window(max_results, result_offset)
+    if type(max_response_mb) is not int or not 1 <= max_response_mb <= MAX_RESPONSE_MB:
+        raise ValueError(f"max_response_mb must be an integer from 1 to {MAX_RESPONSE_MB}.")
     start, end = date.fromisoformat(start_date), date.fromisoformat(end_date)
     if not 0 <= (end - start).days <= 366:
         raise ValueError("Use an ordered monitoring period of at most 367 days.")
@@ -294,7 +318,13 @@ def discharges(permit_id, start_date, end_date, outfall, parameter_code, max_res
         scope="Reported monitoring values and violations; missing values are not zero.",
     )
     data = _lookup(
-        result, "eff_rest_services.get_effluent_chart", permit_id, "SourceId", max_bytes=DISCHARGE_MAX_BYTES, **params
+        result,
+        "eff_rest_services.get_effluent_chart",
+        permit_id,
+        "SourceId",
+        max_bytes=max_response_mb * 1_000_000,
+        timeout=(5, 50),
+        **params,
     )
     if data is None:
         return result

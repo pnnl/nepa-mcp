@@ -82,9 +82,22 @@ def get_epa_echo_discharge_reports(
     ] = None,
     max_results: Limit = 25,
     result_offset: Offset = 0,
+    max_response_mb: Annotated[
+        int,
+        Field(
+            strict=True,
+            ge=1,
+            le=api.MAX_RESPONSE_MB,
+            description="Download limit after decompression in MB (1,000,000 bytes). Increase on retry if the tool reports response_size_limit.",
+        ),
+    ] = api.DEFAULT_RESPONSE_MB,
 ) -> str:
     """Retrieve discharge reports, limits, units, no-discharge codes, and reported violations for one NPDES permit."""
-    return render(api.discharges(permit_id, start_date, end_date, outfall, parameter_code, max_results, result_offset))
+    return render(
+        api.discharges(
+            permit_id, start_date, end_date, outfall, parameter_code, max_results, result_offset, max_response_mb
+        )
+    )
 
 
 @mcp.tool(annotations=READ_ONLY, timeout=60.0)
